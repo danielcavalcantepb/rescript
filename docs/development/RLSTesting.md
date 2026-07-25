@@ -2,13 +2,13 @@
 
 ## Prerequisites
 
-- Migration applied on a dedicated Supabase project
-- Two Auth users (A, B) created in Dashboard (no passwords in repo)
-- User A creates an organization via app onboarding
+- Migration applied on the linked Rescript project (see [DatabaseLive.md](./DatabaseLive.md))
+- Two Auth users (A, B) — Dashboard or ephemeral seed (no passwords in repo)
+- User A creates an organization via app onboarding / RPC
 
 ## Manual / SQL checklist
 
-Using the Supabase SQL editor **as each user** (or `set request.jwt.claim.sub`):
+Using the Supabase SQL editor **as each user** (or SDK with user JWT):
 
 1. **A sees own org** — `select * from organization` returns A's org  
 2. **B sees nothing** of A's org  
@@ -17,12 +17,14 @@ Using the Supabase SQL editor **as each user** (or `set request.jwt.claim.sub`):
 5. **A lists own membership** with `role = owner`  
 6. **Suspended org** — after `update organization set status = 'suspended'`, app refuses to select it as active  
 7. **create_organization** as authenticated user succeeds once per click (advisory lock)  
-8. Publishable key only in client — never `service_role`
+8. **Customer isolation** — A cannot SELECT/INSERT/UPDATE customers of B  
+9. **Customer DELETE** denied (no policy)  
+10. Publishable key only in client — never `service_role`
 
 ## Automated
 
 Unit tests cover role→permission mapping, active-org preference, query-key isolation, and provider wiring.  
-Full RLS suite requires a live project (CI secret) — scripts can be added when the remote is linked.
+Live RLS suite (A/B via SDK) executed in Database Live — **11/11 PASS** (see DatabaseLive.md).
 
 ## Negative cases to retest after every tenancy change
 

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import type { PermissionKey } from '@rescript/permissions'
 import { usePermission } from '#/platform/permissions/permission-context'
-import { ForbiddenState } from '#/platform/errors/states'
+import { ForbiddenState, PageError } from '#/platform/errors'
+import { PageLoading } from '#/platform/loading'
 
 export function PermissionGuard({
   permission,
@@ -29,8 +30,18 @@ export function PermissionBoundary({
   title?: string
   description?: string
 }) {
-  const { can, isLoading } = usePermission()
-  if (isLoading) return null
+  const { can, isLoading, status, error } = usePermission()
+  if (isLoading || status === 'loading') {
+    return <PageLoading label="Carregando permissões…" />
+  }
+  if (status === 'error') {
+    return (
+      <PageError
+        error={error}
+        onRetry={() => window.location.reload()}
+      />
+    )
+  }
   if (!can(permission)) {
     return <ForbiddenState title={title} description={description} />
   }
@@ -50,5 +61,28 @@ export function FeatureGate({
     <PermissionGuard permission={permission} fallback={fallback}>
       {children}
     </PermissionGuard>
+  )
+}
+
+/**
+ * Page-level gate: loading → error → forbidden → children.
+ * Never shows Forbidden or protected content while grants are unresolved.
+ */
+export function RequirePermission({
+  permission,
+  children,
+  forbiddenDescription,
+}: {
+  permission: PermissionKey
+  children: ReactNode
+  forbiddenDescription?: string
+}) {
+  return (
+    <PermissionBoundary
+      permission={permission}
+      description={forbiddenDescription}
+    >
+      {children}
+    </PermissionBoundary>
   )
 }

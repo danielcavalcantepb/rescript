@@ -5,16 +5,34 @@ import {
   FeatureGate,
   PermissionBoundary,
   PermissionGuard,
+  RequirePermission,
 } from '#/platform/permissions/guards'
+
+const permissionMock = vi.hoisted(() => ({
+  grants: ['customers.read'] as string[],
+  isLoading: false,
+  status: 'ready' as 'loading' | 'ready' | 'error',
+  error: null as Error | null,
+}))
 
 vi.mock('#/platform/permissions/permission-context', () => ({
   usePermission: () => ({
-    grants: ['customers.read'],
-    isLoading: false,
-    can: (key: string) => key === 'customers.read',
-    cannot: (key: string) => key !== 'customers.read',
-    canAny: (keys: string[]) => keys.includes('customers.read'),
-    canAll: (keys: string[]) => keys.every((k) => k === 'customers.read'),
+    grants: permissionMock.grants,
+    isLoading: permissionMock.isLoading,
+    status: permissionMock.status,
+    error: permissionMock.error,
+    can: (key: string) =>
+      !permissionMock.isLoading &&
+      permissionMock.status === 'ready' &&
+      permissionMock.grants.includes(key),
+    cannot: (key: string) =>
+      permissionMock.isLoading ||
+      permissionMock.status !== 'ready' ||
+      !permissionMock.grants.includes(key),
+    canAny: (keys: string[]) =>
+      keys.some((k) => permissionMock.grants.includes(k)),
+    canAll: (keys: string[]) =>
+      keys.every((k) => permissionMock.grants.includes(k)),
   }),
 }))
 
@@ -34,6 +52,9 @@ describe('permission helpers', () => {
 
 describe('PermissionGuard', () => {
   it('renders children when allowed', () => {
+    permissionMock.isLoading = false
+    permissionMock.status = 'ready'
+    permissionMock.grants = ['customers.read']
     render(
       <PermissionGuard permission="customers.read">
         <span>allowed</span>
@@ -43,6 +64,9 @@ describe('PermissionGuard', () => {
   })
 
   it('hides children when denied', () => {
+    permissionMock.isLoading = false
+    permissionMock.status = 'ready'
+    permissionMock.grants = ['customers.read']
     render(
       <PermissionGuard permission="sales.confirm">
         <span>denied</span>
@@ -50,10 +74,25 @@ describe('PermissionGuard', () => {
     )
     expect(screen.queryByText('denied')).toBeNull()
   })
+
+  it('hides children while loading (no protected flash)', () => {
+    permissionMock.isLoading = true
+    permissionMock.status = 'loading'
+    permissionMock.grants = ['customers.read']
+    render(
+      <PermissionGuard permission="customers.read">
+        <span>premature</span>
+      </PermissionGuard>,
+    )
+    expect(screen.queryByText('premature')).toBeNull()
+  })
 })
 
 describe('FeatureGate', () => {
   it('gates features by permission key', () => {
+    permissionMock.isLoading = false
+    permissionMock.status = 'ready'
+    permissionMock.grants = ['customers.read']
     render(
       <FeatureGate permission="customers.read">
         <span>feature</span>
@@ -63,8 +102,24 @@ describe('FeatureGate', () => {
   })
 })
 
-describe('PermissionBoundary', () => {
-  it('shows forbidden state when denied', () => {
+describe('PermissionBoundary / RequirePermission', () => {
+  it('shows loading instead of Forbidden while unresolved', () => {
+    permissionMock.isLoading = true
+    permissionMock.status = 'loading'
+    render(
+      <PermissionBoundary permission="customers.read">
+        <span>secret</span>
+      </PermissionBoundary>,
+    )
+    expect(screen.getByText('Carregando permissões…')).toBeTruthy()
+    expect(screen.queryByText('Sem permissão')).toBeNull()
+    expect(screen.queryByText('secret')).toBeNull()
+  })
+
+  it('shows forbidden state when denied after ready', () => {
+    permissionMock.isLoading = false
+    permissionMock.status = 'ready'
+    permissionMock.grants = ['customers.read']
     render(
       <PermissionBoundary permission="sales.confirm">
         <span>secret</span>
@@ -72,5 +127,33 @@ describe('PermissionBoundary', () => {
     )
     expect(screen.queryByText('secret')).toBeNull()
     expect(screen.getByText('Sem permissão')).toBeTruthy()
+  })
+
+  it('shows error state when grant load failed', () => {
+    permissionMock.isLoading = false
+    permissionMock.status = 'error'
+    permissionMock.error = new Error('falha grants')
+    permissionMock.grants = []
+    render(
+      <RequirePermission permission="customers.read">
+        <span>secret</span>
+      </RequirePermission>,
+    )
+    expect(screen.queryByText('secret')).toBeNull()
+    expect(screen.queryByText('Sem permissão')).toBeNull()
+    expect(screen.getByText('falha grants')).toBeTruthy()
+  })
+
+  it('renders children when allowed after ready', () => {
+    permissionMock.isLoading = false
+    permissionMock.status = 'ready'
+    permissionMock.error = null
+    permissionMock.grants = ['customers.read']
+    render(
+      <RequirePermission permission="customers.read">
+        <span>ok</span>
+      </RequirePermission>,
+    )
+    expect(screen.getByText('ok')).toBeTruthy()
   })
 })

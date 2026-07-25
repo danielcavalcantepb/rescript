@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { CustomerRow, Database } from '@rescript/database'
+import type { Database } from '@rescript/database'
 type CustomerUpdate = Database['public']['Tables']['customer']['Update']
 import { createBrowserSupabaseClient } from '#/lib/supabase/client'
 import { normalizeDocument } from '#/modules/customers/domain/validation'
@@ -12,6 +12,7 @@ import type {
   UpdateCustomerInput,
 } from '#/modules/customers/domain/types'
 import {
+  asCustomerRow,
   mapCustomer,
   mapCustomerListItem,
 } from '#/modules/customers/infrastructure/mappers'
@@ -114,7 +115,7 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     const { data, error } = await builder.limit(limit + 1)
     if (error) throw error
 
-    const rows = (data ?? []) as CustomerRow[]
+    const rows = (data ?? []).map(asCustomerRow)
     const page = rows.slice(0, limit)
     const hasMore = rows.length > limit
     const last = page[page.length - 1]

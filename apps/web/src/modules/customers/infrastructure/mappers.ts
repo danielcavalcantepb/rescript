@@ -1,22 +1,33 @@
-import type { CustomerRow } from '@rescript/database'
+import type {
+  CustomerPersonType,
+  CustomerRow,
+  CustomerStatus,
+  Tables,
+} from '@rescript/database'
 import type { Customer, CustomerListItem } from '#/modules/customers/domain/types'
 
-export function mapCustomer(row: CustomerRow): Customer {
+/** Narrow CLI-generated string columns to domain CHECK unions. */
+export function asCustomerRow(row: Tables<'customer'>): CustomerRow {
+  return row as CustomerRow
+}
+
+export function mapCustomer(row: Tables<'customer'> | CustomerRow): Customer {
+  const r = asCustomerRow(row)
   return {
-    id: row.id,
-    organizationId: row.organization_id,
-    name: row.name,
-    tradeName: row.trade_name,
-    personType: row.person_type,
-    document: row.document,
-    email: row.email,
-    phone: row.phone,
-    city: row.city,
-    notes: row.notes,
-    status: row.status,
-    archivedAt: row.archived_at,
-    createdAt: row.created_at,
-    updatedAt: row.updated_at,
+    id: r.id,
+    organizationId: r.organization_id,
+    name: r.name,
+    tradeName: r.trade_name,
+    personType: r.person_type as CustomerPersonType,
+    document: r.document,
+    email: r.email,
+    phone: r.phone,
+    city: r.city,
+    notes: r.notes,
+    status: r.status as CustomerStatus,
+    archivedAt: r.archived_at,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
   }
 }
 

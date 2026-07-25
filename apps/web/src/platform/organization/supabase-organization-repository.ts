@@ -1,8 +1,12 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type {
   Database,
+  MembershipRole,
   MembershipRow,
+  MembershipStatus,
   OrganizationRow,
+  OrganizationStatus,
+  Tables,
 } from '@rescript/database'
 import type {
   CreateOrganizationResult,
@@ -18,23 +22,33 @@ import {
 } from '#/platform/organization/active-organization'
 import { createBrowserSupabaseClient } from '#/lib/supabase/client'
 
-function mapOrg(row: OrganizationRow): Organization {
+function asOrganizationRow(row: Tables<'organization'>): OrganizationRow {
+  return row as OrganizationRow
+}
+
+function asMembershipRow(row: Tables<'membership'>): MembershipRow {
+  return row as MembershipRow
+}
+
+function mapOrg(row: Tables<'organization'> | OrganizationRow): Organization {
+  const r = asOrganizationRow(row)
   return {
-    id: row.id,
-    name: row.name,
-    slug: row.slug,
-    status: row.status,
+    id: r.id,
+    name: r.name,
+    slug: r.slug,
+    status: r.status as OrganizationStatus,
   }
 }
 
-function mapMembership(row: MembershipRow): Membership {
+function mapMembership(row: Tables<'membership'> | MembershipRow): Membership {
+  const r = asMembershipRow(row)
   return {
-    id: row.id,
-    organizationId: row.organization_id,
-    userId: row.user_id,
-    role: row.role,
-    status: row.status,
-    isOwner: row.is_owner,
+    id: r.id,
+    organizationId: r.organization_id,
+    userId: r.user_id,
+    role: r.role as MembershipRole,
+    status: r.status as MembershipStatus,
+    isOwner: r.is_owner,
   }
 }
 

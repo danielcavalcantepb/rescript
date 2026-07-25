@@ -1,5 +1,9 @@
 export type {
   Database,
+  Json,
+  Tables,
+  TablesInsert,
+  TablesUpdate,
   OrganizationRow,
   MembershipRow,
   CustomerRow,

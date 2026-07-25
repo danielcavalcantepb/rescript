@@ -14,9 +14,12 @@ import {
 import { queryKeys } from '#/platform/cache/query-keys'
 import { useOrganization } from '#/platform/organization/organization-context'
 import { usePermission } from '#/platform/permissions/permission-context'
-import { FeatureGate } from '#/platform/permissions/guards'
+import {
+  FeatureGate,
+  RequirePermission,
+} from '#/platform/permissions/guards'
 import { PageLoading } from '#/platform/loading'
-import { ForbiddenState, PageError } from '#/platform/errors'
+import { PageError } from '#/platform/errors'
 import { dialogs } from '#/platform/dialogs'
 import { notificationService } from '#/platform/services'
 import {
@@ -36,13 +39,14 @@ export const Route = createFileRoute('/_app/clientes/$customerId')({
 })
 
 function CustomerDetailPage() {
-  const { can } = usePermission()
-  if (!can('customers.read')) {
-    return (
-      <ForbiddenState description="Você não tem permissão para ver clientes." />
-    )
-  }
-  return <CustomerDetailContent />
+  return (
+    <RequirePermission
+      permission="customers.read"
+      forbiddenDescription="Você não tem permissão para ver clientes."
+    >
+      <CustomerDetailContent />
+    </RequirePermission>
+  )
 }
 
 function CustomerDetailContent() {

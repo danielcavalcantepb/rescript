@@ -17,7 +17,19 @@ Keys are `resource.action` only. Never check role names in UI.
 ## API
 
 - `PermissionProvider` → `SupabasePermissionRepository`
-- `usePermission()` → `{ can, cannot, canAny, canAll, grants, isLoading }`
-- `PermissionGuard` / `PermissionBoundary` / `FeatureGate`
+- `usePermission()` → `{ can, cannot, canAny, canAll, grants, isLoading, status, error }`
+- `status`: `loading` | `ready` | `error`
+- `PermissionGuard` / `PermissionBoundary` / `FeatureGate` / `RequirePermission`
+
+## Load states (UI)
+
+| Estado | UI |
+|--------|----|
+| Session / org / grants unresolved (`isLoading`) | Platform `PageLoading` — never Forbidden |
+| `ready` + allowed | Conteúdo |
+| `ready` + denied | `ForbiddenState` |
+| `error` | `PageError` |
+
+`can()` returns `false` while unresolved; pages must gate with `RequirePermission` / `PermissionBoundary` so Forbidden only appears after resolution.
 
 Custom roles, extra grants, restrictions, entitlements = future.

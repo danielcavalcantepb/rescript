@@ -16,9 +16,11 @@ import {
 import { queryKeys } from '#/platform/cache/query-keys'
 import { useOrganization } from '#/platform/organization/organization-context'
 import { usePermission } from '#/platform/permissions/permission-context'
-import { FeatureGate } from '#/platform/permissions/guards'
+import {
+  FeatureGate,
+  RequirePermission,
+} from '#/platform/permissions/guards'
 import { PageLoading, TableLoading } from '#/platform/loading'
-import { ForbiddenState } from '#/platform/errors'
 import { listCustomers } from '#/modules/customers'
 import { supabaseCustomerRepository } from '#/modules/customers'
 import { CustomerForm } from '#/modules/customers/ui/customer-form'
@@ -34,13 +36,14 @@ export const Route = createFileRoute('/_app/clientes/')({
 })
 
 function CustomersListPage() {
-  const { can } = usePermission()
-  if (!can('customers.read')) {
-    return (
-      <ForbiddenState description="Você não tem permissão para ver clientes." />
-    )
-  }
-  return <CustomersListContent />
+  return (
+    <RequirePermission
+      permission="customers.read"
+      forbiddenDescription="Você não tem permissão para ver clientes."
+    >
+      <CustomersListContent />
+    </RequirePermission>
+  )
 }
 
 function CustomersListContent() {

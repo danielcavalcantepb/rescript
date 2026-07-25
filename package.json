@@ -14,7 +14,7 @@
     "typecheck": "npm run typecheck -w web",
     "format": "prettier --write \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,tsx,json}\"",
     "db:push": "npx supabase db push",
-    "db:types": "npx supabase gen types typescript --linked"
+    "db:types": "npx supabase gen types typescript --linked > packages/database/src/generated.ts"
   },
   "devDependencies": {
     "prettier": "^3.6.2"
