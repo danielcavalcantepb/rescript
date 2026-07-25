@@ -223,6 +223,158 @@
   }
 }
 
+/* Auth experience — scoped tokens for /login only.
+   Identity derived from the Rescript brand gradient (green), not blue. */
+.auth-experience {
+  /* Surfaces — deep neutral with a faint green cast */
+  --color-canvas: #080b0a;
+  --color-surface: #101613;
+  --color-surface-alt: #0c110f;
+  --color-surface-elevated: #141d18;
+  --color-border: #1e2a24;
+  --color-border-soft: #18211c;
+  --color-line: #1e2a24;
+
+  /* Primary — brand green (#1f7a56) tuned for AA on solid fills */
+  --color-primary: #1f7a56;
+  --color-primary-hover: #268a5c;
+  --color-primary-active: #196345;
+  --color-primary-soft: rgb(31 122 86 / 0.16);
+
+  /* Accent — brighter brand green for text / icons / focus on dark */
+  --color-accent: #4bd08d;
+  --color-accent-strong: #5fe09a;
+
+  --color-success: #34d399;
+  --color-success-bg: rgb(52 211 153 / 0.12);
+  --color-warning: #e0a422;
+  --color-warning-bg: rgb(224 164 34 / 0.12);
+  --color-danger: #f87171;
+  --color-danger-bg: rgb(248 113 113 / 0.12);
+
+  --color-ink: #f2f6f3;
+  --color-text-primary: #f2f6f3;
+  --color-text-secondary: #9daaa2;
+  --color-muted: #7e8d84;
+  --color-ink-muted: #9daaa2;
+
+  --color-focus: #4bd08d;
+  --color-selection: rgb(31 122 86 / 0.3);
+  --color-overlay: rgb(0 0 0 / 0.6);
+
+  --auth-panel-bg: #060908;
+  --auth-grid-line: rgb(95 224 154 / 0.05);
+  --auth-connector: rgb(95 224 154 / 0.22);
+  --auth-glow: rgb(31 122 86 / 0.28);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
+  --shadow-elevated: 0 20px 50px -24px rgb(0 0 0 / 0.7);
+}
+
+@keyframes auth-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes auth-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes auth-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes auth-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 0 0 rgb(75 208 141 / 0.45);
+  }
+  50% {
+    opacity: 0.7;
+    box-shadow: 0 0 0 5px rgb(75 208 141 / 0);
+  }
+}
+
+@keyframes auth-draw {
+  from {
+    stroke-dashoffset: var(--auth-dash, 640);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes auth-bar-grow {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.auth-form-enter {
+  animation: auth-fade-up var(--motion-slow) var(--ease-out) both;
+}
+
+.auth-panel-enter {
+  animation: auth-fade-in 460ms var(--ease-out) both;
+}
+
+.auth-rise {
+  animation: auth-rise 520ms var(--ease-out) both;
+}
+
+.auth-live-dot {
+  animation: auth-pulse 2.4s var(--ease-in-out) infinite;
+}
+
+.auth-spark {
+  stroke-dasharray: var(--auth-dash, 640);
+  animation: auth-draw 1400ms var(--ease-out) 240ms both;
+}
+
+.auth-bar-fill {
+  transform-origin: left center;
+  animation: auth-bar-grow 900ms var(--ease-out) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .auth-form-enter,
+  .auth-panel-enter,
+  .auth-rise,
+  .auth-live-dot,
+  .auth-spark,
+  .auth-bar-fill {
+    animation: none !important;
+  }
+  .auth-spark {
+    stroke-dashoffset: 0 !important;
+  }
+  .auth-bar-fill {
+    transform: scaleX(1) !important;
+  }
+}
+
 @utility text-balance {
   text-wrap: balance;
 }
