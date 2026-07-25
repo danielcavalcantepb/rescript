@@ -27,6 +27,7 @@ export type MembershipRole =
   | 'viewer'
 export type CustomerStatus = 'active' | 'inactive'
 export type CustomerPersonType = 'PF' | 'PJ'
+export type ProductStatus = 'active' | 'inactive'
 
 export type OrganizationRow = Omit<Tables<'organization'>, 'status'> & {
   status: OrganizationStatus
@@ -43,4 +44,8 @@ export type CustomerRow = Omit<
 > & {
   status: CustomerStatus
   person_type: CustomerPersonType
+}
+
+export type ProductRow = Omit<Tables<'product'>, 'status'> & {
+  status: ProductStatus
 }

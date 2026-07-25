@@ -1,5 +1,4 @@
 import type { AppCommand } from '#/platform/commands/types'
-import { products } from '#/mocks/data'
 
 export const defaultCommands: AppCommand[] = [
   {
@@ -105,15 +104,4 @@ export const defaultCommands: AppCommand[] = [
     priority: 50,
     run: ({ navigate }) => navigate('/clientes'),
   },
-  ...products.slice(0, 8).map(
-    (p): AppCommand => ({
-      id: `entity.product.${p.id}`,
-      label: p.name,
-      category: 'search',
-      icon: 'product',
-      keywords: ['produto', p.name],
-      priority: 10,
-      run: ({ navigate }) => navigate(`/produtos/${p.id}`),
-    }),
-  ),
 ]

@@ -38,8 +38,22 @@ export const queryKeys = {
   products: {
     all: (organizationId: string) =>
       [...queryKeys.root, 'products', organizationId] as const,
+    lists: (organizationId: string) =>
+      [...queryKeys.products.all(organizationId), 'list'] as const,
+    list: (
+      organizationId: string,
+      filters: {
+        q?: string
+        status?: string
+        sort?: string
+      },
+    ) =>
+      [
+        ...queryKeys.products.lists(organizationId),
+        filters,
+      ] as const,
     detail: (organizationId: string, id: string) =>
-      [...queryKeys.products.all(organizationId), id] as const,
+      [...queryKeys.products.all(organizationId), 'detail', id] as const,
   },
   sales: {
     all: (organizationId: string) =>

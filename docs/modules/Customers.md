@@ -141,10 +141,7 @@ npm run db:types
 - Audit port noop (tabela futura)
 - ⌘K lista entidades reais de customer ainda não (vai à listagem)
 - Testes RLS live pendentes até migration aplicada
-- Produtos no ⌘K ainda usam mock (fora deste módulo)
-
 ## Próximos passos
 
-1. Link + `db push` da migration Customers
-2. Smoke manual criar → editar → arquivar → trocar org
-3. Products como próximo bounded context (após aprovação)
+1. Smoke manual criar → editar → arquivar → trocar org
+2. Ver módulo Products (`docs/modules/Products.md`)
