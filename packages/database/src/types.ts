@@ -1,5 +1,5 @@
 /**
- * Hand-maintained Supabase Database types for Organizations + Memberships.
+ * Hand-maintained Supabase Database types.
  * Regenerate via `supabase gen types` when CLI is linked (see Migrations.md).
  */
 
@@ -13,6 +13,9 @@ export type MembershipRole =
   | 'inventory'
   | 'finance'
   | 'viewer'
+
+export type CustomerStatus = 'active' | 'inactive'
+export type CustomerPersonType = 'PF' | 'PJ'
 
 export type OrganizationRow = {
   id: string
@@ -36,6 +39,26 @@ export type MembershipRow = {
   created_at: string
   updated_at: string
   created_by: string
+}
+
+export type CustomerRow = {
+  id: string
+  organization_id: string
+  name: string
+  trade_name: string | null
+  person_type: CustomerPersonType
+  document: string | null
+  email: string | null
+  phone: string | null
+  city: string | null
+  notes: string | null
+  status: CustomerStatus
+  archived_at: string | null
+  archived_by: string | null
+  created_at: string
+  updated_at: string
+  created_by: string
+  updated_by: string
 }
 
 export type Database = {
@@ -71,6 +94,30 @@ export type Database = {
           created_by: string
         }
         Update: Partial<MembershipRow>
+        Relationships: []
+      }
+      customer: {
+        Row: CustomerRow
+        Insert: {
+          id?: string
+          organization_id: string
+          name: string
+          trade_name?: string | null
+          person_type: CustomerPersonType
+          document?: string | null
+          email?: string | null
+          phone?: string | null
+          city?: string | null
+          notes?: string | null
+          status?: CustomerStatus
+          archived_at?: string | null
+          archived_by?: string | null
+          created_at?: string
+          updated_at?: string
+          created_by: string
+          updated_by: string
+        }
+        Update: Partial<CustomerRow>
         Relationships: []
       }
     }

@@ -32,7 +32,7 @@ import {
 export type AppIcon = LucideIcon
 
 export const icons = {
-  alert: AlertTriangle,
+  alert: AlertTriangle, // EmptyState / errors
   building: Building2,
   check: Check,
   chevronDown: ChevronDown,

@@ -1,6 +1,5 @@
 /**
- * Query key factory — prepared for organization isolation.
- * When real orgs land, always scope keys with organizationId.
+ * Query key factory — always scope domain keys with organizationId.
  */
 export const queryKeys = {
   root: ['rescript'] as const,
@@ -19,8 +18,22 @@ export const queryKeys = {
   customers: {
     all: (organizationId: string) =>
       [...queryKeys.root, 'customers', organizationId] as const,
+    lists: (organizationId: string) =>
+      [...queryKeys.customers.all(organizationId), 'list'] as const,
+    list: (
+      organizationId: string,
+      filters: {
+        q?: string
+        status?: string
+        sort?: string
+      },
+    ) =>
+      [
+        ...queryKeys.customers.lists(organizationId),
+        filters,
+      ] as const,
     detail: (organizationId: string, id: string) =>
-      [...queryKeys.customers.all(organizationId), id] as const,
+      [...queryKeys.customers.all(organizationId), 'detail', id] as const,
   },
   products: {
     all: (organizationId: string) =>

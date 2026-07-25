@@ -12,6 +12,11 @@ const saleTone: Record<string, 'neutral' | 'info' | 'warning' | 'success' | 'dan
   OrçamentoExpirado: 'neutral',
   ativo: 'success',
   arquivado: 'neutral',
+  active: 'success',
+  inactive: 'neutral',
+  Ativo: 'success',
+  Arquivado: 'neutral',
+
   'Em aberto': 'warning',
   Parcial: 'accent',
   Quitado: 'success',
