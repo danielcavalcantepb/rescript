@@ -28,6 +28,11 @@ export type MembershipRole =
 export type CustomerStatus = 'active' | 'inactive'
 export type CustomerPersonType = 'PF' | 'PJ'
 export type ProductStatus = 'active' | 'inactive'
+export type InventoryMovementType =
+  | 'entry'
+  | 'exit'
+  | 'adjustment_in'
+  | 'adjustment_out'
 
 export type OrganizationRow = Omit<Tables<'organization'>, 'status'> & {
   status: OrganizationStatus
@@ -48,4 +53,10 @@ export type CustomerRow = Omit<
 
 export type ProductRow = Omit<Tables<'product'>, 'status'> & {
   status: ProductStatus
+}
+
+export type InventoryBalanceRow = Tables<'inventory_balance'>
+
+export type InventoryMovementRow = Omit<Tables<'inventory_movement'>, 'type'> & {
+  type: InventoryMovementType
 }

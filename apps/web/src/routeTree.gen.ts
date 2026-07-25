@@ -15,6 +15,8 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
 import { Route as AppClientesIndexRouteImport } from './routes/_app/clientes/index'
 import { Route as AppClientesCustomerIdRouteImport } from './routes/_app/clientes/$customerId'
+import { Route as AppEstoqueIndexRouteImport } from './routes/_app/estoque/index'
+import { Route as AppEstoqueMovimentacoesRouteImport } from './routes/_app/estoque/movimentacoes'
 import { Route as AppProdutosIndexRouteImport } from './routes/_app/produtos/index'
 import { Route as AppProdutosProductIdRouteImport } from './routes/_app/produtos/$productId'
 import { Route as AppVendasIndexRouteImport } from './routes/_app/vendas/index'
@@ -49,6 +51,16 @@ const AppClientesCustomerIdRoute = AppClientesCustomerIdRouteImport.update({
   path: '/clientes/$customerId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEstoqueIndexRoute = AppEstoqueIndexRouteImport.update({
+  id: '/estoque/',
+  path: '/estoque/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEstoqueMovimentacoesRoute = AppEstoqueMovimentacoesRouteImport.update({
+  id: '/estoque/movimentacoes',
+  path: '/estoque/movimentacoes',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProdutosIndexRoute = AppProdutosIndexRouteImport.update({
   id: '/produtos/',
   path: '/produtos/',
@@ -75,9 +87,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/clientes/$customerId': typeof AppClientesCustomerIdRoute
+  '/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/produtos/$productId': typeof AppProdutosProductIdRoute
   '/vendas/$saleId': typeof AppVendasSaleIdRoute
   '/clientes/': typeof AppClientesIndexRoute
+  '/estoque/': typeof AppEstoqueIndexRoute
   '/produtos/': typeof AppProdutosIndexRoute
   '/vendas/': typeof AppVendasIndexRoute
 }
@@ -86,9 +100,11 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/': typeof AppIndexRoute
   '/clientes/$customerId': typeof AppClientesCustomerIdRoute
+  '/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/produtos/$productId': typeof AppProdutosProductIdRoute
   '/vendas/$saleId': typeof AppVendasSaleIdRoute
   '/clientes': typeof AppClientesIndexRoute
+  '/estoque': typeof AppEstoqueIndexRoute
   '/produtos': typeof AppProdutosIndexRoute
   '/vendas': typeof AppVendasIndexRoute
 }
@@ -99,9 +115,11 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/_app/': typeof AppIndexRoute
   '/_app/clientes/$customerId': typeof AppClientesCustomerIdRoute
+  '/_app/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/_app/produtos/$productId': typeof AppProdutosProductIdRoute
   '/_app/vendas/$saleId': typeof AppVendasSaleIdRoute
   '/_app/clientes/': typeof AppClientesIndexRoute
+  '/_app/estoque/': typeof AppEstoqueIndexRoute
   '/_app/produtos/': typeof AppProdutosIndexRoute
   '/_app/vendas/': typeof AppVendasIndexRoute
 }
@@ -112,9 +130,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/clientes/$customerId'
+    | '/estoque/movimentacoes'
     | '/produtos/$productId'
     | '/vendas/$saleId'
     | '/clientes/'
+    | '/estoque/'
     | '/produtos/'
     | '/vendas/'
   fileRoutesByTo: FileRoutesByTo
@@ -123,9 +143,11 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/'
     | '/clientes/$customerId'
+    | '/estoque/movimentacoes'
     | '/produtos/$productId'
     | '/vendas/$saleId'
     | '/clientes'
+    | '/estoque'
     | '/produtos'
     | '/vendas'
   id:
@@ -135,9 +157,11 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/_app/'
     | '/_app/clientes/$customerId'
+    | '/_app/estoque/movimentacoes'
     | '/_app/produtos/$productId'
     | '/_app/vendas/$saleId'
     | '/_app/clientes/'
+    | '/_app/estoque/'
     | '/_app/produtos/'
     | '/_app/vendas/'
   fileRoutesById: FileRoutesById
@@ -192,6 +216,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppClientesCustomerIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/estoque/': {
+      id: '/_app/estoque/'
+      path: '/estoque'
+      fullPath: '/estoque/'
+      preLoaderRoute: typeof AppEstoqueIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/estoque/movimentacoes': {
+      id: '/_app/estoque/movimentacoes'
+      path: '/estoque/movimentacoes'
+      fullPath: '/estoque/movimentacoes'
+      preLoaderRoute: typeof AppEstoqueMovimentacoesRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/produtos/': {
       id: '/_app/produtos/'
       path: '/produtos'
@@ -226,9 +264,11 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppClientesCustomerIdRoute: typeof AppClientesCustomerIdRoute
+  AppEstoqueMovimentacoesRoute: typeof AppEstoqueMovimentacoesRoute
   AppProdutosProductIdRoute: typeof AppProdutosProductIdRoute
   AppVendasSaleIdRoute: typeof AppVendasSaleIdRoute
   AppClientesIndexRoute: typeof AppClientesIndexRoute
+  AppEstoqueIndexRoute: typeof AppEstoqueIndexRoute
   AppProdutosIndexRoute: typeof AppProdutosIndexRoute
   AppVendasIndexRoute: typeof AppVendasIndexRoute
 }
@@ -236,9 +276,11 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppClientesCustomerIdRoute: AppClientesCustomerIdRoute,
+  AppEstoqueMovimentacoesRoute: AppEstoqueMovimentacoesRoute,
   AppProdutosProductIdRoute: AppProdutosProductIdRoute,
   AppVendasSaleIdRoute: AppVendasSaleIdRoute,
   AppClientesIndexRoute: AppClientesIndexRoute,
+  AppEstoqueIndexRoute: AppEstoqueIndexRoute,
   AppProdutosIndexRoute: AppProdutosIndexRoute,
   AppVendasIndexRoute: AppVendasIndexRoute,
 }

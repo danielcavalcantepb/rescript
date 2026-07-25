@@ -28,9 +28,18 @@ describe('role presets → permissions', () => {
   it('viewer is read-only', () => {
     const grants = permissionsForRole('viewer')
     expect(grants).toContain('customers.read')
+    expect(grants).toContain('inventory.read')
     expect(grants).not.toContain('customers.write')
+    expect(grants).not.toContain('inventory.move')
     expect(grants).not.toContain('sales.confirm')
     expect(grants).not.toContain('org.settings')
+  })
+
+  it('inventory role can move and adjust', () => {
+    const grants = permissionsForRole('inventory')
+    expect(grants).toContain('inventory.read')
+    expect(grants).toContain('inventory.move')
+    expect(grants).toContain('inventory.adjust')
   })
 
   it('seller cannot manage members', () => {

@@ -19,6 +19,7 @@ export const PERMISSIONS = [
   'sales.cancel',
   'sales.discount',
   'sales.discount.authorize',
+  'inventory.read',
   'inventory.move',
   'inventory.adjust',
   'finance.receive',

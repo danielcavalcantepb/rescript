@@ -107,61 +107,98 @@ export type Database = {
           },
         ]
       }
-      product: {
+      inventory_balance: {
         Row: {
-          archived_at: string | null
-          archived_by: string | null
-          category: string | null
-          created_at: string
-          created_by: string
-          description: string | null
-          id: string
-          name: string
           organization_id: string
-          sku: string
-          status: string
-          unit: string
+          product_id: string
+          quantity: number
           updated_at: string
-          updated_by: string
         }
         Insert: {
-          archived_at?: string | null
-          archived_by?: string | null
-          category?: string | null
-          created_at?: string
-          created_by: string
-          description?: string | null
-          id?: string
-          name: string
           organization_id: string
-          sku: string
-          status?: string
-          unit: string
+          product_id: string
+          quantity?: number
           updated_at?: string
-          updated_by: string
         }
         Update: {
-          archived_at?: string | null
-          archived_by?: string | null
-          category?: string | null
-          created_at?: string
-          created_by?: string
-          description?: string | null
-          id?: string
-          name?: string
           organization_id?: string
-          sku?: string
-          status?: string
-          unit?: string
+          product_id?: string
+          quantity?: number
           updated_at?: string
-          updated_by?: string
         }
         Relationships: [
           {
-            foreignKeyName: "product_organization_id_fkey"
+            foreignKeyName: "inventory_balance_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organization"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_balance_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      inventory_movement: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          notes: string | null
+          occurred_at: string
+          organization_id: string
+          product_id: string
+          quantity: number
+          reason: string
+          reference_id: string | null
+          reference_type: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          notes?: string | null
+          occurred_at: string
+          organization_id: string
+          product_id: string
+          quantity: number
+          reason: string
+          reference_id?: string | null
+          reference_type?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          notes?: string | null
+          occurred_at?: string
+          organization_id?: string
+          product_id?: string
+          quantity?: number
+          reason?: string
+          reference_id?: string | null
+          reference_type?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "inventory_movement_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "inventory_movement_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "product"
             referencedColumns: ["id"]
           },
         ]
@@ -246,11 +283,74 @@ export type Database = {
         }
         Relationships: []
       }
+      product: {
+        Row: {
+          archived_at: string | null
+          archived_by: string | null
+          category: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          sku: string
+          status: string
+          unit: string
+          updated_at: string
+          updated_by: string
+        }
+        Insert: {
+          archived_at?: string | null
+          archived_by?: string | null
+          category?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          sku: string
+          status?: string
+          unit: string
+          updated_at?: string
+          updated_by: string
+        }
+        Update: {
+          archived_at?: string | null
+          archived_by?: string | null
+          category?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          sku?: string
+          status?: string
+          unit?: string
+          updated_at?: string
+          updated_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "product_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      compute_product_stock: {
+        Args: { p_organization_id: string; p_product_id: string }
+        Returns: number
+      }
       create_organization: {
         Args: { p_name: string }
         Returns: {
@@ -271,8 +371,45 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      inventory_movement_delta: {
+        Args: { p_quantity: number; p_type: string }
+        Returns: number
+      }
       is_org_member: { Args: { p_organization_id: string }; Returns: boolean }
       is_org_owner: { Args: { p_organization_id: string }; Returns: boolean }
+      register_inventory_movement: {
+        Args: {
+          p_notes?: string
+          p_occurred_at?: string
+          p_organization_id: string
+          p_product_id: string
+          p_quantity: number
+          p_reason: string
+          p_reference_id?: string
+          p_reference_type?: string
+          p_type: string
+        }
+        Returns: {
+          created_at: string
+          created_by: string
+          id: string
+          notes: string | null
+          occurred_at: string
+          organization_id: string
+          product_id: string
+          quantity: number
+          reason: string
+          reference_id: string | null
+          reference_type: string | null
+          type: string
+        }
+        SetofOptions: {
+          from: "*"
+          to: "inventory_movement"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
     }
     Enums: {
       [_ in never]: never

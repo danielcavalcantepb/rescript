@@ -20,6 +20,7 @@ const READ_CORE: readonly PermissionKey[] = [
   'customers.read',
   'products.read',
   'sales.read',
+  'inventory.read',
 ]
 
 /**
@@ -43,7 +44,9 @@ export const ROLE_PERMISSIONS: Record<RolePreset, readonly PermissionKey[]> = {
     'sales.confirm',
     'sales.cancel',
     'sales.discount',
+    'inventory.read',
     'inventory.move',
+    'inventory.adjust',
     'payments.register',
     'imports.run',
   ],
@@ -65,6 +68,7 @@ export const ROLE_PERMISSIONS: Record<RolePreset, readonly PermissionKey[]> = {
     'products.read',
     'products.create',
     'products.edit',
+    'inventory.read',
     'inventory.move',
     'inventory.adjust',
   ],

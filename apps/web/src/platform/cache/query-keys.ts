@@ -55,6 +55,41 @@ export const queryKeys = {
     detail: (organizationId: string, id: string) =>
       [...queryKeys.products.all(organizationId), 'detail', id] as const,
   },
+  inventory: {
+    all: (organizationId: string) =>
+      [...queryKeys.root, 'inventory', organizationId] as const,
+    stocks: (organizationId: string) =>
+      [...queryKeys.inventory.all(organizationId), 'stock'] as const,
+    stock: (
+      organizationId: string,
+      filters: {
+        q?: string
+        status?: string
+        stockStatus?: string
+        sort?: string
+      },
+    ) =>
+      [...queryKeys.inventory.stocks(organizationId), filters] as const,
+    productStock: (organizationId: string, productId: string) =>
+      [
+        ...queryKeys.inventory.all(organizationId),
+        'product',
+        productId,
+      ] as const,
+    movements: (organizationId: string) =>
+      [...queryKeys.inventory.all(organizationId), 'movements'] as const,
+    movementList: (
+      organizationId: string,
+      filters: {
+        q?: string
+        productId?: string
+        type?: string
+        from?: string
+        to?: string
+      },
+    ) =>
+      [...queryKeys.inventory.movements(organizationId), filters] as const,
+  },
   sales: {
     all: (organizationId: string) =>
       [...queryKeys.root, 'sales', organizationId] as const,
@@ -74,6 +109,7 @@ export function invalidateOrganizationScope(
   invalidate(queryKeys.permissions.all(organizationId))
   invalidate(queryKeys.customers.all(organizationId))
   invalidate(queryKeys.products.all(organizationId))
+  invalidate(queryKeys.inventory.all(organizationId))
   invalidate(queryKeys.sales.all(organizationId))
   invalidate(queryKeys.insights.all(organizationId))
 }

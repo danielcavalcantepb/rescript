@@ -8,11 +8,11 @@ const links = [
   { to: '/', label: 'Central', icon: icons.central },
   { to: '/clientes', label: 'Clientes', icon: icons.customer },
   { to: '/produtos', label: 'Produtos', icon: icons.product },
+  { to: '/estoque', label: 'Estoque', icon: icons.inventory },
   { to: '/vendas', label: 'Vendas', icon: icons.sale },
 ] as const
 
 const soon = [
-  { key: 'estoque', label: 'Estoque', icon: icons.inventory },
   { key: 'financeiro', label: 'Financeiro', icon: icons.finance },
   { key: 'importacoes', label: 'Importar', icon: icons.import },
   { key: 'config', label: 'Configurações', icon: icons.settings },
