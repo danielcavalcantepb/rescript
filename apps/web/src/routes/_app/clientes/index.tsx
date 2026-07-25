@@ -15,14 +15,16 @@ import {
 } from '#/components/ui/dialog'
 import { queryKeys } from '#/platform/cache/query-keys'
 import { useOrganization } from '#/platform/organization/organization-context'
-import { usePermission } from '#/platform/permissions/permission-context'
 import {
   FeatureGate,
   RequirePermission,
-} from '#/platform/permissions/guards'
+  usePermission,
+} from '#/platform/permissions'
 import { PageLoading, TableLoading } from '#/platform/loading'
-import { listCustomers } from '#/modules/customers'
-import { supabaseCustomerRepository } from '#/modules/customers'
+import {
+  listCustomers,
+  supabaseCustomerRepository,
+} from '#/modules/customers'
 import { CustomerForm } from '#/modules/customers/ui/customer-form'
 import {
   toFormError,

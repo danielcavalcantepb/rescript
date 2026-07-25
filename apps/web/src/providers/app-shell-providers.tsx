@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { OrganizationProvider } from '#/platform/organization/organization-context'
-import { PermissionProvider } from '#/platform/permissions/permission-context'
+import { PermissionProvider } from '#/platform/permissions'
 import { CommandBootstrap } from '#/platform/commands/command-bootstrap'
 import { ToastViewport } from '#/platform/toast'
 import { DialogHost } from '#/platform/dialogs'

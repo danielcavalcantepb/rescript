@@ -137,22 +137,25 @@ export function PermissionProvider({
     grantsStaleForOrg ||
     resolvedOrgId === undefined
 
+  const effectiveStatus: PermissionStatus = isLoading ? 'loading' : status
+
   const value = useMemo<PermissionContextValue>(
     () => ({
       grants,
-      isLoading,
-      status: isLoading ? 'loading' : status,
+      isLoading: effectiveStatus === 'loading',
+      status: effectiveStatus,
       error,
-      // Deny while unresolved — callers must check isLoading before Forbidden.
-      can: (key) => (!isLoading && status === 'ready' ? canCheck(grants, key) : false),
+      // Deny unless ready. Callers must branch on status before Forbidden UI.
+      can: (key) =>
+        effectiveStatus === 'ready' ? canCheck(grants, key) : false,
       cannot: (key) =>
-        !isLoading && status === 'ready' ? cannotCheck(grants, key) : true,
+        effectiveStatus === 'ready' ? cannotCheck(grants, key) : true,
       canAny: (keys) =>
-        !isLoading && status === 'ready' ? canAnyCheck(grants, keys) : false,
+        effectiveStatus === 'ready' ? canAnyCheck(grants, keys) : false,
       canAll: (keys) =>
-        !isLoading && status === 'ready' ? canAllCheck(grants, keys) : false,
+        effectiveStatus === 'ready' ? canAllCheck(grants, keys) : false,
     }),
-    [error, grants, isLoading, status],
+    [effectiveStatus, error, grants],
   )
 
   return (

@@ -13,13 +13,13 @@ import {
 } from '#/components/ui/dialog'
 import { queryKeys } from '#/platform/cache/query-keys'
 import { useOrganization } from '#/platform/organization/organization-context'
-import { usePermission } from '#/platform/permissions/permission-context'
 import {
   FeatureGate,
   RequirePermission,
-} from '#/platform/permissions/guards'
-import { PageLoading } from '#/platform/loading'
+  usePermission,
+} from '#/platform/permissions'
 import { PageError } from '#/platform/errors'
+import { PageLoading } from '#/platform/loading'
 import { dialogs } from '#/platform/dialogs'
 import { notificationService } from '#/platform/services'
 import {

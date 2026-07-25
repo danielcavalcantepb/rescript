@@ -1,37 +1,39 @@
 import { describe, expect, it, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { can, cannot } from '@rescript/permissions'
+import type { PermissionStatus } from '#/platform/permissions'
 import {
   FeatureGate,
   PermissionBoundary,
   PermissionGuard,
   RequirePermission,
-} from '#/platform/permissions/guards'
+} from '#/platform/permissions'
 
 const permissionMock = vi.hoisted(() => ({
   grants: ['customers.read'] as string[],
   isLoading: false,
-  status: 'ready' as 'loading' | 'ready' | 'error',
+  status: 'ready' as PermissionStatus,
   error: null as Error | null,
 }))
 
 vi.mock('#/platform/permissions/permission-context', () => ({
   usePermission: () => ({
     grants: permissionMock.grants,
-    isLoading: permissionMock.isLoading,
+    isLoading: permissionMock.status === 'loading',
     status: permissionMock.status,
     error: permissionMock.error,
+    // Mirrors production: allow only when ready + grant present (no "denied" status).
     can: (key: string) =>
-      !permissionMock.isLoading &&
       permissionMock.status === 'ready' &&
       permissionMock.grants.includes(key),
     cannot: (key: string) =>
-      permissionMock.isLoading ||
       permissionMock.status !== 'ready' ||
       !permissionMock.grants.includes(key),
     canAny: (keys: string[]) =>
+      permissionMock.status === 'ready' &&
       keys.some((k) => permissionMock.grants.includes(k)),
     canAll: (keys: string[]) =>
+      permissionMock.status === 'ready' &&
       keys.every((k) => permissionMock.grants.includes(k)),
   }),
 }))
@@ -116,7 +118,7 @@ describe('PermissionBoundary / RequirePermission', () => {
     expect(screen.queryByText('secret')).toBeNull()
   })
 
-  it('shows forbidden state when denied after ready', () => {
+  it('shows Forbidden when ready and not allowed (no denied status)', () => {
     permissionMock.isLoading = false
     permissionMock.status = 'ready'
     permissionMock.grants = ['customers.read']

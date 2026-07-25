@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '#/platform/cache/query-keys'
 import { useOrganization } from '#/platform/organization/organization-context'
-import { usePermission } from '#/platform/permissions/permission-context'
+import { usePermission } from '#/platform/permissions'
 import { useSession } from '#/providers/app-session'
 import {
   archiveCustomer,

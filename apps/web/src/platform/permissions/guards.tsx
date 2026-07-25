@@ -4,6 +4,11 @@ import { usePermission } from '#/platform/permissions/permission-context'
 import { ForbiddenState, PageError } from '#/platform/errors'
 import { PageLoading } from '#/platform/loading'
 
+/**
+ * Soft gate for inline UI (e.g. buttons).
+ * While loading: renders nothing (no Forbidden, no protected children).
+ * After ready: children if allowed, otherwise fallback.
+ */
 export function PermissionGuard({
   permission,
   children,
@@ -13,12 +18,17 @@ export function PermissionGuard({
   children: ReactNode
   fallback?: ReactNode
 }) {
-  const { can, isLoading } = usePermission()
-  if (isLoading) return null
-  if (!can(permission)) return <>{fallback}</>
+  const { can, status } = usePermission()
+  if (status === 'loading') return null
+  if (status === 'error' || !can(permission)) return <>{fallback}</>
   return <>{children}</>
 }
 
+/**
+ * Hard gate for page sections.
+ * loading → PageLoading | error → PageError | ready+denied → Forbidden | ready+allowed → children
+ * Denial is `status === 'ready' && !can(permission)` — no separate "denied" status.
+ */
 export function PermissionBoundary({
   permission,
   children,
@@ -30,18 +40,17 @@ export function PermissionBoundary({
   title?: string
   description?: string
 }) {
-  const { can, isLoading, status, error } = usePermission()
-  if (isLoading || status === 'loading') {
+  const { can, status, error } = usePermission()
+
+  if (status === 'loading') {
     return <PageLoading label="Carregando permissões…" />
   }
   if (status === 'error') {
     return (
-      <PageError
-        error={error}
-        onRetry={() => window.location.reload()}
-      />
+      <PageError error={error} onRetry={() => window.location.reload()} />
     )
   }
+  // status === 'ready'
   if (!can(permission)) {
     return <ForbiddenState title={title} description={description} />
   }
@@ -65,8 +74,7 @@ export function FeatureGate({
 }
 
 /**
- * Page-level gate: loading → error → forbidden → children.
- * Never shows Forbidden or protected content while grants are unresolved.
+ * Page-level gate: same lifecycle as PermissionBoundary.
  */
 export function RequirePermission({
   permission,

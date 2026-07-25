@@ -14,7 +14,7 @@ import {
   type AppCommand,
   type CommandCategory,
 } from '#/platform/commands/types'
-import { usePermission } from '#/platform/permissions/permission-context'
+import { usePermission } from '#/platform/permissions'
 
 export function CommandPalette({
   open,
