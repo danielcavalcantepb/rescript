@@ -1,0 +1,14 @@
+node_modules
+dist
+.turbo
+.DS_Store
+*.local
+.env
+.env.*
+!.env.example
+apps/web/dist
+apps/web/.tanstack/tmp
+coverage
+*.log
+.vscode/*
+!.vscode/extensions.json

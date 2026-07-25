@@ -1,0 +1,22 @@
+{
+  "name": "rescript-platform",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w web",
+    "build": "npm run build -w web",
+    "generate-routes": "npm run generate-routes -w web",
+    "lint": "npm run lint -w web",
+    "test": "npm run test -w web",
+    "typecheck": "npm run typecheck -w web",
+    "format": "prettier --write \"apps/**/*.{ts,tsx,css,json}\" \"packages/**/*.{ts,tsx,json}\"",
+    "db:push": "npx supabase db push",
+    "db:types": "npx supabase gen types typescript --linked"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  }
+}

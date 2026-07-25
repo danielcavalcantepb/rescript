@@ -1,0 +1,7 @@
+export { logger } from '#/platform/services/logger'
+export { clipboardService } from '#/platform/services/clipboard'
+export { storageService } from '#/platform/services/storage'
+export { dateService } from '#/platform/services/date'
+export { currencyService } from '#/platform/services/currency'
+export { environmentService } from '#/platform/services/environment'
+export { notificationService } from '#/platform/services/notification'
