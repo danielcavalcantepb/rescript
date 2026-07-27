@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-label="Rescript">
   <defs>
     <linearGradient id="rescript-mark-gradient" x1="0" y1="16" x2="32" y2="16" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#1A2820"/>
-      <stop offset="48%" stop-color="#2A7A56"/>
-      <stop offset="100%" stop-color="#5FE09A"/>
+      <stop offset="0%" stop-color="#454B3E"/>
+      <stop offset="50%" stop-color="#2A7A56"/>
+      <stop offset="100%" stop-color="#4ADE80"/>
     </linearGradient>
   </defs>
-  <!-- Three bars = exclusive "E" mark. Stroke weight matches logo hairline. -->
+  <!-- Three bars = exclusive stylized "E" from the Rescript wordmark -->
   <rect x="4" y="7" width="24" height="2.2" rx="1.1" fill="url(#rescript-mark-gradient)"/>
   <rect x="4" y="14.9" width="24" height="2.2" rx="1.1" fill="url(#rescript-mark-gradient)"/>
   <rect x="4" y="22.8" width="24" height="2.2" rx="1.1" fill="url(#rescript-mark-gradient)"/>

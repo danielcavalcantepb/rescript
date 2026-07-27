@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: BusinessRules
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Regras de Negócio
 
 > Documento oficial de regras de negócio do núcleo (MVP).

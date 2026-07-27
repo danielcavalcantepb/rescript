@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / ConstraintCatalog
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Catálogo de Constraints Lógicas
 
 Legenda de garantia: **DB** · **DOM** (domínio) · **BOTH** · **ASYNC** · **AUDIT**

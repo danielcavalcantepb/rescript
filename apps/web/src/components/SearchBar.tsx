@@ -16,12 +16,14 @@ export function SearchBar({
       <Search
         className="pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2 text-[var(--color-muted)]"
         strokeWidth={1.5}
+        aria-hidden
       />
       <Input
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
         className="h-9 pl-9 text-[13px]"
+        aria-label={placeholder}
       />
     </div>
   )

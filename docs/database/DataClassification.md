@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / DataClassification
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Classificação de Dados
 
 | Nível | Exemplos | Acesso | Logs | Mask | Export | Retenção | Test envs |

@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: Product
+Supersedes: None
+Superseded-By: 00_PRODUCT_VISION.md
+Related-Modules: All
+---
+
 # Rescript — Documento de Produto
 
 > Documento oficial de produto: personas, jornadas, casos de uso, planos e princípios de experiência.

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0012-repository-structure
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0012 — Estrutura do Repositório (Monorepo Mínimo)
 
 **Status:** Aceito · **Reversibilidade:** alta

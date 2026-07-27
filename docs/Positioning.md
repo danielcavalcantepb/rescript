@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: Positioning
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Posicionamento Estratégico
 
 > Documento oficial de posicionamento de marca e produto.

@@ -4,10 +4,10 @@
   --font-sans: "Geist", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, "Cascadia Code", monospace;
 
-  /* Brand (institutional gradient only) */
-  --brand-from: #1a2820;
+  /* Brand (institutional gradient â€” matches official wordmark) */
+  --brand-from: #454b3e;
   --brand-via: #2a7a56;
-  --brand-to: #5fe09a;
+  --brand-to: #4ade80;
 
   /* Color */
   --color-primary: #1f7a56;
@@ -17,6 +17,7 @@
   --color-canvas: #f3f5f7;
   --color-surface: #ffffff;
   --color-surface-alt: #f8fafb;
+  --color-surface-elevated: #ffffff;
   --color-border: #e8ebf0;
   --color-border-soft: #f0f2f5;
   --color-ink: #0b1220;
@@ -32,6 +33,7 @@
   --color-info: #175cd3;
   --color-info-bg: #eff8ff;
   --color-focus: #1f7a56;
+  --color-hover: #eef1f4;
   --color-selection: #e8f7f0;
   --color-overlay: rgb(11 18 32 / 0.4);
   --color-accent: #1f7a56;
@@ -60,8 +62,8 @@
   /* Elevation */
   --shadow-none: none;
   --shadow-sm: 0 1px 2px rgb(11 18 32 / 0.04);
-  --shadow-overlay: 0 4px 16px rgb(11 18 32 / 0.06);
-  --shadow-modal: 0 12px 40px rgb(11 18 32 / 0.1);
+  --shadow-overlay: 0 8px 24px rgb(11 18 32 / 0.08);
+  --shadow-modal: 0 16px 48px rgb(11 18 32 / 0.12);
 
   /* Opacity */
   --opacity-disabled: 0.5;
@@ -99,41 +101,62 @@
   --text-caption: 0.75rem;
 }
 
+/* Dark mode â€” designed (not inverted). Brand-green neutrals, Linear/Vercel depth. */
 .dark {
-  --color-ink: #e8edf5;
-  --color-text-primary: #e8edf5;
-  --color-text-secondary: #9aa3b5;
-  --color-muted: #7a8494;
-  --color-ink-muted: #9aa3b5;
-  --color-canvas: #0b1220;
-  --color-surface: #121a2b;
-  --color-surface-alt: #0f1624;
-  --color-border: #243047;
-  --color-border-soft: #1a2436;
-  --color-line: #243047;
+  color-scheme: dark;
+
+  --color-ink: #eef3ef;
+  --color-text-primary: #eef3ef;
+  --color-text-secondary: #9aa89f;
+  --color-muted: #6f7f76;
+  --color-ink-muted: #9aa89f;
+
+  --color-canvas: #0a0f0d;
+  --color-surface: #111816;
+  --color-surface-alt: #0d1311;
+  --color-surface-elevated: #171f1c;
+  --color-border: #24302b;
+  --color-border-soft: #1a221e;
+  --color-line: #24302b;
+  --color-hover: #1a221e;
+
   --color-primary: #3dba84;
-  --color-primary-hover: #5fe09a;
-  --color-primary-active: #2a7a56;
-  --color-primary-soft: #134e3a;
+  --color-primary-hover: #4fd194;
+  --color-primary-active: #2f9a6c;
+  --color-primary-soft: rgb(61 186 132 / 0.14);
   --color-accent: #3dba84;
-  --color-accent-hover: #5fe09a;
-  --color-accent-subtle: #134e3a;
+  --color-accent-hover: #4fd194;
+  --color-accent-subtle: rgb(61 186 132 / 0.14);
+
   --color-danger: #f97066;
-  --color-danger-bg: #3b1210;
-  --color-warning: #fdb022;
-  --color-warning-bg: #3b2408;
-  --color-success: #32d583;
-  --color-success-bg: #0a2f1f;
+  --color-danger-bg: rgb(249 112 102 / 0.12);
+  --color-warning: #f5b84c;
+  --color-warning-bg: rgb(245 184 76 / 0.12);
+  --color-success: #34d399;
+  --color-success-bg: rgb(52 211 153 / 0.12);
   --color-info: #84caff;
-  --color-info-bg: #102a56;
-  --color-focus: #3dba84;
-  --color-selection: #134e3a;
-  --color-overlay: rgb(0 0 0 / 0.55);
+  --color-info-bg: rgb(132 202 255 / 0.12);
+
+  --color-focus: #4bd08d;
+  --color-selection: rgb(61 186 132 / 0.22);
+  --color-overlay: rgb(0 0 0 / 0.6);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-overlay: 0 12px 32px rgb(0 0 0 / 0.45);
+  --shadow-modal: 0 24px 64px rgb(0 0 0 / 0.55);
 }
 
 @layer base {
   * {
     box-sizing: border-box;
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
   }
 
   html,
@@ -149,6 +172,9 @@
     color: var(--color-text-primary);
     background: var(--color-canvas);
     -webkit-font-smoothing: antialiased;
+    transition:
+      background-color var(--motion-base) var(--ease-out),
+      color var(--motion-base) var(--ease-out);
   }
 
   button,
@@ -221,36 +247,88 @@
     animation: none !important;
     opacity: 1 !important;
   }
+
+  body {
+    transition: none !important;
+  }
 }
 
-/* Auth experience — scoped tokens for /login only.
-   Identity derived from the Rescript brand gradient (green), not blue. */
+/* Auth experience â€” two visual universes.
+   Left (default): warm light authentication surface â€” brand first.
+   Right (.auth-institutional): deep green institutional panel.
+   Palette derived from the Rescript wordmark (olive â†’ forest â†’ lime). No blue. */
+
 .auth-experience {
-  /* Surfaces — deep neutral with a faint green cast */
-  --color-canvas: #080b0a;
-  --color-surface: #101613;
-  --color-surface-alt: #0c110f;
+  /* Light auth canvas â€” warm off-white, not cold gray */
+  --color-canvas: #fafaf8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f4f4f0;
+  --color-surface-elevated: #ffffff;
+  --color-border: #e6e6e0;
+  --color-border-soft: #efefe9;
+  --color-line: #e6e6e0;
+  --color-hover: #f0f0eb;
+
+  /* Primary from logo mid/forest green â€” AA on white fills */
+  --color-primary: #1f7a56;
+  --color-primary-hover: #259366;
+  --color-primary-active: #176345;
+  --color-primary-soft: #e8f5ee;
+
+  --color-accent: #1f7a56;
+  --color-accent-strong: #2a7a56;
+  --color-accent-hover: #259366;
+  --color-accent-subtle: #e8f5ee;
+
+  --color-success: #027a48;
+  --color-success-bg: #ecfdf3;
+  --color-warning: #b54708;
+  --color-warning-bg: #fffaeb;
+  --color-danger: #b42318;
+  --color-danger-bg: #fef3f2;
+
+  /* Dark type on light surface */
+  --color-ink: #141814;
+  --color-text-primary: #141814;
+  --color-text-secondary: #5c655e;
+  --color-muted: #8a928b;
+  --color-ink-muted: #5c655e;
+
+  --color-focus: #1f7a56;
+  --color-selection: rgb(31 122 86 / 0.14);
+  --color-overlay: rgb(20 24 20 / 0.35);
+
+  --shadow-sm: 0 1px 2px rgb(20 24 20 / 0.04);
+  --shadow-overlay: 0 8px 28px rgb(20 24 20 / 0.08);
+  --shadow-elevated: 0 16px 40px -20px rgb(20 24 20 / 0.14);
+
+  /* Soft brand wash for mobile (when panel is hidden) */
+  --auth-glow: rgb(31 122 86 / 0.1);
+  --auth-panel-bg: #060908;
+  --auth-grid-line: rgb(74 222 128 / 0.06);
+  --auth-connector: rgb(74 222 128 / 0.22);
+}
+
+/* Institutional right panel â€” deep green universe */
+.auth-experience .auth-institutional {
+  --color-canvas: #060908;
+  --color-surface: #0e1511;
+  --color-surface-alt: #0a100d;
   --color-surface-elevated: #141d18;
   --color-border: #1e2a24;
   --color-border-soft: #18211c;
   --color-line: #1e2a24;
+  --color-hover: #1a221e;
 
-  /* Primary — brand green (#1f7a56) tuned for AA on solid fills */
-  --color-primary: #1f7a56;
-  --color-primary-hover: #268a5c;
-  --color-primary-active: #196345;
-  --color-primary-soft: rgb(31 122 86 / 0.16);
+  --color-primary: #3dba84;
+  --color-primary-hover: #4fd194;
+  --color-primary-active: #2f9a6c;
+  --color-primary-soft: rgb(61 186 132 / 0.14);
 
-  /* Accent — brighter brand green for text / icons / focus on dark */
   --color-accent: #4bd08d;
-  --color-accent-strong: #5fe09a;
-
-  --color-success: #34d399;
-  --color-success-bg: rgb(52 211 153 / 0.12);
-  --color-warning: #e0a422;
-  --color-warning-bg: rgb(224 164 34 / 0.12);
-  --color-danger: #f87171;
-  --color-danger-bg: rgb(248 113 113 / 0.12);
+  --color-accent-strong: #4ade80;
+  --color-accent-hover: #5fe09a;
+  --color-accent-subtle: rgb(61 186 132 / 0.14);
 
   --color-ink: #f2f6f3;
   --color-text-primary: #f2f6f3;
@@ -259,16 +337,17 @@
   --color-ink-muted: #9daaa2;
 
   --color-focus: #4bd08d;
-  --color-selection: rgb(31 122 86 / 0.3);
-  --color-overlay: rgb(0 0 0 / 0.6);
+  --color-selection: rgb(61 186 132 / 0.22);
+  --color-danger: #f97066;
+  --color-danger-bg: rgb(249 112 102 / 0.12);
 
   --auth-panel-bg: #060908;
-  --auth-grid-line: rgb(95 224 154 / 0.05);
-  --auth-connector: rgb(95 224 154 / 0.22);
-  --auth-glow: rgb(31 122 86 / 0.28);
+  --auth-grid-line: rgb(74 222 128 / 0.055);
+  --auth-connector: rgb(74 222 128 / 0.2);
+  --auth-glow: rgb(31 122 86 / 0.32);
 
-  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.3);
-  --shadow-elevated: 0 20px 50px -24px rgb(0 0 0 / 0.7);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.35);
+  --shadow-elevated: 0 24px 56px -24px rgb(0 0 0 / 0.7);
 }
 
 @keyframes auth-fade-up {
@@ -358,6 +437,17 @@
   animation: auth-bar-grow 900ms var(--ease-out) both;
 }
 
+.auth-input {
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out),
+    background-color var(--motion-fast) var(--ease-out);
+}
+
+.auth-input:hover:not(:disabled):not(:focus-visible) {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+}
+
 @media (prefers-reduced-motion: reduce) {
   .auth-form-enter,
   .auth-panel-enter,
@@ -372,6 +462,26 @@
   }
   .auth-bar-fill {
     transform: scaleX(1) !important;
+  }
+}
+
+.marketing-float {
+  animation: marketing-float 7s var(--ease-in-out) infinite;
+}
+
+@keyframes marketing-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marketing-float {
+    animation: none !important;
   }
 }
 

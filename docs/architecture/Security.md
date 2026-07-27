@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / Security
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Segurança de Aplicação
 
 > Defesa em profundidade. Segurança por padrão (AP9), menor privilégio (AP11), integridade garantida pelo banco (AP12).

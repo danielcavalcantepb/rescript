@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: decisions / StateMachineClosure
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Máquinas de Estado — Fechamento sob PROPOSTAS
 
 > Sem novos estados sem significado. Assume FDC aprováveis.  

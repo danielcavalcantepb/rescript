@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / DomainServices
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Serviços de Domínio
 
 > Lógica de negócio que **não pertence naturalmente** a uma única entidade ou VO — normalmente porque coordena **vários agregados** ou expressa uma operação com nome de negócio próprio.

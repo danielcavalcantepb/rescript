@@ -8,20 +8,29 @@ import {
 } from '#/modules/customers/domain/validation'
 
 describe('customer validation', () => {
-  it('requires name', () => {
+  it('requires legalName', () => {
     const errors = validateCreateCustomer({
-      name: '  ',
+      legalName: '  ',
       personType: 'PF',
     })
-    expect(errors.name).toBeTruthy()
+    expect(errors.legalName).toBeTruthy()
   })
 
-  it('accepts optional document', () => {
+  it('accepts optional document for draft', () => {
     const errors = validateCreateCustomer({
-      name: 'Maria',
+      legalName: 'Maria',
       personType: 'PF',
     })
     expect(errors).toEqual({})
+  })
+
+  it('requires document when activate', () => {
+    const errors = validateCreateCustomer({
+      legalName: 'Maria',
+      personType: 'PF',
+      activate: true,
+    })
+    expect(errors.document).toBeTruthy()
   })
 
   it('validates CPF checksum', () => {
@@ -30,8 +39,8 @@ describe('customer validation', () => {
   })
 
   it('validates CNPJ checksum', () => {
-    expect(isValidDocument('11222333000181', 'PJ')).toBe(true)
-    expect(isValidDocument('11222333000180', 'PJ')).toBe(false)
+    expect(isValidDocument('11444777000161', 'PJ')).toBe(true)
+    expect(isValidDocument('11444777000160', 'PJ')).toBe(false)
   })
 
   it('normalizes document digits', () => {
@@ -40,36 +49,36 @@ describe('customer validation', () => {
 
   it('rejects invalid email', () => {
     const errors = validateCreateCustomer({
-      name: 'Acme',
+      legalName: 'Acme',
       personType: 'PJ',
       email: 'not-an-email',
     })
     expect(errors.email).toBeTruthy()
   })
 
-  it('enforces name length', () => {
+  it('enforces legalName length', () => {
     const errors = validateCreateCustomer({
-      name: 'x'.repeat(CUSTOMER_LIMITS.name + 1),
+      legalName: 'x'.repeat(CUSTOMER_LIMITS.legalName + 1),
       personType: 'PF',
     })
-    expect(errors.name).toMatch(/máximo/)
+    expect(errors.legalName).toMatch(/máximo/)
   })
 
   it('update uses context personType for document', () => {
     const withoutContext = validateUpdateCustomer({
-      document: '11222333000181',
+      document: '11444777000161',
     })
     expect(withoutContext.document).toBeTruthy()
 
     const withContext = validateUpdateCustomer(
-      { document: '11222333000181' },
+      { document: '11444777000161' },
       { personType: 'PJ' },
     )
     expect(withContext).toEqual({})
   })
 
-  it('update rejects empty name when provided', () => {
-    const errors = validateUpdateCustomer({ name: '  ' })
-    expect(errors.name).toBeTruthy()
+  it('update rejects empty legalName when provided', () => {
+    const errors = validateUpdateCustomer({ legalName: '  ' })
+    expect(errors.legalName).toBeTruthy()
   })
 })

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / ReceivablesModel
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Modelo Lógico — Recebíveis
 
 > Sale ≠ Receivable ≠ Installment ≠ Payment. FD-04: sem juros/multa no MVP (campos futuros nullable/ausentes).

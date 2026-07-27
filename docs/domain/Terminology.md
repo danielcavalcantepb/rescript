@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Terminology
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Terminologia e Convenções
 
 > Decisões de nomenclatura do domínio: o termo oficial, o que evitar, e como nomeamos entidades, eventos, comandos e estados. Resolve as ambiguidades apontadas nas fases anteriores.

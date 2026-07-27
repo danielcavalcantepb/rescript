@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: design / DecisionCenter
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Central de Decisão — Design de Experiência
 
 > A tela mais importante do produto. Não é dashboard. Não é BI. Não é mural de gráficos.

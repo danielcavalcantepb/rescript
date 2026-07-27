@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / DecisionImpact
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Impacto das Decisões Pendentes no Modelo Lógico
 
 > **Não altera** o modelo silenciosamente. Mapeia o que muda **quando** o fundador aprovar cada FDC.  

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: walkthrough / README
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Domain Walkthrough
 
 > Fase de validação operacional do domínio, arquitetura e modelo lógico por simulação de cenários reais.

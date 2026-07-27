@@ -1,6 +1,10 @@
 import { Badge } from '#/components/ui/badge'
 
-const saleTone: Record<string, 'neutral' | 'info' | 'warning' | 'success' | 'danger' | 'accent'> = {
+const statusTone: Record<
+  string,
+  'neutral' | 'info' | 'warning' | 'success' | 'danger' | 'accent'
+> = {
+  // Sales
   Rascunho: 'neutral',
   Orçamento: 'info',
   Pedido: 'warning',
@@ -10,19 +14,33 @@ const saleTone: Record<string, 'neutral' | 'info' | 'warning' | 'success' | 'dan
   Descartada: 'neutral',
   OrçamentoRecusado: 'neutral',
   OrçamentoExpirado: 'neutral',
+
+  // Catalog / Customer
   ativo: 'success',
   arquivado: 'neutral',
   active: 'success',
   inactive: 'neutral',
+  draft: 'info',
+  archived: 'neutral',
   Ativo: 'success',
+  Inativo: 'warning',
   Arquivado: 'neutral',
 
+  // Finance-ish (mock)
   'Em aberto': 'warning',
   Parcial: 'accent',
   Quitado: 'success',
   Vencido: 'danger',
+
+  // Inventory
+  Disponível: 'success',
+  'Sem estoque': 'warning',
+  Entrada: 'success',
+  Saída: 'info',
+  'Ajuste (+)': 'accent',
+  'Ajuste (−)': 'warning',
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  return <Badge tone={saleTone[status] ?? 'neutral'}>{status}</Badge>
+  return <Badge tone={statusTone[status] ?? 'neutral'}>{status}</Badge>
 }

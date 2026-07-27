@@ -10,7 +10,8 @@ export function EmptyState({
   title,
   description,
   action,
-  useBrandMark = true,
+  /** When an icon is provided, prefer it. Brand mark only for brand/marketing empties. */
+  useBrandMark,
 }: {
   icon?: IconName
   title: string
@@ -18,13 +19,15 @@ export function EmptyState({
   action?: ReactNode
   useBrandMark?: boolean
 }) {
+  const showBrand = useBrandMark ?? !icon
+
   return (
     <PlatformEmptyState
       icon={icon}
       title={title}
       description={description}
       action={action}
-      useBrandMark={useBrandMark}
+      useBrandMark={showBrand}
     />
   )
 }

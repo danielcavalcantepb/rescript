@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0002-modular-monolith
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0002 — Monólito Modular
 
 **Status:** Aceito · **Reversibilidade:** média

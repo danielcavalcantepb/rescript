@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / ConsistencyReview
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Revisão Cruzada de Consistência
 
 > Conflitos e lacunas encontrados na modelagem lógica. **Nada resolvido em silêncio.**

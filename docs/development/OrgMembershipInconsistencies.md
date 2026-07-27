@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: development / OrgMembershipInconsistencies
+Supersedes: None
+Superseded-By: README.md
+Related-Modules: All
+---
+
 # Inconsistências documentais — Organizations + Memberships
 
 Registradas **antes** da implementação da primeira migration.  

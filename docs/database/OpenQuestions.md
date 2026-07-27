@@ -1,3 +1,15 @@
+---
+Status: Draft
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Proposal
+Scope: database / OpenQuestions
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Questões Abertas do Fundador
 
 > Recomendações técnicas **não** são decisões aprovadas.

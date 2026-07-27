@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / Glossary
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Glossário (Linguagem Ubíqua)
 
 > Vocabulário compartilhado entre produto, design e engenharia. Termos usados de forma consistente em toda a documentação e no código.

@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: development / AuthSetup
+Supersedes: None
+Superseded-By: README.md
+Related-Modules: All
+---
+
 # Auth Setup — Supabase (etapa identidade)
 
 Fundação de autenticação do Rescript. **Auth ≠ Organization ≠ Membership.**

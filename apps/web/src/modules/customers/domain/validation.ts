@@ -1,61 +1,66 @@
-import type { CreateCustomerInput, UpdateCustomerInput } from '#/modules/customers/domain/types'
+import {
+  isValidDocumentDigits,
+  normalizeDocumentDigits,
+  type PersonType,
+} from '#/modules/customers/domain/document'
+import type {
+  CreateAddressInput,
+  CreateContactInput,
+  CreateCustomerInput,
+  UpdateAddressInput,
+  UpdateContactInput,
+  UpdateCustomerInput,
+} from '#/modules/customers/domain/types'
 
 export type FieldErrors = Record<string, string>
 
 export const CUSTOMER_LIMITS = {
-  name: 200,
+  legalName: 200,
   tradeName: 200,
   email: 254,
   phone: 40,
   city: 120,
   notes: 2000,
+  roleTitle: 120,
+  postalCode: 16,
+  street: 200,
+  number: 32,
+  complement: 120,
+  district: 120,
+  state: 64,
 } as const
 
-export function normalizeDocument(value: string | null | undefined): string | null {
-  if (!value) return null
-  const digits = value.replace(/\D/g, '')
-  return digits.length ? digits : null
+/** @deprecated use normalizeDocumentDigits */
+export const normalizeDocument = normalizeDocumentDigits
+
+/** @deprecated use isValidDocumentDigits */
+export function isValidDocument(
+  digits: string,
+  personType: PersonType,
+): boolean {
+  return isValidDocumentDigits(digits, personType)
 }
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
-/** Basic CPF/CNPJ length + checksum (BR). */
-export function isValidDocument(digits: string, personType: 'PF' | 'PJ'): boolean {
-  if (personType === 'PF') {
-    if (digits.length !== 11 || /^(\d)\1+$/.test(digits)) return false
-    const calc = (base: string, factor: number) => {
-      let sum = 0
-      for (let i = 0; i < base.length; i++) sum += Number(base[i]) * (factor - i)
-      const mod = (sum * 10) % 11
-      return mod === 10 ? 0 : mod
-    }
-    const d1 = calc(digits.slice(0, 9), 10)
-    const d2 = calc(digits.slice(0, 10), 11)
-    return d1 === Number(digits[9]) && d2 === Number(digits[10])
-  }
-  if (digits.length !== 14 || /^(\d)\1+$/.test(digits)) return false
-  const calc = (base: string, weights: number[]) => {
-    const sum = base
-      .split('')
-      .reduce((acc, n, i) => acc + Number(n) * weights[i]!, 0)
-    const mod = sum % 11
-    return mod < 2 ? 0 : 11 - mod
-  }
-  const w1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-  const w2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]
-  const d1 = calc(digits.slice(0, 12), w1)
-  const d2 = calc(digits.slice(0, 13), w2)
-  return d1 === Number(digits[12]) && d2 === Number(digits[13])
-}
-
 function validateOptionalLengths(
-  input: Partial<CreateCustomerInput>,
+  input: {
+    legalName?: string
+    tradeName?: string | null
+    email?: string | null
+    phone?: string | null
+    city?: string | null
+    notes?: string | null
+  },
   errors: FieldErrors,
 ) {
-  if (input.name !== undefined && input.name.trim().length > CUSTOMER_LIMITS.name) {
-    errors.name = `Nome deve ter no máximo ${CUSTOMER_LIMITS.name} caracteres.`
+  if (
+    input.legalName !== undefined &&
+    input.legalName.trim().length > CUSTOMER_LIMITS.legalName
+  ) {
+    errors.legalName = `Nome deve ter no máximo ${CUSTOMER_LIMITS.legalName} caracteres.`
   }
   if (
     input.tradeName !== undefined &&
@@ -96,25 +101,29 @@ function validateOptionalLengths(
 
 export function validateCreateCustomer(input: CreateCustomerInput): FieldErrors {
   const errors: FieldErrors = {}
-  const name = input.name?.trim() ?? ''
-  if (name.length < 1) errors.name = 'Informe o nome do cliente.'
+  const legalName = input.legalName?.trim() ?? ''
+  if (legalName.length < 1) errors.legalName = 'Informe o nome do cliente.'
 
   if (input.personType !== 'PF' && input.personType !== 'PJ') {
     errors.personType = 'Selecione PF ou PJ.'
   }
 
-  const document = normalizeDocument(input.document)
-  if (document) {
-    if (!isValidDocument(document, input.personType)) {
+  const document = normalizeDocumentDigits(input.document)
+  if (input.activate) {
+    if (!document) {
+      errors.document =
+        input.personType === 'PF' ? 'CPF obrigatório para ativar.' : 'CNPJ obrigatório para ativar.'
+    } else if (!isValidDocumentDigits(document, input.personType)) {
       errors.document =
         input.personType === 'PF' ? 'CPF inválido.' : 'CNPJ inválido.'
     }
+  } else if (document && !isValidDocumentDigits(document, input.personType)) {
+    errors.document =
+      input.personType === 'PF' ? 'CPF inválido.' : 'CNPJ inválido.'
   }
 
   const email = input.email?.trim()
-  if (email && !isValidEmail(email)) {
-    errors.email = 'E-mail inválido.'
-  }
+  if (email && !isValidEmail(email)) errors.email = 'E-mail inválido.'
 
   validateOptionalLengths(input, errors)
   return errors
@@ -122,27 +131,20 @@ export function validateCreateCustomer(input: CreateCustomerInput): FieldErrors 
 
 export function validateUpdateCustomer(
   input: UpdateCustomerInput,
-  context?: { personType?: 'PF' | 'PJ' },
+  context?: { personType?: PersonType },
 ): FieldErrors {
   const errors: FieldErrors = {}
-  if (input.name !== undefined && input.name.trim().length < 1) {
-    errors.name = 'Informe o nome do cliente.'
-  }
-  if (
-    input.personType !== undefined &&
-    input.personType !== 'PF' &&
-    input.personType !== 'PJ'
-  ) {
-    errors.personType = 'Selecione PF ou PJ.'
+  if (input.legalName !== undefined && input.legalName.trim().length < 1) {
+    errors.legalName = 'Informe o nome do cliente.'
   }
 
-  const personType = input.personType ?? context?.personType
+  const personType = context?.personType
   if (input.document !== undefined && input.document !== null && input.document !== '') {
     if (!personType) {
-      errors.document = 'Selecione PF ou PJ para validar o documento.'
+      errors.document = 'Tipo de pessoa necessário para validar o documento.'
     } else {
-      const document = normalizeDocument(input.document)
-      if (document && !isValidDocument(document, personType)) {
+      const document = normalizeDocumentDigits(input.document)
+      if (document && !isValidDocumentDigits(document, personType)) {
         errors.document =
           personType === 'PF' ? 'CPF inválido.' : 'CNPJ inválido.'
       }
@@ -154,6 +156,58 @@ export function validateUpdateCustomer(
   }
 
   validateOptionalLengths(input, errors)
+  return errors
+}
+
+export function validateCreateContact(input: CreateContactInput): FieldErrors {
+  const errors: FieldErrors = {}
+  if (!input.name?.trim()) errors.name = 'Informe o nome do contato.'
+  if (input.email?.trim() && !isValidEmail(input.email.trim())) {
+    errors.email = 'E-mail inválido.'
+  }
+  return errors
+}
+
+export function validateUpdateContact(input: UpdateContactInput): FieldErrors {
+  const errors: FieldErrors = {}
+  if (input.name !== undefined && !input.name.trim()) {
+    errors.name = 'Informe o nome do contato.'
+  }
+  if (input.email !== undefined && input.email?.trim() && !isValidEmail(input.email.trim())) {
+    errors.email = 'E-mail inválido.'
+  }
+  return errors
+}
+
+export function validateCreateAddress(input: CreateAddressInput): FieldErrors {
+  const errors: FieldErrors = {}
+  if (!['billing', 'shipping', 'other'].includes(input.kind)) {
+    errors.kind = 'Tipo de endereço inválido.'
+  }
+  if (!input.postalCode?.trim()) errors.postalCode = 'Informe o CEP.'
+  if (!input.street?.trim()) errors.street = 'Informe a rua.'
+  if (!input.city?.trim()) errors.city = 'Informe a cidade.'
+  if (!input.state?.trim()) errors.state = 'Informe o estado.'
+  return errors
+}
+
+export function validateUpdateAddress(input: UpdateAddressInput): FieldErrors {
+  const errors: FieldErrors = {}
+  if (input.kind !== undefined && !['billing', 'shipping', 'other'].includes(input.kind)) {
+    errors.kind = 'Tipo de endereço inválido.'
+  }
+  if (input.postalCode !== undefined && !input.postalCode.trim()) {
+    errors.postalCode = 'Informe o CEP.'
+  }
+  if (input.street !== undefined && !input.street.trim()) {
+    errors.street = 'Informe a rua.'
+  }
+  if (input.city !== undefined && !input.city.trim()) {
+    errors.city = 'Informe a cidade.'
+  }
+  if (input.state !== undefined && !input.state.trim()) {
+    errors.state = 'Informe o estado.'
+  }
   return errors
 }
 

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Entities
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Entidades
 
 > Objetos com **identidade** e **ciclo de vida**. Cada ficha responde às 13 perguntas do briefing.

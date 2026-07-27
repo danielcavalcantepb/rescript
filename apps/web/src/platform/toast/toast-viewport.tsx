@@ -38,7 +38,7 @@ function ToastCard({ toast: item }: { toast: ToastItem }) {
     <div
       className={cn(
         'pointer-events-auto w-full rounded-[var(--radius-md)] border px-3 py-2.5 shadow-[var(--shadow-overlay)]',
-        'animate-in fade-in slide-in-from-bottom-2 duration-[var(--motion-base)]',
+        'animate-[auth-fade-up_var(--motion-base)_var(--ease-out)]',
         variantStyles[item.variant],
       )}
       role="status"
@@ -57,7 +57,7 @@ function ToastCard({ toast: item }: { toast: ToastItem }) {
         </div>
         <button
           type="button"
-          className="rounded-[var(--radius-sm)] p-0.5 text-[var(--color-muted)] hover:bg-black/5"
+          className="rounded-[var(--radius-sm)] p-0.5 text-[var(--color-muted)] transition-colors duration-[var(--motion-fast)] hover:bg-[var(--color-hover)] hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
           aria-label="Fechar notificação"
           onClick={() => toastStore.dismiss(item.id)}
         >

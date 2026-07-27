@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / InventoryModel
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Modelo Lógico — Estoque (Ledger)
 
 > FD-01, FD-02. Ledger físico = fonte de verdade. Reserva em `ReservationModel.md`.

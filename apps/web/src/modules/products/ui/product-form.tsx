@@ -1,7 +1,9 @@
-import { useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import type { CreateProductInput } from '#/modules/products/domain/types'
 import { Button } from '#/components/ui/button'
+import { FormField } from '#/components/ui/form-field'
 import { Input } from '#/components/ui/input'
+import { Textarea } from '#/components/ui/textarea'
 import { ButtonLoading } from '#/platform/loading'
 import { dialogs } from '#/platform/dialogs'
 
@@ -73,56 +75,55 @@ export function ProductForm({
 
   return (
     <form className="space-y-3.5" onSubmit={(e) => void handleSubmit(e)}>
-      <Field label="Nome *" error={fieldErrors?.name}>
+      <FormField label="Nome *" error={fieldErrors?.name}>
         <Input
           value={values.name}
           disabled={readOnly || submitting}
           onChange={(e) => set('name', e.target.value)}
-          aria-invalid={Boolean(fieldErrors?.name)}
         />
-      </Field>
+      </FormField>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="SKU *" error={fieldErrors?.sku}>
+        <FormField label="SKU *" error={fieldErrors?.sku}>
           <Input
             value={values.sku}
             disabled={readOnly || submitting}
             onChange={(e) => set('sku', e.target.value)}
-            aria-invalid={Boolean(fieldErrors?.sku)}
             autoCapitalize="characters"
           />
-        </Field>
-        <Field label="Unidade *" error={fieldErrors?.unit}>
+        </FormField>
+        <FormField label="Unidade *" error={fieldErrors?.unit}>
           <Input
             value={values.unit}
             disabled={readOnly || submitting}
             onChange={(e) => set('unit', e.target.value)}
-            aria-invalid={Boolean(fieldErrors?.unit)}
             placeholder="un, kg, cx…"
           />
-        </Field>
+        </FormField>
       </div>
 
-      <Field label="Categoria" error={fieldErrors?.category}>
+      <FormField label="Categoria" error={fieldErrors?.category}>
         <Input
           value={values.category ?? ''}
           disabled={readOnly || submitting}
           onChange={(e) => set('category', e.target.value)}
         />
-      </Field>
+      </FormField>
 
-      <Field label="Descrição" error={fieldErrors?.description}>
-        <textarea
+      <FormField label="Descrição" error={fieldErrors?.description}>
+        <Textarea
           value={values.description ?? ''}
           disabled={readOnly || submitting}
           onChange={(e) => set('description', e.target.value)}
           rows={3}
-          className="flex w-full rounded-[var(--radius-sm)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-2 text-[13px] text-[var(--color-ink)] outline-none focus:border-[var(--color-focus)]"
         />
-      </Field>
+      </FormField>
 
       {formError ? (
-        <p className="rounded-[var(--radius-sm)] bg-[var(--color-danger-bg)] px-3 py-2 text-xs text-[var(--color-danger)]">
+        <p
+          role="alert"
+          className="rounded-[var(--radius-md)] bg-[var(--color-danger-bg)] px-3 py-2 text-xs text-[var(--color-danger)]"
+        >
           {formError}
         </p>
       ) : null}
@@ -145,27 +146,5 @@ export function ProductForm({
         </div>
       ) : null}
     </form>
-  )
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string
-  error?: string
-  children: ReactNode
-}) {
-  return (
-    <div>
-      <label className="mb-1 block text-[13px] font-medium text-[var(--color-ink)]">
-        {label}
-      </label>
-      {children}
-      {error ? (
-        <p className="mt-1 text-xs text-[var(--color-danger)]">{error}</p>
-      ) : null}
-    </div>
   )
 }

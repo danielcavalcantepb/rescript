@@ -25,7 +25,7 @@ export type MembershipRole =
   | 'inventory'
   | 'finance'
   | 'viewer'
-export type CustomerStatus = 'active' | 'inactive'
+export type CustomerStatus = 'draft' | 'active' | 'inactive' | 'archived'
 export type CustomerPersonType = 'PF' | 'PJ'
 export type ProductStatus = 'active' | 'inactive'
 export type InventoryMovementType =

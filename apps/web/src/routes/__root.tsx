@@ -32,6 +32,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     links: [
       { rel: 'stylesheet', href: appCss },
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'icon', href: '/favicon.png', type: 'image/png' },
     ],
   }),
   shellComponent: RootDocument,
@@ -44,11 +45,15 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 function NotFoundPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-[var(--color-canvas)] px-4 text-center">
-      <img src="/brand/rescript-wordmark.png" alt="Rescript" className="h-6 w-auto opacity-90" />
+      <img
+        src="/brand/rescript-wordmark.png"
+        alt="Rescript"
+        className="h-7 w-auto object-contain opacity-95"
+      />
       <p className="text-sm text-[var(--color-muted)]">404</p>
       <h1 className="text-xl font-medium text-[var(--color-ink)]">Página não encontrada</h1>
       <a href="/" className="text-sm text-[var(--color-primary)] hover:underline">
-        Voltar à Central
+        Voltar ao site
       </a>
     </div>
   )
@@ -82,9 +87,15 @@ function RootComponent() {
 
 function RootDocument({ children }: { children: ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" suppressHydrationWarning>
       <head>
         <HeadContent />
+        {/* Apply saved/system theme before paint to avoid FOUC */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var k='rescript.theme';var p=localStorage.getItem(k);var d=window.matchMedia('(prefers-color-scheme: dark)').matches;var dark=p==='dark'||(p!=='light'&&d);var r=document.documentElement;r.classList.toggle('dark',dark);r.style.colorScheme=dark?'dark':'light';}catch(e){}})();`,
+          }}
+        />
         <link rel="preconnect" href="https://cdn.jsdelivr.net" />
         <link
           href="https://cdn.jsdelivr.net/npm/geist@1.3.1/dist/fonts.geist-sans.css"

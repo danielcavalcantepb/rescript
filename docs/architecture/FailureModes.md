@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / FailureModes
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Análise de Modos de Falha
 
 > Para cada falha possível em operações críticas: impacto, prevenção, detecção e recuperação.

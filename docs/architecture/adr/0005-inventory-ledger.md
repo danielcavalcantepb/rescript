@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0005-inventory-ledger
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0005 — Estoque como Ledger
 
 **Status:** Aceito · **Reversibilidade:** BAIXA (cara de mudar) — decisão estrutural

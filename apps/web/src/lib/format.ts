@@ -23,10 +23,18 @@ export function formatDateTime(iso: string): string {
 }
 
 export function initials(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((p) => p[0]?.toUpperCase() ?? '')
-    .join('')
+  const trimmed = name.trim()
+  if (!trimmed || trimmed === 'Usuário') return 'U'
+
+  const parts = trimmed.split(/\s+/).filter(Boolean)
+  if (parts.length >= 2) {
+    return parts
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? '')
+      .join('')
+  }
+
+  const single = parts[0] ?? ''
+  // Single given name → one initial (never invent a second letter from the rest)
+  return (single[0] ?? '?').toUpperCase()
 }

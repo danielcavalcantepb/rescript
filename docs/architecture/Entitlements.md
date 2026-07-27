@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / Entitlements
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Entitlements, Planos e Feature Flags
 
 > Como os planos comerciais controlam recursos **sem espalhar condicionais** pelo domínio.

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / MessagingArchitecture
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Arquitetura de Mensageria (WhatsApp e Canais)
 
 > Fronteiras arquiteturais para comunicação externa (WhatsApp e outros canais). **Fase posterior** — nada é implementado; nenhum provedor é escolhido definitivamente.

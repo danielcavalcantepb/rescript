@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: screens / InventoryMovement
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # InventoryMovement (lista + registrar entrada/ajuste)
 
 ## Objetivo

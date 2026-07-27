@@ -1,3 +1,15 @@
+---
+Status: Draft
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Proposal
+Scope: decisions / PendingDecisions
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Decisões Pendentes — Catálogo Consolidado
 
 > Levantamento em: `docs/`, `architecture/`, `domain/`, `design/`, `screens/`, `database/`, `walkthrough/`.  

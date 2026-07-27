@@ -1,3 +1,15 @@
+---
+Status: Draft
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Proposal
+Scope: design / FutureIdeas
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Ideias Futuras (não MVP)
 
 > Parque de ideias. **Não** entram no escopo atual sem decisão explícita.

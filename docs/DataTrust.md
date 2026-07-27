@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: DataTrust
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Política de Confiança nos Dados (Data Trust)
 
 > Documento oficial da política de integridade e confiança dos dados.

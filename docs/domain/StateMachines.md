@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / StateMachines
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Máquinas de Estado
 
 > Estados possíveis e transições permitidas. Toda mudança de estado obedece a estas máquinas (invariante G6).

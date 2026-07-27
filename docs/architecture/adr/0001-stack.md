@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0001-stack
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0001 — Stack Tecnológica
 
 **Status:** Aceito (fase de arquitetura) · **Reversibilidade:** média (borda) / baixa (PostgreSQL)

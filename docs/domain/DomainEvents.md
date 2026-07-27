@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / DomainEvents
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Eventos de Domínio
 
 > Fatos relevantes que **aconteceram** no negócio. Nome sempre no passado. São a memória e a linguagem de integração entre contextos.

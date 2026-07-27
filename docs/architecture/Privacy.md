@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / Privacy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Privacidade e LGPD
 
 > Orientação técnica de privacidade e proteção de dados pessoais. **Não é parecer jurídico** — deve ser validado por profissional quando necessário.

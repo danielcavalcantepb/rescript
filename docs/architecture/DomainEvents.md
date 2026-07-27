@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / DomainEvents
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Eventos de Domínio e Outbox
 
 > Comunicação interna desacoplada e efeitos assíncronos confiáveis, **sem** infraestrutura de event streaming prematura.

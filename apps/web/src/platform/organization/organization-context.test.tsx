@@ -13,7 +13,7 @@ import {
 
 vi.mock('#/providers/app-session', () => ({
   useSession: () => ({
-    authUser: { id: 'user_1', email: 'a@b.com', displayName: 'A' },
+    authUser: { id: 'user_1', email: 'a@b.com', displayName: 'A', firstName: 'A' },
     isAuthenticated: true,
     isAuthLoading: false,
   }),
@@ -65,7 +65,16 @@ const repo: OrganizationRepository = {
     }
   },
   async listMemberships() {
-    return []
+    return [
+      {
+        id: 'mem_a',
+        organizationId: 'org_a',
+        userId: 'user_1',
+        role: 'owner' as const,
+        status: 'active' as const,
+        isOwner: true,
+      },
+    ]
   },
 }
 

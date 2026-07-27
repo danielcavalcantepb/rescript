@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / MigrationStrategy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Estratégia de Migrations (futura)
 
 > Esta fase **não** cria migrations. Define como a próxima fase deve fazê-lo.

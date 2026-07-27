@@ -5,6 +5,7 @@ export type {
   CreateOrganizationResult,
   OrganizationRepository,
 } from '#/platform/organization/types'
+export { MEMBERSHIP_ROLE_LABELS } from '#/platform/organization/types'
 export {
   OrganizationProvider,
   useOrganization,

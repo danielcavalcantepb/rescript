@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: decisions / README
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Decisões do Fundador — Fechamento Pré-Schema
 
 > Esta pasta formaliza questões abertas **antes** do schema físico.  

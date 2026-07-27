@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: design / Brand
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Marca — Rescript
 
 > Resumo executivo. **Fonte da verdade:** [`BrandIdentity.md`](./BrandIdentity.md) · guia prático: [`BrandGuidelines.md`](./BrandGuidelines.md).

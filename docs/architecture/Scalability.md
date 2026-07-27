@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / Scalability
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Escalabilidade
 
 > Como a arquitetura evolui de 10 a 100.000 empresas **sem superdimensionar** a primeira versão. Microserviços só com motivo mensurável.

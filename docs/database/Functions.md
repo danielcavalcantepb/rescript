@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / Functions
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Funções Lógicas (futuro no DB ou domínio controlado)
 
 > Sem SQL. Catálogo do que provavelmente será função/RPC/serviço transacional.

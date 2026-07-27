@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: screens / ResponsiveBehavior
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Comportamento Responsivo (por superfície)
 
 > Não assumir a mesma UX em todos os breakpoints. Ver também `docs/design/Responsive.md`.

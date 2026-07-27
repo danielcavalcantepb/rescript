@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / ValueObjects
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Value Objects
 
 > Objetos definidos pelos seus **valores**, sem identidade própria, **imutáveis**. Encapsulam regras que, de outra forma, se espalhariam pelo sistema.

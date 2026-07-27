@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Module Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: modules / InventoryInconsistencies
+Supersedes: None
+Superseded-By: README.md
+Related-Modules: All
+---
+
 # Inventory — Divergências conscientes
 
 | Tópico | Brief / docs longos | Decisão |

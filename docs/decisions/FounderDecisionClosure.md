@@ -1,3 +1,15 @@
+---
+Status: Draft
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Proposal
+Scope: decisions / FounderDecisionClosure
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Fechamento de Decisões do Fundador
 
 > Status nesta etapa: **todas PROPOSTA**.  

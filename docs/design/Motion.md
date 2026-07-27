@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: design / Motion
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Motion
 
 > Toda animação comunica **calma**. Autoridade: `BrandIdentity.md` §7.

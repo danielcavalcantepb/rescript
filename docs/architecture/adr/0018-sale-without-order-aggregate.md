@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0018-sale-without-order-aggregate
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0018 — Sale Único no MVP (sem agregado Order)
 
 **Status:** Aceito · **Reversibilidade:** média (Order pode ser extraído depois)

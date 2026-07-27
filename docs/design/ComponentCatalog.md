@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: design / ComponentCatalog
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Catálogo de Componentes
 
 > Especificação conceitual. Sem código. Cada componente: propósito, anatomia, variantes, estados, a11y, anti-uso.

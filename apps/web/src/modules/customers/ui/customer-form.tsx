@@ -1,7 +1,9 @@
-import { useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import type { CreateCustomerInput } from '#/modules/customers/domain/types'
 import { Button } from '#/components/ui/button'
+import { FormField } from '#/components/ui/form-field'
 import { Input } from '#/components/ui/input'
+import { Textarea } from '#/components/ui/textarea'
 import { ButtonLoading } from '#/platform/loading'
 import { dialogs } from '#/platform/dialogs'
 import { cn } from '#/lib/utils'
@@ -9,7 +11,7 @@ import { cn } from '#/lib/utils'
 export type CustomerFormValues = CreateCustomerInput
 
 const empty: CustomerFormValues = {
-  name: '',
+  legalName: '',
   tradeName: '',
   personType: 'PJ',
   document: '',
@@ -17,6 +19,7 @@ const empty: CustomerFormValues = {
   phone: '',
   city: '',
   notes: '',
+  activate: true,
 }
 
 export function CustomerForm({
@@ -28,6 +31,7 @@ export function CustomerForm({
   onSubmit,
   onCancel,
   readOnly,
+  lockPersonType,
 }: {
   initial?: Partial<CustomerFormValues>
   submitting?: boolean
@@ -37,6 +41,8 @@ export function CustomerForm({
   onSubmit: (values: CustomerFormValues) => void | Promise<void>
   onCancel?: () => void
   readOnly?: boolean
+  /** Person type is immutable after create. */
+  lockPersonType?: boolean
 }) {
   const baselineRef = useRef<CustomerFormValues>({ ...empty, ...initial })
   const [values, setValues] = useState<CustomerFormValues>(() => ({
@@ -77,12 +83,12 @@ export function CustomerForm({
 
   return (
     <form className="space-y-3.5" onSubmit={(e) => void handleSubmit(e)}>
-      <div className="flex gap-2">
+      <div className="flex gap-2" role="group" aria-label="Tipo de pessoa">
         {(['PJ', 'PF'] as const).map((type) => (
           <button
             key={type}
             type="button"
-            disabled={readOnly || submitting}
+            disabled={readOnly || submitting || lockPersonType}
             onClick={() => set('personType', type)}
             className={cn(
               'rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors',
@@ -96,26 +102,28 @@ export function CustomerForm({
         ))}
       </div>
 
-      <Field label="Nome *" error={fieldErrors?.name}>
+      <FormField
+        label={values.personType === 'PF' ? 'Nome *' : 'Razão social *'}
+        error={fieldErrors?.legalName}
+      >
         <Input
-          value={values.name}
+          value={values.legalName}
           disabled={readOnly || submitting}
-          onChange={(e) => set('name', e.target.value)}
-          aria-invalid={Boolean(fieldErrors?.name)}
+          onChange={(e) => set('legalName', e.target.value)}
         />
-      </Field>
+      </FormField>
 
       {values.personType === 'PJ' ? (
-        <Field label="Nome fantasia" error={fieldErrors?.tradeName}>
+        <FormField label="Nome fantasia" error={fieldErrors?.tradeName}>
           <Input
             value={values.tradeName ?? ''}
             disabled={readOnly || submitting}
             onChange={(e) => set('tradeName', e.target.value)}
           />
-        </Field>
+        </FormField>
       ) : null}
 
-      <Field
+      <FormField
         label={values.personType === 'PF' ? 'CPF' : 'CNPJ'}
         error={fieldErrors?.document}
       >
@@ -123,48 +131,63 @@ export function CustomerForm({
           value={values.document ?? ''}
           disabled={readOnly || submitting}
           onChange={(e) => set('document', e.target.value)}
-          aria-invalid={Boolean(fieldErrors?.document)}
+          inputMode="numeric"
+          autoComplete="off"
         />
-      </Field>
+      </FormField>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="E-mail" error={fieldErrors?.email}>
+        <FormField label="E-mail" error={fieldErrors?.email}>
           <Input
             type="email"
             value={values.email ?? ''}
             disabled={readOnly || submitting}
             onChange={(e) => set('email', e.target.value)}
           />
-        </Field>
-        <Field label="Telefone" error={fieldErrors?.phone}>
+        </FormField>
+        <FormField label="Telefone" error={fieldErrors?.phone}>
           <Input
             value={values.phone ?? ''}
             disabled={readOnly || submitting}
             onChange={(e) => set('phone', e.target.value)}
           />
-        </Field>
+        </FormField>
       </div>
 
-      <Field label="Cidade" error={fieldErrors?.city}>
+      <FormField label="Cidade" error={fieldErrors?.city}>
         <Input
           value={values.city ?? ''}
           disabled={readOnly || submitting}
           onChange={(e) => set('city', e.target.value)}
         />
-      </Field>
+      </FormField>
 
-      <Field label="Observações" error={fieldErrors?.notes}>
-        <textarea
+      <FormField label="Observações" error={fieldErrors?.notes}>
+        <Textarea
           value={values.notes ?? ''}
           disabled={readOnly || submitting}
           onChange={(e) => set('notes', e.target.value)}
           rows={3}
-          className="flex w-full rounded-[var(--radius-sm)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-2 text-[13px] text-[var(--color-ink)] outline-none focus:border-[var(--color-focus)]"
         />
-      </Field>
+      </FormField>
+
+      {!lockPersonType && !readOnly ? (
+        <label className="flex items-center gap-2 text-sm text-[var(--color-text-secondary)]">
+          <input
+            type="checkbox"
+            checked={Boolean(values.activate)}
+            disabled={submitting}
+            onChange={(e) => set('activate', e.target.checked)}
+          />
+          Ativar ao salvar (documento obrigatório)
+        </label>
+      ) : null}
 
       {formError ? (
-        <p className="rounded-[var(--radius-sm)] bg-[var(--color-danger-bg)] px-3 py-2 text-xs text-[var(--color-danger)]">
+        <p
+          role="alert"
+          className="rounded-[var(--radius-md)] bg-[var(--color-danger-bg)] px-3 py-2 text-xs text-[var(--color-danger)]"
+        >
           {formError}
         </p>
       ) : null}
@@ -187,27 +210,5 @@ export function CustomerForm({
         </div>
       ) : null}
     </form>
-  )
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string
-  error?: string
-  children: ReactNode
-}) {
-  return (
-    <div>
-      <label className="mb-1 block text-[13px] font-medium text-[var(--color-ink)]">
-        {label}
-      </label>
-      {children}
-      {error ? (
-        <p className="mt-1 text-xs text-[var(--color-danger)]">{error}</p>
-      ) : null}
-    </div>
   )
 }

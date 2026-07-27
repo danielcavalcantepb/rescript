@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: decisions / CoherenceGaps
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Divergências e Promessas Incompatíveis
 
 > Levantadas na revisão pré-schema. Resolução proposta via FDC — **não** aplicadas silenciosamente.

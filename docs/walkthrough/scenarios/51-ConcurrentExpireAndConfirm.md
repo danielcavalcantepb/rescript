@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: walkthrough / scenarios / 51-ConcurrentExpireAndConfirm
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Cenário 51 — Expirar Reserva vs Confirmar (Corrida) (exploratório)
 
 ## Cenário

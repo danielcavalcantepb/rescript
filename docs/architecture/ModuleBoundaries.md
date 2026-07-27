@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / ModuleBoundaries
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Fronteiras dos Módulos (Bounded Contexts)
 
 > Responsabilidades e limites de cada módulo técnico. **Não** modela colunas — estabelece o que cada domínio possui, faz e não pode fazer.

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: NorthStarMetric
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — North Star Metric
 
 > Documento oficial da métrica-guia da empresa e do framework de métricas.

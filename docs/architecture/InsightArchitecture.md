@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / InsightArchitecture
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Arquitetura de Insights (Camada Interpretar)
 
 > Como a inteligência funciona **sem depender de IA generativa**: regras determinísticas sobre dados transacionais consistentes, sempre rastreáveis.

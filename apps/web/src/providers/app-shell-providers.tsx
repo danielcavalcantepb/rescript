@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { OrganizationProvider } from '#/platform/organization/organization-context'
 import { PermissionProvider } from '#/platform/permissions'
+import { ThemeProvider } from '#/platform/theme'
 import { CommandBootstrap } from '#/platform/commands/command-bootstrap'
 import { ToastViewport } from '#/platform/toast'
 import { DialogHost } from '#/platform/dialogs'
@@ -17,15 +18,17 @@ export function AppShellProviders({ children }: { children: ReactNode }) {
         window.location.href = '/'
       }}
     >
-      <OrganizationProvider>
-        <PermissionProvider>
-          <CommandBootstrap>
-            {children}
-            <ToastViewport />
-            <DialogHost />
-          </CommandBootstrap>
-        </PermissionProvider>
-      </OrganizationProvider>
+      <ThemeProvider>
+        <OrganizationProvider>
+          <PermissionProvider>
+            <CommandBootstrap>
+              {children}
+              <ToastViewport />
+              <DialogHost />
+            </CommandBootstrap>
+          </PermissionProvider>
+        </OrganizationProvider>
+      </ThemeProvider>
     </GlobalErrorBoundary>
   )
 }

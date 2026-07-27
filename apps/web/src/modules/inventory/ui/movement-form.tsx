@@ -1,6 +1,9 @@
-import { useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent } from 'react'
 import { Button } from '#/components/ui/button'
+import { FormField } from '#/components/ui/form-field'
 import { Input } from '#/components/ui/input'
+import { Select } from '#/components/ui/select'
+import { Textarea } from '#/components/ui/textarea'
 import { ButtonLoading } from '#/platform/loading'
 import { dialogs } from '#/platform/dialogs'
 
@@ -101,13 +104,11 @@ export function MovementForm({
   return (
     <form className="space-y-3.5" onSubmit={(e) => void handleSubmit(e)}>
       {productOptions ? (
-        <Field label="Produto *" error={fieldErrors?.productId}>
-          <select
+        <FormField label="Produto *" error={fieldErrors?.productId}>
+          <Select
             value={values.productId}
             disabled={readOnly || submitting}
             onChange={(e) => set('productId', e.target.value)}
-            aria-invalid={Boolean(fieldErrors?.productId)}
-            className="flex h-9 w-full rounded-[var(--radius-sm)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 text-[13px] text-[var(--color-ink)] outline-none focus:border-[var(--color-focus)]"
           >
             <option value="">Selecione…</option>
             {productOptions.map((opt) => (
@@ -115,31 +116,30 @@ export function MovementForm({
                 {opt.label}
               </option>
             ))}
-          </select>
-        </Field>
+          </Select>
+        </FormField>
       ) : productLabel ? (
-        <Field label="Produto">
+        <FormField label="Produto">
           <p className="text-[13px] text-[var(--color-ink)]">{productLabel}</p>
-        </Field>
+        </FormField>
       ) : null}
 
       {mode === 'adjustment' ? (
-        <Field label="Direção *" error={fieldErrors?.type}>
-          <select
+        <FormField label="Direção *" error={fieldErrors?.type}>
+          <Select
             value={values.direction}
             disabled={readOnly || submitting}
             onChange={(e) =>
               set('direction', e.target.value as 'in' | 'out')
             }
-            className="flex h-9 w-full rounded-[var(--radius-sm)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 text-[13px] text-[var(--color-ink)] outline-none focus:border-[var(--color-focus)]"
           >
             <option value="in">Ajuste de entrada (+)</option>
             <option value="out">Ajuste de saída (−)</option>
-          </select>
-        </Field>
+          </Select>
+        </FormField>
       ) : null}
 
-      <Field label="Quantidade *" error={fieldErrors?.quantity}>
+      <FormField label="Quantidade *" error={fieldErrors?.quantity}>
         <Input
           type="number"
           inputMode="decimal"
@@ -148,45 +148,45 @@ export function MovementForm({
           value={values.quantity}
           disabled={readOnly || submitting}
           onChange={(e) => set('quantity', e.target.value)}
-          aria-invalid={Boolean(fieldErrors?.quantity)}
         />
-      </Field>
+      </FormField>
 
-      <Field label="Motivo *" error={fieldErrors?.reason}>
+      <FormField label="Motivo *" error={fieldErrors?.reason}>
         <Input
           value={values.reason}
           disabled={readOnly || submitting}
           onChange={(e) => set('reason', e.target.value)}
-          aria-invalid={Boolean(fieldErrors?.reason)}
           placeholder={
             mode === 'adjustment'
               ? 'Obrigatório para ajustes'
               : 'Ex.: compra, uso interno…'
           }
         />
-      </Field>
+      </FormField>
 
-      <Field label="Observações" error={fieldErrors?.notes}>
-        <textarea
+      <FormField label="Observações" error={fieldErrors?.notes}>
+        <Textarea
           value={values.notes}
           disabled={readOnly || submitting}
           onChange={(e) => set('notes', e.target.value)}
           rows={3}
-          className="flex w-full rounded-[var(--radius-sm)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] px-3 py-2 text-[13px] text-[var(--color-ink)] outline-none focus:border-[var(--color-focus)]"
         />
-      </Field>
+      </FormField>
 
-      <Field label="Data do movimento" error={fieldErrors?.occurredAt}>
+      <FormField label="Data do movimento" error={fieldErrors?.occurredAt}>
         <Input
           type="datetime-local"
           value={values.occurredAt}
           disabled={readOnly || submitting}
           onChange={(e) => set('occurredAt', e.target.value)}
         />
-      </Field>
+      </FormField>
 
       {formError ? (
-        <p className="rounded-[var(--radius-sm)] bg-[var(--color-danger-bg)] px-3 py-2 text-xs text-[var(--color-danger)]">
+        <p
+          role="alert"
+          className="rounded-[var(--radius-md)] bg-[var(--color-danger-bg)] px-3 py-2 text-xs text-[var(--color-danger)]"
+        >
           {formError}
         </p>
       ) : null}
@@ -213,27 +213,5 @@ export function MovementForm({
         </div>
       ) : null}
     </form>
-  )
-}
-
-function Field({
-  label,
-  error,
-  children,
-}: {
-  label: string
-  error?: string
-  children: ReactNode
-}) {
-  return (
-    <div>
-      <label className="mb-1 block text-[13px] font-medium text-[var(--color-ink)]">
-        {label}
-      </label>
-      {children}
-      {error ? (
-        <p className="mt-1 text-xs text-[var(--color-danger)]">{error}</p>
-      ) : null}
-    </div>
   )
 }

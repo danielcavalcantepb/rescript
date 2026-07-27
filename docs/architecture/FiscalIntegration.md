@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / FiscalIntegration
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Integração Fiscal
 
 > O fiscal é feito por **integração especializada**. Não reconstruímos a complexidade tributária brasileira internamente.

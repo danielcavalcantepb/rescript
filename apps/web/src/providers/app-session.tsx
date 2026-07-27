@@ -7,12 +7,18 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import type { AuthChangeEvent, Session } from '@supabase/supabase-js'
+import type { AuthChangeEvent, Session, User } from '@supabase/supabase-js'
 import {
-  getAuthDisplayName,
+  hasResolvedUserName,
+  resolveUserDisplayName,
+  resolveUserFirstName,
   type AuthUser,
 } from '@rescript/auth'
-import { authService, type LoginResult } from '#/lib/auth/auth-service'
+import {
+  authService,
+  type LoginResult,
+  type UpdateProfileNameResult,
+} from '#/lib/auth/auth-service'
 import { createBrowserSupabaseClient } from '#/lib/supabase/client'
 import { getContext } from '#/integrations/tanstack-query/root-provider'
 import { clearActiveOrganizationId } from '#/platform/organization/active-organization'
@@ -22,32 +28,51 @@ type AppSessionValue = {
   authUser: AuthUser | null
   isAuthenticated: boolean
   isAuthLoading: boolean
+  /** True when a real human name is missing from metadata/profile. */
+  needsDisplayName: boolean
   login: (email: string, password: string) => Promise<LoginResult>
   logout: () => Promise<void>
+  updateDisplayName: (fullName: string) => Promise<UpdateProfileNameResult>
 }
 
 const AppSessionContext = createContext<AppSessionValue | null>(null)
 
-function toAuthUser(user: {
+export function toAuthUser(user: {
   id: string
   email?: string
   user_metadata?: Record<string, unknown>
 }): AuthUser {
   const email = user.email ?? ''
+  const source = {
+    email,
+    userMetadata: user.user_metadata ?? null,
+  }
   return {
     id: user.id,
     email,
-    displayName: getAuthDisplayName({
-      email,
-      userMetadata: user.user_metadata ?? null,
-    }),
+    displayName: resolveUserDisplayName(source),
+    firstName: resolveUserFirstName(source),
   }
+}
+
+function needsName(user: User | null | undefined): boolean {
+  if (!user) return false
+  return !hasResolvedUserName({
+    email: user.email,
+    userMetadata: user.user_metadata ?? null,
+  })
 }
 
 export function AppSessionProvider({ children }: { children: ReactNode }) {
   const [authUser, setAuthUser] = useState<AuthUser | null>(null)
   const [isAuthLoading, setAuthLoading] = useState(true)
+  const [needsDisplayName, setNeedsDisplayName] = useState(false)
   const [loggingOut, setLoggingOut] = useState(false)
+
+  const applyUser = useCallback((user: User | null) => {
+    setAuthUser(user ? toAuthUser(user) : null)
+    setNeedsDisplayName(needsName(user))
+  }, [])
 
   useEffect(() => {
     const supabase = createBrowserSupabaseClient()
@@ -55,8 +80,7 @@ export function AppSessionProvider({ children }: { children: ReactNode }) {
 
     void supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       if (!active) return
-      const sessionUser = data.session?.user
-      setAuthUser(sessionUser ? toAuthUser(sessionUser) : null)
+      applyUser(data.session?.user ?? null)
       setAuthLoading(false)
     })
 
@@ -65,7 +89,7 @@ export function AppSessionProvider({ children }: { children: ReactNode }) {
     } = supabase.auth.onAuthStateChange(
       (_event: AuthChangeEvent, session: Session | null) => {
         if (!active) return
-        setAuthUser(session?.user ? toAuthUser(session.user) : null)
+        applyUser(session?.user ?? null)
         setAuthLoading(false)
       },
     )
@@ -74,7 +98,7 @@ export function AppSessionProvider({ children }: { children: ReactNode }) {
       active = false
       subscription.unsubscribe()
     }
-  }, [])
+  }, [applyUser])
 
   const login = useCallback(async (email: string, password: string) => {
     return authService.login(email, password)
@@ -86,6 +110,7 @@ export function AppSessionProvider({ children }: { children: ReactNode }) {
     try {
       await authService.logout()
       setAuthUser(null)
+      setNeedsDisplayName(false)
       clearActiveOrganizationId()
       getContext().queryClient.clear()
     } finally {
@@ -93,15 +118,34 @@ export function AppSessionProvider({ children }: { children: ReactNode }) {
     }
   }, [loggingOut])
 
+  const updateDisplayName = useCallback(async (fullName: string) => {
+    const result = await authService.updateProfileName(fullName)
+    if (result.ok) {
+      const supabase = createBrowserSupabaseClient()
+      const { data } = await supabase.auth.getUser()
+      applyUser(data.user ?? null)
+    }
+    return result
+  }, [applyUser])
+
   const value = useMemo<AppSessionValue>(
     () => ({
       authUser,
       isAuthenticated: Boolean(authUser),
       isAuthLoading,
+      needsDisplayName,
       login,
       logout,
+      updateDisplayName,
     }),
-    [authUser, isAuthLoading, login, logout],
+    [
+      authUser,
+      isAuthLoading,
+      needsDisplayName,
+      login,
+      logout,
+      updateDisplayName,
+    ],
   )
 
   return (

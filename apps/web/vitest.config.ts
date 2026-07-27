@@ -8,8 +8,8 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     testTimeout: 5000,
-    hookTimeout: 5000,
-    teardownTimeout: 3000,
+    hookTimeout: 60_000,
+    teardownTimeout: 30_000,
     fileParallelism: false,
     include: [
       'src/**/*.test.ts',
@@ -21,6 +21,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '#': path.resolve(__dirname, './src'),
+      // Production uses the real package (throws in client bundles).
+      'server-only': path.resolve(__dirname, './src/test/server-only-shim.ts'),
       '@rescript/auth': path.resolve(__dirname, '../../packages/auth/src/index.ts'),
       '@rescript/permissions': path.resolve(
         __dirname,

@@ -120,7 +120,7 @@ export function InsightAllClear() {
       <div>
         <p className="text-sm font-medium text-[var(--color-ink)]">Tudo sob controle</p>
         <p className="text-xs text-[var(--color-text-secondary)]">
-          Nenhum risco encontrado agora.
+          Sem alertas no momento — continue acompanhando a operação.
         </p>
       </div>
     </div>

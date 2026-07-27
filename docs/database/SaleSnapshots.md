@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / SaleSnapshots
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Snapshots Comerciais na Sale
 
 > Histórico da venda não muda quando cadastro muda.

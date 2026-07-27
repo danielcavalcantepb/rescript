@@ -15,10 +15,11 @@ function repo(
 }
 
 const sessionState = vi.hoisted(() => ({
-  authUser: { id: 'u1', email: 'a@test.local', displayName: 'A' } as {
+  authUser: { id: 'u1', email: 'a@test.local', displayName: 'A', firstName: 'A' } as {
     id: string
     email: string
     displayName: string
+    firstName: string
   } | null,
   isAuthenticated: true,
   isAuthLoading: false,
@@ -81,6 +82,7 @@ describe('PermissionProvider load states', () => {
       id: 'u1',
       email: 'a@test.local',
       displayName: 'A',
+      firstName: 'A',
     }
     sessionState.isAuthenticated = true
     sessionState.isAuthLoading = false
@@ -200,6 +202,7 @@ describe('RequirePermission flash prevention', () => {
       id: 'u1',
       email: 'a@test.local',
       displayName: 'A',
+      firstName: 'A',
     }
     orgState.isLoading = false
     orgState.currentOrganization = {

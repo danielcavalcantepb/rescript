@@ -1,8 +1,12 @@
-import { mapAuthError } from '@rescript/auth'
+import { mapAuthError, buildAuthNameMetadata } from '@rescript/auth'
 import { createBrowserSupabaseClient } from '#/lib/supabase/client'
 
 export type LoginResult =
   | { ok: true }
+  | { ok: false; message: string }
+
+export type UpdateProfileNameResult =
+  | { ok: true; fullName: string }
   | { ok: false; message: string }
 
 /** Client-side auth actions — no direct Supabase calls in UI components. */
@@ -31,5 +35,46 @@ export const authService = {
   async logout(): Promise<void> {
     const supabase = createBrowserSupabaseClient()
     await supabase.auth.signOut()
+  },
+
+  /**
+   * Persists human identity on the authenticated user via user_metadata.
+   * Uses supabase.auth.updateUser — never service_role, never app_metadata.
+   */
+  async updateProfileName(fullName: string): Promise<UpdateProfileNameResult> {
+    try {
+      let metadata: { full_name: string; display_name: string }
+      try {
+        metadata = buildAuthNameMetadata(fullName)
+      } catch {
+        return {
+          ok: false,
+          message: 'Informe seu nome completo (mínimo 2 caracteres).',
+        }
+      }
+
+      const supabase = createBrowserSupabaseClient()
+      const { data, error } = await supabase.auth.updateUser({
+        data: metadata,
+      })
+
+      if (error) {
+        return { ok: false, message: mapAuthError(error) }
+      }
+
+      if (!data.user) {
+        return {
+          ok: false,
+          message: 'Não foi possível salvar seu nome. Tente novamente.',
+        }
+      }
+
+      return { ok: true, fullName: metadata.full_name }
+    } catch {
+      return {
+        ok: false,
+        message: 'Não foi possível salvar seu nome. Tente novamente.',
+      }
+    }
   },
 }

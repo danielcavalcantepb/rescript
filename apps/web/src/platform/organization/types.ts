@@ -22,6 +22,17 @@ export type Membership = {
   isOwner: boolean
 }
 
+/** Human labels for membership roles (profile chrome). */
+export const MEMBERSHIP_ROLE_LABELS: Record<MembershipRole, string> = {
+  owner: 'Proprietário',
+  admin: 'Administrador',
+  manager: 'Gerente',
+  seller: 'Vendedor',
+  inventory: 'Estoque',
+  finance: 'Financeiro',
+  viewer: 'Visualizador',
+}
+
 export type CreateOrganizationResult = {
   organization: Organization
   membership: Membership

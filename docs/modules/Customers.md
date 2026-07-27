@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Module Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: modules / Customers
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Módulo Customers
 
 Bounded context de referência do Rescript. Padrão para Products, Inventory, Sales e Finance.

@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: Sprint0Delivery
+Supersedes: None
+Superseded-By: README.md
+Related-Modules: All
+---
+
 # Sprint 0 — Entrega (Fase 1 bootstrap)
 
 ## Como rodar

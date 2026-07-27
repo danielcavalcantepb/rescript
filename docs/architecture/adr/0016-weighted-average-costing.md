@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0016-weighted-average-costing
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0016 — Custeio por Custo Médio Ponderado
 
 **Status:** Aceito · **Reversibilidade:** média (método pode evoluir; histórico de custo aplicado é permanente)

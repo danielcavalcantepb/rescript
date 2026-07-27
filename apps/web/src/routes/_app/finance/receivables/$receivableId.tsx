@@ -1,0 +1,1 @@
+import{createFileRoute}from'@tanstack/react-router';import{ReceivableDetailPage}from'#/modules/receivables/ui/pages/receivable-detail-page';export const Route=createFileRoute('/_app/finance/receivables/$receivableId')({component:C});function C(){return <ReceivableDetailPage id={Route.useParams().receivableId}/>}

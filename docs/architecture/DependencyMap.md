@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / DependencyMap
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Mapa de Dependências
 
 > Quais módulos podem depender de quais. Dependências proibidas são tão importantes quanto as permitidas.

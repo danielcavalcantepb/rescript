@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / RepositoryStrategy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Estratégia de Repositório
 
 > Aplicação única organizada por módulos **vs.** monorepo. Escolha proporcional ao tamanho atual da equipe.

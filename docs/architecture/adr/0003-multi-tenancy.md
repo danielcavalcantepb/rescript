@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0003-multi-tenancy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0003 — Multi-Tenancy (RLS + organization_id)
 
 **Status:** Aceito · **Reversibilidade:** BAIXA (cara de mudar) — decisão estrutural

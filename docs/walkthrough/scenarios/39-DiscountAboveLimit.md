@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: walkthrough / scenarios / 39-DiscountAboveLimit
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Cenário 39 — Desconto Acima do Limite
 
 ## Cenário

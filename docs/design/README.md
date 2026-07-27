@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: design / README
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Design de Produto
 
 > Especificação da experiência e da **identidade visual oficial**.  

@@ -87,17 +87,19 @@ export function CommandPalette({
         aria-label="Fechar busca"
         onClick={() => onOpenChange(false)}
       />
-      <div className="relative mx-auto mt-[12vh] w-[min(92vw,560px)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] shadow-[var(--shadow-overlay)]">
-        <div className="flex items-center gap-2 border-b border-[var(--color-border-soft)] px-3 py-2">
+      <div className="relative mx-auto mt-[12vh] w-[min(92vw,560px)] overflow-hidden rounded-[var(--radius-lg)] border border-[var(--color-border-soft)] bg-[var(--color-surface-elevated)] shadow-[var(--shadow-overlay)] animate-[auth-fade-up_var(--motion-base)_var(--ease-out)]">
+        <div className="flex items-center gap-2 border-b border-[var(--color-border-soft)] px-3 py-2.5">
           <RescriptLogo variant="palette" />
-          <span className="text-[11px] text-[var(--color-muted)]">Rescript</span>
+          <span className="text-[11px] font-medium tracking-wide text-[var(--color-muted)] uppercase">
+            Rescript
+          </span>
         </div>
         <Command label="Command palette" shouldFilter={false}>
           <Command.Input
             value={query}
             onValueChange={setQuery}
             placeholder="Buscar ou digitar um comando…"
-            className="w-full border-b border-[var(--color-border-soft)] px-4 py-3 text-sm outline-none"
+            className="w-full border-b border-[var(--color-border-soft)] bg-transparent px-4 py-3.5 text-sm text-[var(--color-ink)] outline-none placeholder:text-[var(--color-muted)] focus-visible:bg-[var(--color-hover)]/40"
           />
           <Command.List className="max-h-80 overflow-auto p-2">
             <Command.Empty className="px-3 py-6 text-sm text-[var(--color-text-secondary)]">
@@ -147,6 +149,7 @@ function CommandItem({
       onSelect={onSelect}
       className={cn(
         'flex cursor-pointer items-center gap-2 rounded-[var(--radius-sm)] px-2 py-2 text-sm text-[var(--color-ink)]',
+        'transition-colors duration-[var(--motion-fast)] ease-[var(--ease-out)]',
         'aria-selected:bg-[var(--color-primary-soft)]',
       )}
     >

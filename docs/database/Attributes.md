@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / Attributes
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Atributos Lógicos
 
 > Tipos: identificador · texto · decimal · inteiro · boolean · data · instante · enum · money · quantity · json · referência · hash.  

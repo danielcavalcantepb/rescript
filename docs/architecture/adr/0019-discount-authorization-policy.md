@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0019-discount-authorization-policy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0019 — Política de Autorização de Desconto
 
 **Status:** Aceito · **Reversibilidade:** alta

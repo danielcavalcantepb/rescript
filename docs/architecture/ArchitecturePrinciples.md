@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / ArchitecturePrinciples
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Princípios de Arquitetura
 
 > Os princípios técnicos que governam toda decisão de arquitetura e implementação.

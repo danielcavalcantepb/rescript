@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: MissionVisionValues
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Missão, Visão e Valores
 
 > Documento oficial de identidade da empresa.

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Queries
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Queries (Consultas)
 
 > Uma **query** é a intenção de **ler** sem efeito colateral. Consultas alimentam telas, a Central de Decisão e os insights. Nunca mudam estado.

@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: Roadmap
+Supersedes: None
+Superseded-By: 07_ROADMAP.md
+Related-Modules: All
+---
+
 # Rescript — Roadmap (Revisado)
 
 > Documento oficial de roadmap estratégico, dividido em versões: **MVP · V1 · V2 · V3**.

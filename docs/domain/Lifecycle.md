@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Lifecycle
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Ciclos de Vida
 
 > Como cada entidade **nasce, vive e termina** — do ponto de vista do negócio. Complementa `StateMachines.md` (transições) e `Entities.md` (fichas).

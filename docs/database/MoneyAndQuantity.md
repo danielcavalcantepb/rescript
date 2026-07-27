@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / MoneyAndQuantity
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Money e Quantity — Modelo Lógico
 
 > FD-06, FD-07. Sem float binário. Implementação física **não** fechada (OQ-05).

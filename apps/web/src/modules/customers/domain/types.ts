@@ -1,12 +1,19 @@
-import type { CustomerPersonType, CustomerStatus } from '@rescript/database'
+import type { PersonType } from '#/modules/customers/domain/document'
 
-/** Application model — never expose raw DB rows to UI. */
+export type CustomerStatus = 'draft' | 'active' | 'inactive' | 'archived'
+export type CustomerPersonType = PersonType
+
+export type ContactStatus = 'active' | 'inactive' | 'archived'
+export type AddressKind = 'billing' | 'shipping' | 'other'
+export type AddressStatus = 'active' | 'inactive' | 'archived'
+
+/** Aggregate root — PF or PJ, never both; type immutable after create. */
 export type Customer = {
   id: string
   organizationId: string
-  name: string
-  tradeName: string | null
   personType: CustomerPersonType
+  legalName: string
+  tradeName: string | null
   document: string | null
   email: string | null
   phone: string | null
@@ -18,15 +25,93 @@ export type Customer = {
   updatedAt: string
 }
 
-export type CustomerListItem = Pick<
-  Customer,
-  'id' | 'name' | 'tradeName' | 'document' | 'city' | 'status' | 'updatedAt'
->
+/** @deprecated use legalName — kept for gradual UI migration */
+export type CustomerLegacyName = Customer & { name: string }
+
+export type CustomerListItem = {
+  id: string
+  legalName: string
+  tradeName: string | null
+  document: string | null
+  email: string | null
+  phone: string | null
+  status: CustomerStatus
+  updatedAt: string
+}
+
+export type CustomerSearchHit = CustomerListItem
+
+export type CustomerContact = {
+  id: string
+  organizationId: string
+  customerId: string
+  name: string
+  roleTitle: string | null
+  email: string | null
+  phone: string | null
+  isPrimary: boolean
+  status: ContactStatus
+  archivedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type CustomerAddress = {
+  id: string
+  organizationId: string
+  customerId: string
+  kind: AddressKind
+  postalCode: string
+  street: string
+  number: string | null
+  complement: string | null
+  district: string | null
+  city: string
+  state: string
+  country: string
+  isPrimary: boolean
+  status: AddressStatus
+  archivedAt: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export type CustomerHistoryEntry = {
+  id: string
+  organizationId: string
+  customerId: string
+  action: string
+  fieldName: string | null
+  oldValue: string | null
+  newValue: string | null
+  reason: string | null
+  actorUserId: string
+  actorIp: string | null
+  createdAt: string
+}
+
+export type CustomerSnapshot = {
+  customer: Customer
+  contacts: CustomerContact[]
+  addresses: CustomerAddress[]
+}
 
 export type CreateCustomerInput = {
-  name: string
-  tradeName?: string | null
   personType: CustomerPersonType
+  legalName: string
+  tradeName?: string | null
+  document?: string | null
+  email?: string | null
+  phone?: string | null
+  city?: string | null
+  notes?: string | null
+  /** When true and document valid → create as active; else draft. */
+  activate?: boolean
+}
+
+export type UpdateCustomerInput = {
+  legalName?: string
+  tradeName?: string | null
   document?: string | null
   email?: string | null
   phone?: string | null
@@ -34,12 +119,55 @@ export type CreateCustomerInput = {
   notes?: string | null
 }
 
-export type UpdateCustomerInput = Partial<CreateCustomerInput>
+export type CreateContactInput = {
+  customerId: string
+  name: string
+  roleTitle?: string | null
+  email?: string | null
+  phone?: string | null
+  isPrimary?: boolean
+}
+
+export type UpdateContactInput = {
+  name?: string
+  roleTitle?: string | null
+  email?: string | null
+  phone?: string | null
+  isPrimary?: boolean
+  status?: Exclude<ContactStatus, 'archived'>
+}
+
+export type CreateAddressInput = {
+  customerId: string
+  kind: AddressKind
+  postalCode: string
+  street: string
+  number?: string | null
+  complement?: string | null
+  district?: string | null
+  city: string
+  state: string
+  country?: string
+  isPrimary?: boolean
+}
+
+export type UpdateAddressInput = {
+  kind?: AddressKind
+  postalCode?: string
+  street?: string
+  number?: string | null
+  complement?: string | null
+  district?: string | null
+  city?: string
+  state?: string
+  country?: string
+  isPrimary?: boolean
+  status?: Exclude<AddressStatus, 'archived'>
+}
 
 export type ListCustomersQuery = {
   q?: string
   status?: CustomerStatus | 'all'
-  /** cursor = updated_at ISO + id for stable pagination */
   cursor?: string | null
   limit?: number
   sort?: 'name_asc' | 'updated_desc'
@@ -50,31 +178,8 @@ export type ListCustomersResult = {
   nextCursor: string | null
 }
 
-export type CustomerRepository = {
-  list(
-    organizationId: string,
-    query: ListCustomersQuery,
-  ): Promise<ListCustomersResult>
-  getById(organizationId: string, id: string): Promise<Customer | null>
-  create(
-    organizationId: string,
-    userId: string,
-    input: CreateCustomerInput,
-  ): Promise<Customer>
-  update(
-    organizationId: string,
-    userId: string,
-    id: string,
-    input: UpdateCustomerInput,
-  ): Promise<Customer>
-  archive(
-    organizationId: string,
-    userId: string,
-    id: string,
-  ): Promise<Customer>
-  restore(
-    organizationId: string,
-    userId: string,
-    id: string,
-  ): Promise<Customer>
+export type SearchCustomersQuery = {
+  q: string
+  status?: CustomerStatus | 'all'
+  limit?: number
 }

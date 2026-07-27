@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: Activation
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Ativação
 
 > Documento oficial da estratégia de ativação (o momento em que o cliente percebe valor real).

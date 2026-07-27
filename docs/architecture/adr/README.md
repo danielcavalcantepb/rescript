@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / adr / README
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Architecture Decision Records (ADRs)
 
 > Registro formal das decisões arquiteturais mais importantes do Rescript. Cada ADR captura contexto, alternativas, decisão, consequências, riscos e gatilhos de revisão.
@@ -32,7 +44,15 @@ Cada ADR contém: Contexto · Problema · Alternativas · Decisão · Justificat
 | [0017](0017-inventory-reservation-mvp.md) | Reserva de estoque no MVP | Média |
 | [0018](0018-sale-without-order-aggregate.md) | Sale único (sem Order no MVP) | Média |
 | [0019](0019-discount-authorization-policy.md) | Política de autorização de desconto | Alta |
+| [0020](0020-product-variant-canonical-catalog.md) | Product/Variant canônico do Catalog | **Baixa (cara de mudar)** |
+| [0021](0021-price-lists-single-source.md) | Price Lists como fonte única de preço | **Baixa (cara de mudar)** |
+| [0022](0022-generic-attributes-variant-axes.md) | Atributos genéricos + Variant Axes | Média |
+| [0023](0023-inventory-product-to-variant-cutover.md) | Cutover estoque Product→Variant (sem dual-write) | **Baixa (cara de mudar)** |
+| [0024](0024-operational-search-projection.md) | Busca operacional por projeção | Média |
+| [0025](0025-supplier-outside-catalog.md) | Supplier fora do Catalog | Média |
 
 > **Reversibilidade baixa** = decisão cara de mudar depois; por isso é fixada agora com cuidado. **Alta** = pode evoluir sem grande custo.
 >
 > Decisões do fundador que embasam ADRs 0016–0019: `docs/domain/FounderDecisions.md`.
+>
+> ADRs 0020–0025 formalizam o Catalog (`CatalogDomainStrategy.md`). Governança: `EngineeringGovernance.md`, `DomainContracts.md`, `DependencyRules.md`, `ArchitectureDecisionLog.md`.

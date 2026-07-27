@@ -12,6 +12,7 @@ import { supabaseOrganizationRepository } from '#/platform/organization/supabase
 import type {
   CreateOrganizationResult,
   CurrentOrganization,
+  Membership,
   Organization,
   OrganizationRepository,
 } from '#/platform/organization/types'
@@ -25,6 +26,8 @@ import { logger } from '#/platform/services/logger'
 type OrganizationContextValue = {
   organizations: Organization[]
   currentOrganization: CurrentOrganization
+  /** Active membership for the current organization (role / cargo). */
+  currentMembership: Membership | null
   isLoading: boolean
   error: string | null
   switchOrganization: (organizationId: string) => Promise<void>
@@ -45,6 +48,9 @@ export function OrganizationProvider({
   const [organizations, setOrganizations] = useState<Organization[]>([])
   const [currentOrganization, setCurrentOrganization] =
     useState<CurrentOrganization>(null)
+  const [currentMembership, setCurrentMembership] = useState<Membership | null>(
+    null,
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
@@ -52,6 +58,7 @@ export function OrganizationProvider({
     if (!isAuthenticated || !authUser) {
       setOrganizations([])
       setCurrentOrganization(null)
+      setCurrentMembership(null)
       setIsLoading(false)
       setError(null)
       return
@@ -60,12 +67,18 @@ export function OrganizationProvider({
     setIsLoading(true)
     setError(null)
     try {
-      const [list, current] = await Promise.all([
+      const [list, current, memberships] = await Promise.all([
         repository.listForUser(authUser.id),
         repository.getCurrent(authUser.id),
+        repository.listMemberships(authUser.id),
       ])
       setOrganizations(list)
       setCurrentOrganization(current)
+      setCurrentMembership(
+        current
+          ? (memberships.find((m) => m.organizationId === current.id) ?? null)
+          : null,
+      )
     } catch (err) {
       logger.error('Failed to load organizations', {
         message: err instanceof Error ? err.message : String(err),
@@ -73,6 +86,7 @@ export function OrganizationProvider({
       setError('Não foi possível carregar suas organizações.')
       setOrganizations([])
       setCurrentOrganization(null)
+      setCurrentMembership(null)
     } finally {
       setIsLoading(false)
     }
@@ -88,6 +102,10 @@ export function OrganizationProvider({
       const previousId = currentOrganization?.id
       const next = await repository.setCurrent(authUser.id, organizationId)
       setCurrentOrganization(next)
+      const memberships = await repository.listMemberships(authUser.id)
+      setCurrentMembership(
+        memberships.find((m) => m.organizationId === next.id) ?? null,
+      )
 
       const { queryClient } = getContext()
       if (previousId) {
@@ -120,6 +138,7 @@ export function OrganizationProvider({
     () => ({
       organizations,
       currentOrganization,
+      currentMembership,
       isLoading,
       error,
       switchOrganization,
@@ -129,6 +148,7 @@ export function OrganizationProvider({
     [
       organizations,
       currentOrganization,
+      currentMembership,
       isLoading,
       error,
       switchOrganization,

@@ -8,8 +8,12 @@ type LogoVariant =
   | 'auth'
   | 'palette'
 
+const WORDMARK = '/brand/rescript-wordmark.png'
+const MARK = '/brand/mark.png'
+
 /**
  * Official Rescript brand assets only — never reconstruct the wordmark in text.
+ * Assets are transparent PNGs (no background plate).
  */
 export function RescriptLogo({
   variant = 'wordmark',
@@ -25,11 +29,11 @@ export function RescriptLogo({
   ) {
     return (
       <img
-        src="/brand/mark.svg"
+        src={MARK}
         alt="Rescript"
         className={cn(
           variant === 'sidebar-collapsed' ? 'size-8' : 'size-5',
-          'select-none',
+          'select-none object-contain',
           className,
         )}
         draggable={false}
@@ -37,25 +41,32 @@ export function RescriptLogo({
     )
   }
 
-  // Sidebar: prominent but balanced — readable without eating the nav.
   if (variant === 'sidebar') {
     return (
       <img
-        src="/brand/rescript-wordmark.png"
+        src={WORDMARK}
         alt="Rescript"
-        className={cn('block h-9 w-auto max-w-full select-none', className)}
+        className={cn(
+          'block h-8 w-auto max-w-full select-none object-contain object-left',
+          className,
+        )}
         draggable={false}
       />
     )
   }
 
-  const sizeClass = variant === 'auth' ? 'h-10 w-auto' : 'h-7 w-auto'
+  const sizeClass =
+    variant === 'auth' ? 'h-9 w-auto sm:h-10' : 'h-7 w-auto'
 
   return (
     <img
-      src="/brand/rescript-wordmark.png"
+      src={WORDMARK}
       alt="Rescript"
-      className={cn(sizeClass, 'object-contain object-left select-none', className)}
+      className={cn(
+        sizeClass,
+        'object-contain object-left select-none',
+        className,
+      )}
       draggable={false}
     />
   )

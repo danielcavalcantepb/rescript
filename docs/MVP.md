@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: MVP
+Supersedes: None
+Superseded-By: MODULE_STATUS.md
+Related-Modules: All
+---
+
 # Rescript — Escopo do MVP
 
 > Documento oficial de escopo do Produto Mínimo Viável.

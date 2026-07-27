@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / BusinessPolicies
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Políticas e Regras de Negócio
 
 > Política = regra configurável. Invariante = verdade não negociável (`Invariants.md`).

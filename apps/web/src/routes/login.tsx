@@ -26,7 +26,7 @@ export const Route = createFileRoute('/login')({
     const { user } = await fetchAuthSession()
     if (user) {
       throw redirect({
-        href: sanitizeRedirectPath(search.redirect, '/'),
+        href: sanitizeRedirectPath(search.redirect, '/app'),
       })
     }
   },
@@ -89,7 +89,7 @@ function LoginPage() {
         setFormError(result.message)
         return
       }
-      await navigate({ href: sanitizeRedirectPath(redirectTo, '/') })
+      await navigate({ href: sanitizeRedirectPath(redirectTo, '/app') })
     } finally {
       setSubmitting(false)
     }
@@ -97,41 +97,44 @@ function LoginPage() {
 
   const tabClass = (active: boolean) =>
     cn(
-      'rounded-[var(--radius-sm)] px-3 py-2 text-[13px] font-medium transition-colors duration-[var(--motion-base)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]',
+      'rounded-[var(--radius-sm)] px-3 py-2.5 text-[13px] font-medium transition-all duration-[var(--motion-base)] ease-[var(--ease-out)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-canvas)]',
       active
-        ? 'bg-[var(--color-primary)] text-white shadow-[var(--shadow-sm)]'
+        ? 'bg-[var(--color-surface)] text-[var(--color-ink)] shadow-[var(--shadow-sm)] ring-1 ring-[var(--color-border-soft)]'
         : 'text-[var(--color-text-secondary)] hover:text-[var(--color-ink)]',
     )
 
+  const fieldClass =
+    'auth-input h-11 rounded-[var(--radius-md)] border-[var(--color-border)] bg-[var(--color-surface)] text-[14px] text-[var(--color-ink)] shadow-[var(--shadow-sm)] placeholder:text-[var(--color-muted)] focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]/25'
+
   return (
     <div className="auth-experience flex min-h-screen bg-[var(--color-canvas)] text-[var(--color-ink)]">
-      <section className="relative flex w-full flex-col justify-center px-6 py-12 sm:px-10 lg:w-[45%] lg:px-14 xl:px-20">
-        {/* Ambient brand glow (mobile/tablet identity accent) */}
+      {/* Left — light authentication universe */}
+      <section className="relative flex w-full flex-col justify-center px-6 py-14 sm:px-10 lg:w-[45%] lg:px-14 xl:px-20">
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-[radial-gradient(ellipse_at_top,var(--auth-glow),transparent_70%)] lg:hidden"
+          className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-[radial-gradient(ellipse_at_top,var(--auth-glow),transparent_70%)] lg:hidden"
           aria-hidden
         />
 
         <div className="auth-form-enter relative mx-auto w-full max-w-[380px]">
-          <div className="inline-flex items-center rounded-[var(--radius-md)] bg-white px-3.5 py-2.5 shadow-[var(--shadow-sm)]">
-            <RescriptLogo variant="auth" />
+          <div className="inline-flex">
+            <RescriptLogo variant="auth" className="h-11 sm:h-12" />
           </div>
 
-          <h1 className="mt-10 text-[1.75rem] leading-[1.15] font-semibold tracking-tight text-[var(--color-ink)] text-balance">
+          <h1 className="mt-12 text-[1.75rem] leading-[1.15] font-semibold tracking-tight text-[var(--color-ink)] text-balance">
             O centro operacional
             <br />
-            <span className="text-[var(--color-text-secondary)]">
+            <span className="font-medium text-[var(--color-text-secondary)]">
               da sua empresa.
             </span>
           </h1>
-          <p className="mt-3 text-[14px] leading-relaxed text-[var(--color-text-secondary)] text-pretty">
+          <p className="mt-3.5 text-[14px] leading-relaxed text-[var(--color-text-secondary)] text-pretty">
             Quando a operação se espalha, a clareza se perde. O Rescript reúne o
             negócio em um só lugar — para organizar, controlar e crescer com
             confiança.
           </p>
 
           <div
-            className="mt-9 grid grid-cols-2 gap-1 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] p-1"
+            className="mt-10 grid grid-cols-2 gap-1 rounded-[var(--radius-md)] bg-[var(--color-surface-alt)] p-1"
             role="tablist"
             aria-label="Método de autenticação"
           >
@@ -173,7 +176,7 @@ function LoginPage() {
             aria-labelledby={
               method === 'password' ? 'auth-tab-password' : 'auth-tab-magic'
             }
-            className="mt-7 space-y-5"
+            className="mt-8 space-y-5"
             onSubmit={(e) => void onSubmit(e)}
             noValidate
           >
@@ -193,7 +196,7 @@ function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 aria-invalid={Boolean(emailError)}
                 aria-describedby={emailError ? 'email-error' : undefined}
-                className="h-11 rounded-[var(--radius-md)] border-[var(--color-border)] bg-[var(--color-surface)] text-[14px] text-[var(--color-ink)] transition-colors focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
+                className={fieldClass}
                 placeholder="voce@empresa.com"
               />
               {emailError ? (
@@ -218,7 +221,7 @@ function LoginPage() {
                   </label>
                   <button
                     type="button"
-                    className="rounded text-[12px] text-[var(--color-text-secondary)] transition-colors hover:text-[var(--color-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
+                    className="rounded text-[12px] font-medium text-[var(--color-text-secondary)] transition-colors duration-[var(--motion-fast)] hover:text-[var(--color-primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
                     onClick={() =>
                       setFormError('Recuperação de senha — em breve.')
                     }
@@ -234,7 +237,7 @@ function LoginPage() {
                     value={password}
                     disabled={submitting}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-11 rounded-[var(--radius-md)] border-[var(--color-border)] bg-[var(--color-surface)] pr-11 text-[14px] text-[var(--color-ink)] transition-colors focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
+                    className={cn(fieldClass, 'pr-11')}
                     aria-invalid={Boolean(passwordError)}
                     aria-describedby={
                       passwordError ? 'password-error' : undefined
@@ -242,7 +245,7 @@ function LoginPage() {
                   />
                   <button
                     type="button"
-                    className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1.5 text-[var(--color-muted)] transition-colors hover:text-[var(--color-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
+                    className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1.5 text-[var(--color-muted)] transition-colors duration-[var(--motion-fast)] hover:text-[var(--color-ink)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
                     onClick={() => setShowPassword((v) => !v)}
                     aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                   >
@@ -264,7 +267,7 @@ function LoginPage() {
                 ) : null}
               </div>
             ) : (
-              <p className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3.5 py-3 text-[12px] leading-relaxed text-[var(--color-text-secondary)]">
+              <p className="rounded-[var(--radius-md)] border border-[var(--color-border-soft)] bg-[var(--color-surface-alt)] px-3.5 py-3 text-[12px] leading-relaxed text-[var(--color-text-secondary)]">
                 Enviaremos um link seguro para o seu e-mail. A integração com o
                 provedor será disponibilizada em breve — o login por senha
                 permanece disponível.
@@ -277,14 +280,14 @@ function LoginPage() {
                 checked={rememberSession}
                 onChange={(e) => setRememberSession(e.target.checked)}
                 disabled={submitting}
-                className="size-4 rounded border-[var(--color-border)] bg-[var(--color-surface)] accent-[var(--color-accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
+                className="size-4 rounded border-[var(--color-border)] bg-[var(--color-surface)] accent-[var(--color-primary)] transition-shadow focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
               />
               Lembrar sessão
             </label>
 
             {formError ? (
               <p
-                className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/30 bg-[var(--color-danger-bg)] px-3.5 py-2.5 text-xs text-[var(--color-danger)]"
+                className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/25 bg-[var(--color-danger-bg)] px-3.5 py-2.5 text-xs text-[var(--color-danger)]"
                 role="alert"
               >
                 {formError}
@@ -293,7 +296,7 @@ function LoginPage() {
 
             <Button
               type="submit"
-              className="h-11 w-full text-[14px] shadow-[var(--shadow-sm)]"
+              className="h-11 w-full text-[14px] shadow-[var(--shadow-sm)] transition-transform duration-[var(--motion-fast)] active:scale-[0.99]"
               disabled={submitting}
             >
               {submitting ? (
@@ -306,12 +309,13 @@ function LoginPage() {
             </Button>
           </form>
 
-          <p className="mt-12 text-[11px] tracking-wide text-[var(--color-muted)]">
+          <p className="mt-14 text-[11px] tracking-wide text-[var(--color-muted)]">
             © Rescript
           </p>
         </div>
       </section>
 
+      {/* Right — deep green institutional universe */}
       <InstitutionalPanel className="lg:w-[55%]" />
     </div>
   )

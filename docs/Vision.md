@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: Vision
+Supersedes: None
+Superseded-By: 00_PRODUCT_VISION.md
+Related-Modules: All
+---
+
 # Rescript — Visão do Produto
 
 > Documento oficial de visão estratégica.

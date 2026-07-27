@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / UseCases
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Casos de Uso
 
 > Descrição detalhada dos casos de uso do domínio, em linguagem de negócio. Cada um mostra ator, fluxo, regras aplicadas, agregados/serviços, eventos e exceções.

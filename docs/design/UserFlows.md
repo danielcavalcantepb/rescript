@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: design / UserFlows
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Fluxos de Usuário
 
 > Fluxos conceituais alinhados ao domínio. Domínio vence se houver conflito.

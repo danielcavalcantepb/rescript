@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / AuditArchitecture
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Arquitetura de Auditoria
 
 > Trilha imutável de ações sensíveis: quem, quando, o quê, em qual contexto. Base da confiança e da responsabilização.

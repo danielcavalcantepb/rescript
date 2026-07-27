@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / FiscalBoundaryModel
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Fronteira Lógica — Fiscal (V1)
 
 > Sem regras tributárias no núcleo. Adapter substituível (ADR-0011).

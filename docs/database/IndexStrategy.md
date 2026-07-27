@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / IndexStrategy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Estratégia de Índices Conceituais
 
 > Sem CREATE INDEX. Priorizar (organization_id, …) em tabelas tenantadas.

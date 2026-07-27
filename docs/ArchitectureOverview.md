@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: ArchitectureOverview
+Supersedes: None
+Superseded-By: 01_PROJECT_ARCHITECTURE.md
+Related-Modules: All
+---
+
 # Rescript — Visão Geral de Arquitetura
 
 > Documento oficial de princípios e decisões arquiteturais de alto nível.

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Product Design
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: screens / README
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — UX Blueprint (Telas)
 
 > Especificação funcional completa de cada tela **antes da implementação**.

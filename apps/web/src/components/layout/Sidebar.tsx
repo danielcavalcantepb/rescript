@@ -5,15 +5,20 @@ import { icons } from '#/platform/icons/catalog'
 import { cn } from '#/lib/utils'
 
 const links = [
-  { to: '/', label: 'Central', icon: icons.central },
-  { to: '/clientes', label: 'Clientes', icon: icons.customer },
-  { to: '/produtos', label: 'Produtos', icon: icons.product },
-  { to: '/estoque', label: 'Estoque', icon: icons.inventory },
-  { to: '/vendas', label: 'Vendas', icon: icons.sale },
+  { to: '/app', label: 'Centro de Comando', icon: icons.central },
+  { to: '/catalog/products', label: 'Produtos', icon: icons.product },
+  { to: '/crm/customers', label: 'Clientes', icon: icons.customer },
+  { to: '/procurement/purchases', label: 'Compras', icon: icons.product },
+  { to: '/procurement/suppliers', label: 'Fornecedores', icon: icons.customer },
+  { to: '/procurement/receiving', label: 'Recebimentos', icon: icons.inventory },
+  { to: '/catalog/inventory/items', label: 'Estoque', icon: icons.inventory },
+  { to: '/finance/accounts-payable', label: 'Contas a pagar', icon: icons.finance },
+  { to: '/finance/payments', label: 'Pagamentos', icon: icons.finance },
+  { to: '/finance/receivables', label: 'Contas a receber', icon: icons.finance },
+  { to: '/sales/orders', label: 'Vendas', icon: icons.sale },
 ] as const
 
 const soon = [
-  { key: 'financeiro', label: 'Financeiro', icon: icons.finance },
   { key: 'importacoes', label: 'Importar', icon: icons.import },
   { key: 'config', label: 'Configurações', icon: icons.settings },
 ] as const
@@ -34,21 +39,23 @@ export function Sidebar({
   return (
     <aside
       className={cn(
-        'flex h-full flex-col border-r border-[var(--color-border-soft)] bg-[var(--color-surface)] transition-[width] duration-[var(--motion-base)]',
+        'flex h-full flex-col border-r border-[var(--color-border-soft)] bg-[var(--color-surface)] transition-[width] duration-[var(--motion-base)] ease-[var(--ease-out)]',
         collapsed ? 'w-16' : 'w-60',
       )}
     >
       <div
         className={cn(
           'border-b border-[var(--color-border-soft)]',
-          collapsed ? 'flex flex-col items-center gap-2 px-2 py-4' : 'flex flex-col px-4 pt-4 pb-0',
+          collapsed
+            ? 'flex flex-col items-center gap-2 px-2 py-4'
+            : 'flex flex-col px-4 pt-4 pb-0',
         )}
       >
         <Link
-          to="/"
+          to="/app"
           onClick={onNavigate}
           className={cn(
-            'block min-w-0',
+            'block min-w-0 rounded-[var(--radius-sm)] transition-opacity duration-[var(--motion-fast)] hover:opacity-[var(--opacity-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]',
             collapsed ? 'flex justify-center' : 'w-full',
           )}
           aria-label="Rescript — Central"
@@ -58,11 +65,14 @@ export function Sidebar({
         <OrganizationSwitcher collapsed={collapsed} />
       </div>
 
-      <nav className={cn('flex-1 space-y-0.5', collapsed ? 'p-1.5' : 'p-2 pt-2.5')}>
+      <nav
+        className={cn('flex-1 space-y-0.5', collapsed ? 'p-1.5' : 'p-2 pt-2.5')}
+        aria-label="Navegação principal"
+      >
         {links.map((item) => {
           const active =
-            item.to === '/'
-              ? pathname === '/'
+            item.to === '/app'
+              ? pathname === '/app'
               : pathname === item.to || pathname.startsWith(`${item.to}/`)
           const Icon = item.icon
           return (
@@ -71,12 +81,16 @@ export function Sidebar({
               to={item.to}
               onClick={onNavigate}
               title={collapsed ? item.label : undefined}
+              aria-current={active ? 'page' : undefined}
               className={cn(
-                'flex items-center rounded-[var(--radius-md)] text-[13px] transition-colors duration-[var(--motion-fast)]',
+                'flex items-center rounded-[var(--radius-md)] text-[13px]',
+                'transition-[color,background-color,transform] duration-[var(--motion-fast)] ease-[var(--ease-out)]',
+                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)] focus-visible:ring-offset-1 focus-visible:ring-offset-[var(--color-surface)]',
+                'active:scale-[0.99]',
                 collapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-2.5 py-2',
                 active
-                  ? 'bg-[var(--color-primary-soft)] font-medium text-[var(--color-primary)]'
-                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)]',
+                  ? 'bg-[var(--color-primary-soft)] font-medium text-[var(--color-primary)] shadow-[var(--shadow-sm)]'
+                  : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-hover)] hover:text-[var(--color-ink)]',
               )}
             >
               <Icon className="size-3.5 shrink-0" strokeWidth={1.5} />
@@ -90,6 +104,7 @@ export function Sidebar({
             <div
               key={item.key}
               title={collapsed ? `${item.label} (em breve)` : 'Em breve'}
+              aria-disabled="true"
               className={cn(
                 'flex items-center rounded-[var(--radius-md)] text-[13px] text-[var(--color-muted)] opacity-[var(--opacity-disabled)]',
                 collapsed ? 'justify-center px-0 py-2.5' : 'gap-2.5 px-2.5 py-2',
@@ -107,10 +122,14 @@ export function Sidebar({
           type="button"
           onClick={onToggleCollapse}
           className={cn(
-            'hidden items-center border-t border-[var(--color-border-soft)] text-[var(--color-muted)] transition-colors hover:bg-[var(--color-canvas)] hover:text-[var(--color-ink)] lg:flex',
+            'hidden items-center border-t border-[var(--color-border-soft)] text-[var(--color-muted)] lg:flex',
+            'transition-colors duration-[var(--motion-fast)] ease-[var(--ease-out)]',
+            'hover:bg-[var(--color-hover)] hover:text-[var(--color-ink)]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--color-focus)]',
             collapsed ? 'justify-center px-0 py-3' : 'gap-2 px-3 py-3 text-xs',
           )}
           aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
+          aria-expanded={!collapsed}
         >
           {collapsed ? (
             <PanelOpen className="size-3.5" strokeWidth={1.5} />

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: walkthrough / scenarios / 42-ReopenQuoteToDraft
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Cenário 42 — Reabrir Orçamento para Rascunho (exploratório)
 
 ## Cenário

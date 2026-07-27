@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Runbook
+Scope: development / InventoryRLSSmoke
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Inventory — RLS e smoke
 
 ## Pré-requisitos

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / ImportArchitecture
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Arquitetura de Importação de Dados
 
 > Reduzir o medo da tela em branco (`Activation.md`) sem comprometer a integridade do sistema.

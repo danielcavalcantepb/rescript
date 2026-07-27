@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / Observability
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Observabilidade
 
 > Enxergar o sistema em produção: logs estruturados, métricas, tracing, alertas — sem vazar dados sensíveis.

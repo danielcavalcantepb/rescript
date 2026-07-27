@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Invariants
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Invariantes
 
 > Verdades que **sempre** devem valer. Uma invariante nunca é violada em nenhum estado válido do domínio. Se uma operação a violaria, a operação falha.

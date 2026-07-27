@@ -16,15 +16,14 @@ const NARRATIVE = [
 ] as const
 
 /**
- * Institutional brand panel for the auth experience.
- * Positioning only — no feature lists, no fabricated metrics.
- * Decorative ambient visuals only; no auth behavior.
+ * Institutional brand panel — deep green universe.
+ * Scoped via `.auth-institutional` so light auth tokens do not bleed in.
  */
 export function InstitutionalPanel({ className }: { className?: string }) {
   return (
     <aside
       className={cn(
-        'relative hidden overflow-hidden bg-[var(--auth-panel-bg)] lg:flex lg:flex-col lg:justify-center',
+        'auth-institutional relative hidden overflow-hidden bg-[var(--auth-panel-bg)] text-[var(--color-ink)] lg:flex lg:flex-col lg:justify-center',
         className,
       )}
       aria-label="Rescript — centro operacional"

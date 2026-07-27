@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Module Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: modules / CustomersInconsistencies
+Supersedes: None
+Superseded-By: README.md
+Related-Modules: All
+---
+
 # Customers — Divergências resolvidas nesta sprint
 
 | Tópico | Docs | Decisão |

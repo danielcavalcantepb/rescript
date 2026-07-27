@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / README
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Modelagem de Domínio (DDD)
 
 > Modelagem **conceitual** do negócio do Rescript com Domain-Driven Design. O objetivo é garantir que **cada conceito exista por um motivo de negócio**, não porque será armazenado.

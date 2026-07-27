@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / NamingConvention
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Convenção de Nomenclatura (Lógica → Física futura)
 
 > Sem SQL. Nomes lógicos estáveis para schema futuro.

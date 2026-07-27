@@ -9,6 +9,9 @@ describe('query key isolation', () => {
     expect(queryKeys.customers.all('org_a')).not.toEqual(
       queryKeys.customers.all('org_b'),
     )
+    expect(queryKeys.purchases.all('org_a')).not.toEqual(
+      queryKeys.purchases.all('org_b'),
+    )
     expect(queryKeys.permissions.all('org_a')[2]).toBe('org_a')
   })
 

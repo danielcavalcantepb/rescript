@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / TestingStrategy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Estratégia de Testes
 
 > O que garante que estoque e financeiro nunca erram e que tenants nunca vazam. Testes são a rede de segurança da confiança nos dados.

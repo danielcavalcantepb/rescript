@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0006-financial-model
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0006 — Modelo Financeiro (entidades separadas + ledger)
 
 **Status:** Aceito · **Reversibilidade:** BAIXA (cara de mudar) — decisão estrutural

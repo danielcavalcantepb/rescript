@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / DeploymentStrategy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Estratégia de Deploy
 
 > Como o Rescript sai do repositório para produção com segurança, previsibilidade e reversibilidade.

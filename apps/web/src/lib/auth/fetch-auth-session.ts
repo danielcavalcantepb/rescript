@@ -1,5 +1,9 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getAuthDisplayName, type AuthUser } from '@rescript/auth'
+import {
+  resolveUserDisplayName,
+  resolveUserFirstName,
+  type AuthUser,
+} from '@rescript/auth'
 
 export type AuthClaimsResult = {
   user: AuthUser | null
@@ -31,15 +35,17 @@ export const fetchAuthSession = createServerFn({ method: 'GET' }).handler(
     if (!id) return { user: null }
 
     const email = typeof claims.email === 'string' ? claims.email : ''
+    const source = {
+      email,
+      userMetadata: claims.user_metadata ?? null,
+    }
 
     return {
       user: {
         id,
         email,
-        displayName: getAuthDisplayName({
-          email,
-          userMetadata: claims.user_metadata ?? null,
-        }),
+        displayName: resolveUserDisplayName(source),
+        firstName: resolveUserFirstName(source),
       },
     }
   },

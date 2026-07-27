@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / UbiquitousLanguage
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Linguagem Ubíqua
 
 > A linguagem compartilhada entre negócio, produto e engenharia. Cada termo tem **um** significado **dentro do seu contexto** (`BoundedContexts.md`). O código, os documentos e as conversas usam exatamente estes termos.

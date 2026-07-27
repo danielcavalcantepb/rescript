@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / SaleTransaction
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Transação de Venda (Confirmar Venda)
 
 > A operação crítica do produto. Onde a camada **Automatizar** se prova: uma ação, todas as consequências, de forma atômica e confiável.

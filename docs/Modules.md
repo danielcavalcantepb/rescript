@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: Modules
+Supersedes: None
+Superseded-By: MODULE_STATUS.md
+Related-Modules: All
+---
+
 # Rescript — Módulos da Plataforma
 
 > Documento oficial de arquitetura funcional (modularização).

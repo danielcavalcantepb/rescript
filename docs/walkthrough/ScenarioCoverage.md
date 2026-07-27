@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Quality
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Historical
+Scope: walkthrough / ScenarioCoverage
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Matriz de Cobertura — Cenários
 
 Legenda módulos: ID=Identity · CAT=Catálogo · INV=Estoque · RES=Reserva · SALE · FIN=Financeiro · INS=Insights · IMP=Import · SEC=Segurança · BILL=Billing · FIS=Fiscal · OUT=Outbox

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: ADR
+Scope: architecture / adr / 0008-internal-events
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # ADR-0008 — Eventos Internos de Domínio
 
 **Status:** Aceito · **Reversibilidade:** média

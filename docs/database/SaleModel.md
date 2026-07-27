@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / SaleModel
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Modelo Lógico — Sale (agregado comercial único — FD-03)
 
 > Sem tabela Order independente no MVP.

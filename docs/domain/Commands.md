@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Commands
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Comandos
 
 > Um **comando** é a intenção de **mudar** o estado do domínio (imperativo). Cada comando é atendido por um agregado/serviço, aplica invariantes e pode produzir eventos.

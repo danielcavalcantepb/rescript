@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Module Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: modules / Inventory
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Módulo Inventory
 
 Ledger de estoque multi-tenant. Fonte de verdade = movimentações; saldo materializado e reconstruível.

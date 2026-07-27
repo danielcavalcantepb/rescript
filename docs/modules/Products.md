@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Module Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: modules / Products
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Módulo Products
 
 Catálogo comercial da organização. Espelha a arquitetura do bounded context Customers.

@@ -47,3 +47,64 @@ export {
   SupabaseInventoryRepository,
   supabaseInventoryRepository,
 } from '#/modules/inventory/infrastructure/supabase-inventory-repository'
+export type {
+  CreateInventoryReservationInput,
+  InventoryReservationDetail,
+  InventoryReservationHistoryEntry,
+  InventoryReservationItem,
+  InventoryReservationListItem,
+  InventoryReservationListQuery,
+  InventoryReservationStatus,
+  ReleaseInventoryReservationInput,
+} from '#/modules/inventory/domain/reservation/types'
+export {
+  assertReservationTransition,
+  reservationOpenQuantity,
+  reservationStatusLabel,
+} from '#/modules/inventory/domain/reservation/lifecycle'
+export type {
+  CreateInventoryPickingInput,
+  InventoryPickingDetail,
+  InventoryPickingHistoryEntry,
+  InventoryPickingItem,
+  InventoryPickingListItem,
+  InventoryPickingListQuery,
+  InventoryPickingStatus,
+  UpdateInventoryPickingItemsInput,
+} from '#/modules/inventory/domain/picking/types'
+export {
+  assertPickingTransition,
+  pickingOpenQuantity,
+  pickingStatusLabel,
+} from '#/modules/inventory/domain/picking/lifecycle'
+export type {
+  CreateInventoryPackingInput,
+  InventoryPackingDetail,
+  InventoryPackingHistoryEntry,
+  InventoryPackingItem,
+  InventoryPackingListItem,
+  InventoryPackingListQuery,
+  InventoryPackingStatus,
+} from '#/modules/inventory/domain/packing/types'
+export {
+  assertPackingTransition,
+  packingStatusLabel,
+} from '#/modules/inventory/domain/packing/lifecycle'
+export type {
+  CancelInventoryShipmentInput,
+  CompleteInventoryShipmentInput,
+  CreateInventoryShipmentInput,
+  DispatchInventoryShipmentInput,
+  InventoryShipmentDetail,
+  InventoryShipmentHistoryEntry,
+  InventoryShipmentItem,
+  InventoryShipmentListItem,
+  InventoryShipmentListQuery,
+  InventoryShipmentMovement,
+  InventoryShipmentStatus,
+  MarkInventoryShipmentReadyInput,
+} from '#/modules/inventory/domain/shipment/types'
+export {
+  assertShipmentTransition,
+  shipmentStatusLabel,
+} from '#/modules/inventory/domain/shipment/lifecycle'

@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / InventoryArchitecture
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Arquitetura de Estoque
 
 > O estoque é área crítica. Desenho conceitual baseado em **ledger** (razão de movimentações) com saldos deriváveis e concorrência controlada.

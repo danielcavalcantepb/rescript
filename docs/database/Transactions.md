@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Data Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: database / Transactions
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Operações Transacionais Lógicas
 
 > Ordem · dados · rollback · idempotência · eventos. Sem SQL.

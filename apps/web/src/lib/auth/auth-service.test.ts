@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const signInWithPassword = vi.fn()
 const signOut = vi.fn()
+const updateUser = vi.fn()
 
 vi.mock('#/lib/supabase/client', () => ({
   createBrowserSupabaseClient: () => ({
     auth: {
       signInWithPassword,
       signOut,
+      updateUser,
     },
   }),
 }))
@@ -17,6 +19,7 @@ describe('authService', () => {
     vi.resetModules()
     signInWithPassword.mockReset()
     signOut.mockReset()
+    updateUser.mockReset()
   })
 
   it('returns ok on valid login', async () => {
@@ -52,5 +55,34 @@ describe('authService', () => {
     const { authService } = await import('./auth-service')
     await authService.logout()
     expect(signOut).toHaveBeenCalledOnce()
+  })
+
+  it('persists full_name and display_name via updateUser', async () => {
+    updateUser.mockResolvedValue({
+      data: { user: { id: 'u1' } },
+      error: null,
+    })
+    const { authService } = await import('./auth-service')
+    await expect(
+      authService.updateProfileName('Daniel Cavalcante'),
+    ).resolves.toEqual({
+      ok: true,
+      fullName: 'Daniel Cavalcante',
+    })
+    expect(updateUser).toHaveBeenCalledWith({
+      data: {
+        full_name: 'Daniel Cavalcante',
+        display_name: 'Daniel Cavalcante',
+      },
+    })
+  })
+
+  it('rejects empty full name without calling Supabase', async () => {
+    const { authService } = await import('./auth-service')
+    await expect(authService.updateProfileName(' ')).resolves.toEqual({
+      ok: false,
+      message: 'Informe seu nome completo (mínimo 2 caracteres).',
+    })
+    expect(updateUser).not.toHaveBeenCalled()
   })
 })

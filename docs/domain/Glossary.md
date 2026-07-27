@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / Glossary
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Glossário do Domínio (referência rápida)
 
 > Definições curtas em ordem alfabética. Para linguagem por contexto ver `UbiquitousLanguage.md`; para decisões de termo ver `Terminology.md`.

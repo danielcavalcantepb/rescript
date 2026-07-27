@@ -1,3 +1,15 @@
+---
+Status: Archived
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Archive
+Scope: Navigation
+Supersedes: None
+Superseded-By: 03_PRODUCT_DESIGN.md
+Related-Modules: All
+---
+
 # Rescript — Navegação, Onboarding e Experiência Inicial
 
 > Documento oficial de arquitetura de navegação, estrutura de menu, telas e experiência inicial do usuário.

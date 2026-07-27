@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / MultiTenancy
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Estratégia Multi-Tenant
 
 > Como isolamos dados de milhares de empresas na mesma base de código e banco, com segurança em profundidade.

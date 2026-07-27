@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Domain Architecture
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: domain / FounderDecisions
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Decisões Oficiais do Fundador
 
 > Registro formal das decisões que fecham pendências da modelagem conceitual (DDD).

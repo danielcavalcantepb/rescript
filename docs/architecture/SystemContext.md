@@ -1,3 +1,15 @@
+---
+Status: Active
+Owner: Architecture & Engineering
+Last-Reviewed: 2026-07-26
+Version: 1.0.0
+Type: Reference
+Scope: architecture / SystemContext
+Supersedes: None
+Superseded-By: None
+Related-Modules: All
+---
+
 # Rescript — Contexto do Sistema
 
 > Visão de mais alto nível (C4 nível 1): o que o Rescript é, quem o usa e com quais sistemas externos ele conversa.
