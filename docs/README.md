@@ -89,6 +89,8 @@ The [complete document index](./DOCUMENT_INDEX.md) lists every governed Markdown
 - [Command Center](./COMMAND_CENTER.md)
 - [Business Analytics Platform](./ANALYTICS.md)
 - [Contextual Entity Creation](./INLINE_CREATE.md)
+- [Sales Order Workspace](./SALES_WORKSPACE.md)
+- [Customer Picker](./CUSTOMER_PICKER.md)
 
 ### Architecture and decisions
 

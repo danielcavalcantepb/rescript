@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from '@tanstack/react-router'
+import { useBlocker, useNavigate } from '@tanstack/react-router'
 import { AppBreadcrumb } from '#/components/AppBreadcrumb'
 import { EntityCell, EntityRow, EntityTable } from '#/components/EntityTable'
 import { PageHeader } from '#/components/PageHeader'
@@ -25,6 +25,15 @@ import {
   useUpdateQuotation,
   useUpdateSalesOrder,
 } from '../use-sales'
+import { decimalToCents, lineTotalCents } from '../sales-money'
+import {
+  DeliverySection,
+  NotesSection,
+  OrderHeader,
+  PaymentSection,
+  SalesTotals,
+  WorkspaceSection,
+} from '../components/sales-order-workspace-components'
 
 type Line = SalesItemInput & {
   productId: string
@@ -71,6 +80,14 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const [notes, setNotes] = useState('')
   const [lines, setLines] = useState<Line[]>([emptyLine()])
   const [error, setError] = useState<string | null>(null)
+  const [dirty, setDirty] = useState(false)
+
+  useBlocker({
+    shouldBlockFn: () =>
+      dirty &&
+      !window.confirm('Existem alterações não salvas. Deseja realmente sair do pedido?'),
+    enableBeforeUnload: dirty,
+  })
 
   useEffect(() => {
     if (!detail.data || !isEdit) return
@@ -106,20 +123,15 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
     )
   }, [detail.data, isEdit])
 
-  const total = useMemo(
-    () =>
-      lines.reduce(
-        (sum, line) =>
-          sum +
-          Math.max(
-            0,
-            Number(line.quantity || 0) * Number(line.unitPrice || 0) -
-              Number(line.discount || 0),
-          ),
-        0,
-      ),
+  const subtotalCents = useMemo(
+    () => lines.reduce((sum, line) => sum + lineTotalCents(line.quantity, line.unitPrice), 0),
     [lines],
   )
+  const discountCents = useMemo(
+    () => lines.reduce((sum, line) => sum + Math.max(0, decimalToCents(line.discount ?? '0')), 0),
+    [lines],
+  )
+  const total = Math.max(0, subtotalCents - discountCents)
   const canSubmit =
     Boolean(customer?.id) &&
     total > 0 &&
@@ -156,14 +168,135 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
       }
       if (isEdit && id) {
         await updateOrder.mutateAsync({ currency, notes, items })
+        setDirty(false)
         await navigate({ to: '/sales/orders/$orderId', params: { orderId: id } })
       } else {
         const orderId = await createOrder.mutateAsync({ customerId: customer!.id, currency, notes, items })
+        setDirty(false)
         await navigate({ to: '/sales/orders/$orderId', params: { orderId } })
       }
     } catch (event) {
       setError(event instanceof Error ? event.message : 'Não foi possível salvar o documento.')
     }
+  }
+
+  if (!isQuotation) {
+    const updateLines = (updater: (current: Line[]) => Line[]) => {
+      setDirty(true)
+      setLines(updater)
+    }
+
+    return (
+      <div className="space-y-5 pb-24">
+        <OrderHeader
+          isEdit={isEdit}
+          date={new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date())}
+          submitting={submitting}
+          canSubmit={canSubmit}
+          onCancel={() => void navigate({ to: '/sales/orders' })}
+          onSave={() => void submit()}
+        />
+        <div className="mx-auto max-w-[1500px]">
+          <AppBreadcrumb
+            items={[
+              { label: 'Vendas', href: '/sales/orders' },
+              { label: 'Pedidos', href: '/sales/orders' },
+              { label: isEdit ? 'Editar pedido' : 'Novo pedido' },
+            ]}
+          />
+        </div>
+        {error ? (
+          <div role="alert" className="mx-auto max-w-[1500px] rounded-[var(--radius-md)] bg-[var(--color-danger-soft)] px-4 py-3 text-sm text-[var(--color-danger)]">
+            {error}
+          </div>
+        ) : null}
+        <div className="mx-auto grid max-w-[1500px] gap-5 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <main className="space-y-5">
+            <WorkspaceSection
+              title="Dados comerciais"
+              description="Defina o cliente e o contexto monetário sem abandonar o pedido."
+            >
+              <div className="grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(180px,1fr)]">
+                <FormField label="Cliente">
+                  <CustomerEntityPicker
+                    value={customer}
+                    disabled={isEdit}
+                    onChange={(value) => {
+                      setCustomer(value)
+                      setDirty(true)
+                    }}
+                  />
+                </FormField>
+                <FormField label="Moeda">
+                  <Input
+                    value={currency}
+                    maxLength={3}
+                    onChange={(event) => {
+                      setCurrency(event.target.value.toUpperCase())
+                      setDirty(true)
+                    }}
+                  />
+                </FormField>
+              </div>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                {['Vendedor não atribuído', 'Canal não configurado', 'Lista aplicada por item'].map((label) => (
+                  <div key={label} className="rounded-[var(--radius-md)] bg-[var(--color-background)] px-3 py-2 text-xs text-[var(--color-muted)]">
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </WorkspaceSection>
+
+            <WorkspaceSection
+              title="Itens do pedido"
+              description="Busque por SKU, código de barras, produto ou variante. O Pricing resolve o valor vigente no servidor."
+            >
+              <div className="mb-4 flex justify-end">
+                <Button variant="secondary" onClick={() => updateLines((current) => [...current, emptyLine()])}>
+                  Adicionar item
+                </Button>
+              </div>
+              <div className="overflow-x-auto">
+                <EntityTable headers={['Busca', 'Produto', 'Qtd.', 'Preço', 'Desconto', 'Origem', '']}>
+                  {lines.map((line, index) => (
+                    <SalesItemRow
+                      key={index}
+                      currency={currency}
+                      organizationId={organizationId}
+                      line={line}
+                      onChange={(next) =>
+                        updateLines((current) =>
+                          current.map((item, itemIndex) => (itemIndex === index ? next : item)),
+                        )
+                      }
+                      onRemove={() =>
+                        updateLines((current) => current.filter((_, itemIndex) => itemIndex !== index))
+                      }
+                      removable={lines.length > 1}
+                    />
+                  ))}
+                </EntityTable>
+              </div>
+            </WorkspaceSection>
+            <PaymentSection />
+            <DeliverySection />
+            <NotesSection
+              value={notes}
+              onChange={(value) => {
+                setNotes(value)
+                setDirty(true)
+              }}
+            />
+          </main>
+          <SalesTotals
+            itemCount={lines.filter((line) => line.variantId).length}
+            subtotalCents={subtotalCents}
+            discountCents={discountCents}
+            currency={currency}
+          />
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -224,7 +357,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
       <section className="flex flex-col gap-3 rounded-[var(--radius-md)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="text-xs text-[var(--color-muted)]">Total comercial</div>
-          <div className="text-xl font-semibold">{formatBRL(total)}</div>
+          <div className="text-xl font-semibold">{formatBRL(total / 100)}</div>
         </div>
         <div className="flex gap-2">
           <Button variant="secondary" onClick={() => void navigate({ to: isQuotation ? '/sales/quotations' : '/sales/orders' })}>

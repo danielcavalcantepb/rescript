@@ -2,7 +2,7 @@
 Status: Active
 Owner: Product Design & Engineering
 Last-Reviewed: 2026-07-27
-Version: 1.0.0
+Version: 1.1.0
 Type: Canonical
 Scope: Contextual Entity Creation
 Supersedes: None
@@ -69,6 +69,10 @@ Após a criação bem-sucedida:
 2. a query de Customers é invalidada;
 3. o Customer retornado pelo caso de uso é selecionado;
 4. o pedido permanece intacto e pode ser concluído.
+
+O Sales Order Workspace mantém itens, preços, descontos, moeda e observações
+durante todo o ciclo do Drawer. Alterações não salvas são protegidas pelo guard de
+navegação do documento.
 
 ## Extensão
 
