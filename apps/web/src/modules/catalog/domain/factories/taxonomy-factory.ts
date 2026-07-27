@@ -14,6 +14,15 @@ import type {
 const NAME_MAX = 120
 export const CATEGORY_MAX_DEPTH = 5
 
+export function createCatalogSlug(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
 export function createBrand(
   organizationId: OrganizationId,
   name: string,
@@ -26,6 +35,9 @@ export function createBrand(
     organizationId,
     name: label.value.name,
     normalizedName: label.value.normalizedName,
+    slug: createCatalogSlug(label.value.name),
+    description: null,
+    sortOrder: 0,
     status: 'active',
   })
 }
@@ -53,6 +65,9 @@ export function createCategory(
     parentId: parent?.id ?? null,
     name: label.value.name,
     normalizedName: label.value.normalizedName,
+    slug: createCatalogSlug(label.value.name),
+    description: null,
+    sortOrder: 0,
     status: 'active',
     depth,
   })
@@ -109,6 +124,9 @@ export function createAttributeDefinition(
     name: label.value.name,
     normalizedName: label.value.normalizedName,
     valueType,
+    isVariantAxis: valueType === 'option',
+    isFilterable: true,
+    sortOrder: 0,
     status: 'active',
     options,
   })

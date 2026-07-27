@@ -63,6 +63,8 @@ export const catalogQueryKeys = {
     [...catalogQueryKeys.all(organizationId), 'brands'] as const,
   categories: (organizationId: string) =>
     [...catalogQueryKeys.all(organizationId), 'categories'] as const,
+  attributes: (organizationId: string) =>
+    [...catalogQueryKeys.all(organizationId), 'attributes'] as const,
   priceLists: (organizationId: string) =>
     [...catalogQueryKeys.all(organizationId), 'price-lists'] as const,
   priceListDetail: (organizationId: string, priceListId: string) =>

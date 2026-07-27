@@ -1,5 +1,6 @@
 import type { CatalogAppDeps } from '#/modules/catalog/application/deps'
 import * as brand from '#/modules/catalog/application/use-cases/brand-use-cases'
+import * as attribute from '#/modules/catalog/application/use-cases/attribute-use-cases'
 import * as category from '#/modules/catalog/application/use-cases/category-use-cases'
 import * as list from '#/modules/catalog/application/use-cases/list-use-cases'
 import * as price from '#/modules/catalog/application/use-cases/price-use-cases'
@@ -84,6 +85,8 @@ export function createCatalogApplicationService(deps: CatalogAppDeps) {
       brand.createBrand(deps, cmd),
     updateBrand: (cmd: Parameters<typeof brand.updateBrand>[1]) =>
       brand.updateBrand(deps, cmd),
+    archiveBrand: (cmd: Parameters<typeof brand.archiveBrand>[1]) =>
+      brand.archiveBrand(deps, cmd),
 
     createCategory: (cmd: Parameters<typeof category.createCategory>[1]) =>
       category.createCategory(deps, cmd),
@@ -91,6 +94,27 @@ export function createCatalogApplicationService(deps: CatalogAppDeps) {
       category.updateCategory(deps, cmd),
     moveCategory: (cmd: Parameters<typeof category.moveCategory>[1]) =>
       category.moveCategory(deps, cmd),
+    archiveCategory: (cmd: Parameters<typeof category.archiveCategory>[1]) =>
+      category.archiveCategory(deps, cmd),
+
+    listAttributes: () => attribute.listAttributes(deps),
+    getAttribute: (cmd: Parameters<typeof attribute.getAttribute>[1]) =>
+      attribute.getAttribute(deps, cmd),
+    createAttribute: (cmd: Parameters<typeof attribute.createAttribute>[1]) =>
+      attribute.createAttribute(deps, cmd),
+    updateAttribute: (cmd: Parameters<typeof attribute.updateAttribute>[1]) =>
+      attribute.updateAttribute(deps, cmd),
+    archiveAttribute: (cmd: Parameters<typeof attribute.archiveAttribute>[1]) =>
+      attribute.archiveAttribute(deps, cmd),
+    createAttributeValue: (
+      cmd: Parameters<typeof attribute.createAttributeValue>[1],
+    ) => attribute.createAttributeValue(deps, cmd),
+    updateAttributeValue: (
+      cmd: Parameters<typeof attribute.updateAttributeValue>[1],
+    ) => attribute.updateAttributeValue(deps, cmd),
+    archiveAttributeValue: (
+      cmd: Parameters<typeof attribute.archiveAttributeValue>[1],
+    ) => attribute.archiveAttributeValue(deps, cmd),
 
     createPriceList: (cmd: Parameters<typeof price.createPriceList>[1]) =>
       price.createPriceList(deps, cmd),

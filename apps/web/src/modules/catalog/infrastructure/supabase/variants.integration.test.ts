@@ -87,6 +87,23 @@ describe.skipIf(!available)('catalog variants matrix (local Supabase)', () => {
       })
       expect(applied.createdVariantIds).toHaveLength(4)
 
+      const { data: projection, error: projectionError } = await orgA.client
+        .from('catalog_search_projection')
+        .select('variant_id, product_name, attributes')
+        .eq('organization_id', orgA.organizationId)
+        .eq('product_id', created.id)
+      expect(projectionError).toBeNull()
+      expect(projection?.length).toBeGreaterThanOrEqual(4)
+      expect(projection?.every((row) => row.product_name === 'Bolsa Multi')).toBe(
+        true,
+      )
+      expect(
+        projection?.filter(
+          (row) =>
+            Array.isArray(row.attributes) && row.attributes.length === 2,
+        ),
+      ).toHaveLength(4)
+
       const listed = await appA.getProductVariants({
         productId: created.id,
         status: 'draft',

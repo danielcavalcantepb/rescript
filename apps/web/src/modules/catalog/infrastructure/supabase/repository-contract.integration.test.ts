@@ -43,6 +43,9 @@ function runBrandProductContract(
         organizationId: ports.organizationId,
         name: `Brand ${label}`,
         normalizedName: `brand ${label}`,
+        slug: `brand-${label}`,
+        description: null,
+        sortOrder: 0,
         status: 'active',
       }
       await ports.brands.save(brand)

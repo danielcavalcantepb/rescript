@@ -166,26 +166,75 @@ export type ListProductVariantsQuery = {
 
 export type CreateBrandCommand = {
   name: string
+  description?: string | null
+  sortOrder?: number
 }
 
 export type UpdateBrandCommand = {
   brandId: string
   name: string
+  description?: string | null
+  sortOrder?: number
 }
+
+export type BrandIdCommand = { brandId: string }
 
 export type CreateCategoryCommand = {
   name: string
   parentId?: string | null
+  description?: string | null
+  sortOrder?: number
 }
 
 export type UpdateCategoryCommand = {
   categoryId: string
   name: string
+  description?: string | null
+  sortOrder?: number
 }
+
+export type CategoryIdCommand = { categoryId: string }
 
 export type MoveCategoryCommand = {
   categoryId: string
   newParentId: string | null
+}
+
+export type CreateAttributeCommand = {
+  name: string
+  valueType: 'option' | 'text' | 'decimal' | 'boolean' | 'date'
+  isVariantAxis?: boolean
+  isFilterable?: boolean
+  sortOrder?: number
+  options?: string[]
+}
+
+export type UpdateAttributeCommand = {
+  attributeId: string
+  name: string
+  isVariantAxis?: boolean
+  isFilterable?: boolean
+  sortOrder?: number
+}
+
+export type AttributeIdCommand = { attributeId: string }
+
+export type CreateAttributeValueCommand = {
+  attributeId: string
+  label: string
+  sortOrder?: number
+}
+
+export type UpdateAttributeValueCommand = {
+  attributeId: string
+  valueId: string
+  label: string
+  sortOrder?: number
+}
+
+export type AttributeValueIdCommand = {
+  attributeId: string
+  valueId: string
 }
 
 export type CreatePriceListCommand = {
@@ -424,6 +473,9 @@ export type BrandResponse = {
   id: string
   organizationId: string
   name: string
+  slug?: string
+  description?: string | null
+  sortOrder?: number
   status: string
 }
 
@@ -432,8 +484,32 @@ export type CategoryResponse = {
   organizationId: string
   parentId: string | null
   name: string
+  slug?: string
+  description?: string | null
+  sortOrder?: number
   depth: number
   status: string
+}
+
+export type AttributeValueResponse = {
+  id: string
+  label: string
+  normalizedLabel: string
+  sortOrder: number
+  status: string
+}
+
+export type AttributeResponse = {
+  id: string
+  organizationId: string
+  name: string
+  normalizedName: string
+  valueType: string
+  isVariantAxis: boolean
+  isFilterable: boolean
+  sortOrder: number
+  status: string
+  values: AttributeValueResponse[]
 }
 
 export type PriceListResponse = {

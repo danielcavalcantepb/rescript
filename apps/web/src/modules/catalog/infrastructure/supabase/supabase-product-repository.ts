@@ -302,11 +302,15 @@ export class SupabaseProductRepository implements CatalogProductRepository {
     for (const value of variant.attributeValues) {
       await sql`
         insert into public.product_variant_attribute_value (
-          variant_id, attribute_definition_id, option_id
+          variant_id, attribute_definition_id, option_id,
+          organization_id, created_at, created_by
         ) values (
           ${variant.id}::uuid,
           ${value.attributeDefinitionId}::uuid,
-          ${value.optionId}::uuid
+          ${value.optionId}::uuid,
+          ${orgId}::uuid,
+          ${ctx.nowIso}::timestamptz,
+          ${ctx.actorUserId}::uuid
         )
       `
     }

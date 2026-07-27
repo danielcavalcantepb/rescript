@@ -53,6 +53,7 @@ export type AttributeDefinitionRepository = {
     organizationId: string,
     normalizedName: string,
   ): Promise<AttributeDefinition | null>
+  listByOrganization(organizationId: string): Promise<AttributeDefinition[]>
   save(definition: AttributeDefinition): Promise<void>
 }
 

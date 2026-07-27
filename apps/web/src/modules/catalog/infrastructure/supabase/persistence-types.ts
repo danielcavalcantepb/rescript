@@ -2,8 +2,16 @@ import type { Tables } from '@rescript/database'
 
 /** Persistence DTOs — snake_case row shapes used by mappers only. */
 
-export type BrandRow = Tables<'brand'>
-export type CategoryRow = Tables<'category'>
+export type BrandRow = Omit<
+  Tables<'brand'>,
+  'slug' | 'description' | 'sort_order'
+> &
+  Partial<Pick<Tables<'brand'>, 'slug' | 'description' | 'sort_order'>>
+export type CategoryRow = Omit<
+  Tables<'category'>,
+  'slug' | 'description' | 'sort_order'
+> &
+  Partial<Pick<Tables<'category'>, 'slug' | 'description' | 'sort_order'>>
 export type AttributeDefinitionRow = Tables<'attribute_definition'>
 export type AttributeOptionRow = Tables<'attribute_option'>
 export type ProductRow = Tables<'product'>

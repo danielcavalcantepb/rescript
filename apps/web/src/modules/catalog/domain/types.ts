@@ -28,6 +28,9 @@ export type Brand = {
   organizationId: OrganizationId
   name: string
   normalizedName: string
+  slug?: string
+  description?: string | null
+  sortOrder?: number
   status: ArchiveableStatus
 }
 
@@ -37,6 +40,9 @@ export type Category = {
   parentId: CategoryId | null
   name: string
   normalizedName: string
+  slug?: string
+  description?: string | null
+  sortOrder?: number
   status: ArchiveableStatus
   /** 0 = root */
   depth: number
@@ -57,6 +63,9 @@ export type AttributeDefinition = {
   name: string
   normalizedName: string
   valueType: AttributeValueType
+  isVariantAxis?: boolean
+  isFilterable?: boolean
+  sortOrder?: number
   status: ArchiveableStatus
   options: AttributeOption[]
 }

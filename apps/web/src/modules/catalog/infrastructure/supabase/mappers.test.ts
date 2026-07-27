@@ -62,6 +62,9 @@ describe('catalog persistence mappers', () => {
       organizationId: 'o1',
       name: 'Acme',
       normalizedName: 'acme',
+      slug: 'acme',
+      description: null,
+      sortOrder: 0,
       status: 'active',
     })
     const written = brandToRow(

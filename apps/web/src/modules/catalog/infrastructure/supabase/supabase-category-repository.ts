@@ -73,6 +73,9 @@ export class SupabaseCategoryRepository implements CategoryRepository {
           parent_id: row.parent_id,
           name: row.name,
           normalized_name: row.normalized_name,
+          slug: row.slug,
+          description: row.description,
+          sort_order: row.sort_order,
           depth: row.depth,
           status: row.status,
           archived_at: row.archived_at,
@@ -86,7 +89,12 @@ export class SupabaseCategoryRepository implements CategoryRepository {
       return
     }
 
-    const { error } = await this.options.client.from('category').insert(row)
+    const { error } = await this.options.client.from('category').insert({
+      ...row,
+      slug: row.slug!,
+      description: row.description ?? null,
+      sort_order: row.sort_order ?? 0,
+    })
     throwIfSupabaseError(error)
   }
 

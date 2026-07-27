@@ -161,6 +161,11 @@ export function createInMemoryAttributeRepository(
       }
       return null
     },
+    async listByOrganization(organizationId) {
+      return [...store.attributes.values()]
+        .filter((definition) => definition.organizationId === organizationId)
+        .map((definition) => structuredClone(definition))
+    },
     async save(definition: AttributeDefinition) {
       store.attributes.set(definition.id, structuredClone(definition))
     },

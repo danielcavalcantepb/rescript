@@ -1,5 +1,6 @@
 import type {
   BrandResponse,
+  AttributeResponse,
   CatalogProductDetailResponse,
   CatalogSearchHitResponse,
   CategoryResponse,
@@ -15,6 +16,7 @@ import { PriceResolutionPolicy } from '#/modules/catalog/domain/policies/price-r
 import type { ResolvedPrice } from '#/modules/catalog/domain/policies/price-resolution-policy'
 import type {
   Brand,
+  AttributeDefinition,
   Category,
   PriceList,
   PriceListEntry,
@@ -22,6 +24,29 @@ import type {
   ProductVariant,
   UnitOfMeasure,
 } from '#/modules/catalog/domain/types'
+
+export function toAttributeResponse(
+  attribute: AttributeDefinition,
+): AttributeResponse {
+  return {
+    id: attribute.id,
+    organizationId: attribute.organizationId,
+    name: attribute.name,
+    normalizedName: attribute.normalizedName,
+    valueType: attribute.valueType,
+    isVariantAxis: attribute.isVariantAxis ?? attribute.valueType === 'option',
+    isFilterable: attribute.isFilterable ?? true,
+    sortOrder: attribute.sortOrder ?? 0,
+    status: attribute.status,
+    values: attribute.options.map((option) => ({
+      id: option.id,
+      label: option.label,
+      normalizedLabel: option.normalizedLabel,
+      sortOrder: option.sortOrder,
+      status: option.status,
+    })),
+  }
+}
 
 export function toVariantResponse(variant: ProductVariant): VariantResponse {
   const primary = variant.barcodes.find((b) => b.isPrimary)
@@ -104,6 +129,9 @@ export function toBrandResponse(brand: Brand): BrandResponse {
     id: brand.id,
     organizationId: brand.organizationId,
     name: brand.name,
+    slug: brand.slug,
+    description: brand.description,
+    sortOrder: brand.sortOrder,
     status: brand.status,
   }
 }
@@ -114,6 +142,9 @@ export function toCategoryResponse(category: Category): CategoryResponse {
     organizationId: category.organizationId,
     parentId: category.parentId,
     name: category.name,
+    slug: category.slug,
+    description: category.description,
+    sortOrder: category.sortOrder,
     depth: category.depth,
     status: category.status,
   }

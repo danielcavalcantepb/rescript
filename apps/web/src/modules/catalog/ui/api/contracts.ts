@@ -5,6 +5,12 @@ import type {
   CatalogProductDetailResponse,
   CreatePriceListCommand,
   CreateBrandCommand,
+  BrandIdCommand,
+  CategoryIdCommand,
+  AttributeIdCommand,
+  AttributeValueIdCommand,
+  CreateAttributeCommand,
+  CreateAttributeValueCommand,
   CreateCategoryCommand,
   CreateProductCommand,
   LifecycleProductCommand,
@@ -25,6 +31,8 @@ import type {
   SearchVariantsQuery,
   UpdatePriceListCommand,
   UpdateBrandCommand,
+  UpdateAttributeCommand,
+  UpdateAttributeValueCommand,
   UpdateCategoryCommand,
   MoveCategoryCommand,
   UpdateProductCommand,
@@ -71,6 +79,9 @@ export type CreateBrandInput = CatalogOrgScope & {
 export type UpdateBrandInput = CatalogOrgScope & {
   command: UpdateBrandCommand
 }
+export type ArchiveBrandInput = CatalogOrgScope & {
+  command: BrandIdCommand
+}
 export type CreateCategoryInput = CatalogOrgScope & {
   command: CreateCategoryCommand
 }
@@ -79,6 +90,27 @@ export type UpdateCategoryInput = CatalogOrgScope & {
 }
 export type MoveCategoryInput = CatalogOrgScope & {
   command: MoveCategoryCommand
+}
+export type ArchiveCategoryInput = CatalogOrgScope & {
+  command: CategoryIdCommand
+}
+export type CreateAttributeInput = CatalogOrgScope & {
+  command: CreateAttributeCommand
+}
+export type UpdateAttributeInput = CatalogOrgScope & {
+  command: UpdateAttributeCommand
+}
+export type ArchiveAttributeInput = CatalogOrgScope & {
+  command: AttributeIdCommand
+}
+export type CreateAttributeValueInput = CatalogOrgScope & {
+  command: CreateAttributeValueCommand
+}
+export type UpdateAttributeValueInput = CatalogOrgScope & {
+  command: UpdateAttributeValueCommand
+}
+export type ArchiveAttributeValueInput = CatalogOrgScope & {
+  command: AttributeValueIdCommand
 }
 
 export type CreateProductInput = CatalogOrgScope & {

@@ -42,6 +42,14 @@ import type {
   VariantPriceSummaryInput,
   VariantPriceSummaryRpcResponse,
   CreateBrandInput,
+  ArchiveBrandInput,
+  ArchiveCategoryInput,
+  CreateAttributeInput,
+  UpdateAttributeInput,
+  ArchiveAttributeInput,
+  CreateAttributeValueInput,
+  UpdateAttributeValueInput,
+  ArchiveAttributeValueInput,
   UpdateBrandInput,
   CreateCategoryInput,
   UpdateCategoryInput,
@@ -182,6 +190,14 @@ export const catalogUpdateBrand = createServerFn({ method: 'POST' })
     ),
   )
 
+export const catalogArchiveBrand = createServerFn({ method: 'POST' })
+  .validator((input: ArchiveBrandInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.archiveBrand(data.command),
+    ),
+  )
+
 export const catalogCreateCategory = createServerFn({ method: 'POST' })
   .validator((input: CreateCategoryInput) => input)
   .handler(async ({ data }) =>
@@ -203,6 +219,68 @@ export const catalogMoveCategory = createServerFn({ method: 'POST' })
   .handler(async ({ data }) =>
     runCatalogRpc(data.organizationId, (app) =>
       app.moveCategory(data.command),
+    ),
+  )
+
+export const catalogArchiveCategory = createServerFn({ method: 'POST' })
+  .validator((input: ArchiveCategoryInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.archiveCategory(data.command),
+    ),
+  )
+
+export const catalogListAttributes = createServerFn({ method: 'POST' })
+  .validator((input: CatalogOrgScope) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) => app.listAttributes()),
+  )
+
+export const catalogCreateAttribute = createServerFn({ method: 'POST' })
+  .validator((input: CreateAttributeInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.createAttribute(data.command),
+    ),
+  )
+
+export const catalogUpdateAttribute = createServerFn({ method: 'POST' })
+  .validator((input: UpdateAttributeInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.updateAttribute(data.command),
+    ),
+  )
+
+export const catalogArchiveAttribute = createServerFn({ method: 'POST' })
+  .validator((input: ArchiveAttributeInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.archiveAttribute(data.command),
+    ),
+  )
+
+export const catalogCreateAttributeValue = createServerFn({ method: 'POST' })
+  .validator((input: CreateAttributeValueInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.createAttributeValue(data.command),
+    ),
+  )
+
+export const catalogUpdateAttributeValue = createServerFn({ method: 'POST' })
+  .validator((input: UpdateAttributeValueInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.updateAttributeValue(data.command),
+    ),
+  )
+
+export const catalogArchiveAttributeValue = createServerFn({ method: 'POST' })
+  .validator((input: ArchiveAttributeValueInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.archiveAttributeValue(data.command),
     ),
   )
 

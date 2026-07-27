@@ -110,23 +110,41 @@ export function legacyProductStatus(
   return lifecycle === 'archived' ? 'inactive' : 'active'
 }
 
-export function mapBrand(row: BrandRow): Brand {
+type CompatibleBrandRow = Omit<
+  BrandRow,
+  'slug' | 'description' | 'sort_order'
+> &
+  Partial<Pick<BrandRow, 'slug' | 'description' | 'sort_order'>>
+
+type CompatibleCategoryRow = Omit<
+  CategoryRow,
+  'slug' | 'description' | 'sort_order'
+> &
+  Partial<Pick<CategoryRow, 'slug' | 'description' | 'sort_order'>>
+
+export function mapBrand(row: CompatibleBrandRow): Brand {
   return {
     id: row.id,
     organizationId: row.organization_id,
     name: row.name,
     normalizedName: row.normalized_name,
+    slug: row.slug ?? row.normalized_name.replace(/\s+/g, '-'),
+    description: row.description ?? null,
+    sortOrder: row.sort_order ?? 0,
     status: asArchiveableStatus(row.status),
   }
 }
 
-export function mapCategory(row: CategoryRow): Category {
+export function mapCategory(row: CompatibleCategoryRow): Category {
   return {
     id: row.id,
     organizationId: row.organization_id,
     parentId: row.parent_id,
     name: row.name,
     normalizedName: row.normalized_name,
+    slug: row.slug ?? row.normalized_name.replace(/\s+/g, '-'),
+    description: row.description ?? null,
+    sortOrder: row.sort_order ?? 0,
     status: asArchiveableStatus(row.status),
     depth: row.depth,
   }
@@ -152,6 +170,9 @@ export function mapAttributeDefinition(
     name: rows.definition.name,
     normalizedName: rows.definition.normalized_name,
     valueType: rows.definition.value_type as AttributeValueType,
+    isVariantAxis: rows.definition.is_variant_axis,
+    isFilterable: rows.definition.is_filterable,
+    sortOrder: rows.definition.sort_order,
     status: asArchiveableStatus(rows.definition.status),
     options: rows.options
       .map(mapAttributeOption)
@@ -340,6 +361,9 @@ export function brandToRow(
     organization_id: brand.organizationId,
     name: brand.name,
     normalized_name: brand.normalizedName,
+    slug: brand.slug ?? brand.normalizedName.replace(/\s+/g, '-'),
+    description: brand.description ?? null,
+    sort_order: brand.sortOrder ?? 0,
     status: brand.status,
     archived_at: archived
       ? (existing?.archived_at ?? ctx.nowIso)
@@ -366,6 +390,9 @@ export function categoryToRow(
     parent_id: category.parentId,
     name: category.name,
     normalized_name: category.normalizedName,
+    slug: category.slug ?? category.normalizedName.replace(/\s+/g, '-'),
+    description: category.description ?? null,
+    sort_order: category.sortOrder ?? 0,
     depth: category.depth,
     status: category.status,
     archived_at: archived
@@ -393,6 +420,10 @@ export function attributeDefinitionToRow(
     name: definition.name,
     normalized_name: definition.normalizedName,
     value_type: definition.valueType,
+    is_variant_axis:
+      definition.isVariantAxis ?? definition.valueType === 'option',
+    is_filterable: definition.isFilterable ?? true,
+    sort_order: definition.sortOrder ?? 0,
     status: definition.status,
     archived_at: archived
       ? (existing?.archived_at ?? ctx.nowIso)

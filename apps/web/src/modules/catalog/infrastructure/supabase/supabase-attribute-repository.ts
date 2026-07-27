@@ -61,6 +61,27 @@ export class SupabaseAttributeRepository
     )
   }
 
+  async listByOrganization(
+    organizationId: string,
+  ): Promise<AttributeDefinition[]> {
+    assertEntityOrganization(organizationId, this.options.organizationId)
+    const { data, error } = await this.options.client
+      .from('attribute_definition')
+      .select('*')
+      .eq('organization_id', this.options.organizationId)
+      .order('sort_order', { ascending: true })
+      .order('name', { ascending: true })
+    throwIfSupabaseError(error)
+
+    return Promise.all(
+      (data ?? []).map((definition) =>
+        this.loadDefinitionWithOptions(
+          definition as AttributeDefinitionRow,
+        ),
+      ),
+    )
+  }
+
   private async loadDefinitionWithOptions(
     definition: AttributeDefinitionRow,
   ): Promise<AttributeDefinition> {
@@ -111,6 +132,9 @@ export class SupabaseAttributeRepository
             name = excluded.name,
             normalized_name = excluded.normalized_name,
             value_type = excluded.value_type,
+            is_variant_axis = excluded.is_variant_axis,
+            is_filterable = excluded.is_filterable,
+            sort_order = excluded.sort_order,
             status = excluded.status,
             archived_at = excluded.archived_at,
             archived_by = excluded.archived_by,
@@ -127,21 +151,6 @@ export class SupabaseAttributeRepository
             and d.organization_id = ${orgId}::uuid
         `
         const existingById = new Map(existingOptions.map((o) => [o.id, o]))
-        const keepIds = new Set(definition.options.map((o) => o.id))
-
-        const removeIds = existingOptions
-          .filter((o) => !keepIds.has(o.id))
-          .map((o) => o.id)
-        if (removeIds.length > 0) {
-          await sql`
-            delete from public.attribute_option o
-            using public.attribute_definition d
-            where o.definition_id = d.id
-              and d.organization_id = ${orgId}::uuid
-              and o.id = any(${removeIds}::uuid[])
-          `
-        }
-
         for (const option of definition.options) {
           const optionRow = attributeOptionToRow(
             option,

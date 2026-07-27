@@ -16,6 +16,16 @@ import {
 import { createAttributeDefinition } from '#/modules/catalog/domain/factories/taxonomy-factory'
 
 const ALL_PRODUCT_PERMS: PermissionKey[] = [
+  'catalog.products.read',
+  'catalog.products.write',
+  'catalog.categories.read',
+  'catalog.categories.write',
+  'catalog.brands.read',
+  'catalog.brands.write',
+  'catalog.attributes.read',
+  'catalog.attributes.write',
+  'catalog.variants.read',
+  'catalog.variants.write',
   'products.read',
   'products.create',
   'products.edit',

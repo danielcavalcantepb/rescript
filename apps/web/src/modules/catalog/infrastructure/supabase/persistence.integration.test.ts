@@ -81,6 +81,9 @@ describe.skipIf(!available)('catalog supabase persistence (local)', () => {
       organizationId: fx.organizationId,
       name: 'Rescript Wear',
       normalizedName: 'rescript wear',
+      slug: 'rescript-wear',
+      description: null,
+      sortOrder: 0,
       status: 'active',
     }
     await fx.repos.brands.save(brand)
@@ -94,6 +97,9 @@ describe.skipIf(!available)('catalog supabase persistence (local)', () => {
       parentId: null,
       name: 'Vestuário',
       normalizedName: 'vestuario',
+      slug: 'vestuario',
+      description: null,
+      sortOrder: 0,
       status: 'active',
       depth: 0,
     }
@@ -109,6 +115,9 @@ describe.skipIf(!available)('catalog supabase persistence (local)', () => {
       name: 'Cor',
       normalizedName: 'cor',
       valueType: 'option',
+      isVariantAxis: true,
+      isFilterable: true,
+      sortOrder: 0,
       status: 'active',
       options: [
         {

@@ -76,6 +76,9 @@ export class SupabaseBrandRepository implements BrandRepository {
         .update({
           name: row.name,
           normalized_name: row.normalized_name,
+          slug: row.slug,
+          description: row.description,
+          sort_order: row.sort_order,
           status: row.status,
           archived_at: row.archived_at,
           archived_by: row.archived_by,
@@ -88,7 +91,12 @@ export class SupabaseBrandRepository implements BrandRepository {
       return
     }
 
-    const { error } = await this.options.client.from('brand').insert(row)
+    const { error } = await this.options.client.from('brand').insert({
+      ...row,
+      slug: row.slug!,
+      description: row.description ?? null,
+      sort_order: row.sort_order ?? 0,
+    })
     throwIfSupabaseError(error)
   }
 

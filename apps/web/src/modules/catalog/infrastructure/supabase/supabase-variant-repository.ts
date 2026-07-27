@@ -73,6 +73,7 @@ export class SupabaseVariantRepository {
     const { data: attrs, error: attrError } = await this.options.client
       .from('product_variant_attribute_value')
       .select('*')
+      .eq('organization_id', this.options.organizationId)
       .in('variant_id', variantIds)
     throwIfSupabaseError(attrError)
 
