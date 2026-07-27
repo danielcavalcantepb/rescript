@@ -208,6 +208,8 @@ export async function wipeOrganization(organizationId: string): Promise<void> {
     await tx`select set_config('supplier.allow_history_admin', 'on', true)`
     await tx`select set_config('purchase.allow_history_admin', 'on', true)`
     await tx`select set_config('receiving.allow_history_admin', 'on', true)`
+    await tx`select set_config('audit.allow_admin', 'on', true)`
+    await tx`delete from public.audit_event where organization_id = ${organizationId}::uuid`
     await tx`delete from public.catalog_product_lifecycle_event where organization_id = ${organizationId}::uuid`
     await tx`delete from public.customer_history where organization_id = ${organizationId}::uuid`
     await tx`delete from public.customer_contact where organization_id = ${organizationId}::uuid`
@@ -270,4 +272,4 @@ export async function afterAllCatalogPersistence(): Promise<void> {
   await closeCatalogSqlPools()
 }
 
-export { TEST_PASSWORD }
+export { getCatalogSql, TEST_PASSWORD }

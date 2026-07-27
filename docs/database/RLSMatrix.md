@@ -25,8 +25,8 @@ Legenda acesso: **Direct** (cliente com RLS) · **RO** · **FnOnly** (função/t
 | Role/Permission | all auth | platform | platform | — | RO / Platform |
 | Customer/Product/Variant | perm | perm | perm | archive only | Direct |
 | PriceCurrent | perm | perm | perm | — | Direct |
-| InventoryBalance | perm | **FnOnly** | **FnOnly** | — | RO + Fn |
-| InventoryMovement | perm | **FnOnly** | **proibido** | **proibido** | RO + Fn |
+| InventoryItem | inventory.read | identidade zero com inventory.create | metadados com inventory.edit; quantidade **FnOnly** | — | Direct limitado + Fn |
+| InventoryLedgerMovement | inventory.movements.read | **FnOnly + perm específica** | **proibido** | **proibido** | RO + Fn |
 | Reservation* | perm | **FnOnly** | **FnOnly** | — | Fn |
 | Sale (draft/quote/order) | perm | perm | perm+version | discard | Direct |
 | Sale confirmed fields | perm | — | **proibido** | — | RO |

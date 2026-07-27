@@ -16,7 +16,8 @@ Related-Modules: All
 
 ## 1. Ledger de estoque (MVP — FT)
 
-**InventoryMovement** append-only.
+**InventoryLedgerMovement** append-only, escopado por
+`(organization_id, variant_id, location_id)`.
 
 | Aspecto | Regra |
 |---|---|
@@ -24,8 +25,12 @@ Related-Modules: All
 | Compensação | novo movimento; **nunca** UPDATE/DELETE histórico |
 | Reconstrução | somar movements → physical; reservations ativas → reserved |
 | Custo | unit_cost_applied na saída imutável; média em AverageCost* |
-| Auditoria | movement + AuditEvent em ajustes |
+| Auditoria | movement + AuditEvent persistido |
 | Reserva | **fora** do ledger físico |
+
+`InventoryItem` é a projeção materializada. A função read-only
+`reconcile_inventory_ledger` detecta divergência, movimento ausente e cadeia
+inválida; não corrige dados automaticamente.
 
 ## 2. Ledger financeiro
 

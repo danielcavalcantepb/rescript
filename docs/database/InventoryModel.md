@@ -29,7 +29,7 @@ Related-Modules: All
 
 ---
 
-## 2. InventoryBalance (DERIVADO / materializado)
+## 2. InventoryItem (DERIVADO / materializado)
 
 Chave lógica: `(organization_id, location_id, variant_id)`
 
@@ -82,10 +82,10 @@ Chave lógica: `(organization_id, location_id, variant_id)`
 
 ```mermaid
 erDiagram
-    STOCK_LOCATION ||--o{ INVENTORY_BALANCE : holds
-    PRODUCT_VARIANT ||--o{ INVENTORY_BALANCE : of
-    PRODUCT_VARIANT ||--o{ INVENTORY_MOVEMENT : ledger
-    INVENTORY_MOVEMENT }o--o| INVENTORY_MOVEMENT : reverses
+    STOCK_LOCATION ||--o{ INVENTORY_ITEM : holds
+    PRODUCT_VARIANT ||--o{ INVENTORY_ITEM : of
+    PRODUCT_VARIANT ||--o{ INVENTORY_LEDGER_MOVEMENT : ledger
+    INVENTORY_LEDGER_MOVEMENT }o--o| INVENTORY_LEDGER_MOVEMENT : reverses
 ```
 
 ---

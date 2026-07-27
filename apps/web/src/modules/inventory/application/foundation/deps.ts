@@ -71,13 +71,13 @@ export function requireLedgerCreate(can: Can) {
 }
 
 export function requireLedgerAdjust(can: Can) {
-  return can('inventory.adjust') || can('inventory.movements.create')
+  return can('inventory.adjust')
 }
 
 export function requireLedgerTransfer(can: Can) {
-  return can('inventory.transfer') || can('inventory.movements.create')
+  return can('inventory.transfer')
 }
 
 export function requireLedgerReverse(can: Can) {
-  return can('inventory.reverse') || can('inventory.adjust')
+  return can('inventory.reverse')
 }

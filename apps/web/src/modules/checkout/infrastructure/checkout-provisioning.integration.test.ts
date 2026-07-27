@@ -38,6 +38,8 @@ async function cleanup(checkoutId?: string, organizationId?: string) {
       await tx`delete from public.checkout_session where id = ${checkoutId}::uuid`
     }
     if (organizationId) {
+      await tx`select set_config('audit.allow_admin', 'on', true)`
+      await tx`delete from public.audit_event where organization_id = ${organizationId}::uuid`
       await tx`delete from public.subscription_event where organization_id = ${organizationId}::uuid`
       await tx`delete from public.organization_onboarding where organization_id = ${organizationId}::uuid`
       await tx`delete from public.subscription where organization_id = ${organizationId}::uuid`

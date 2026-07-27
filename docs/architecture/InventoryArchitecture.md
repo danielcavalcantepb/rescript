@@ -57,7 +57,9 @@ graph TB
 ## 3. InventoryMovement vs Reservation (separação oficial)
 
 ### 3.1. InventoryMovement (ledger do físico)
-Altera **somente o saldo físico** (ou o compensa). Append-only. Tipos: entrada, saída, ajuste positivo/negativo, devolução, estorno; transferência futura. Saídas gravam **custo unitário aplicado** (média vigente).
+Altera **somente o saldo físico** (ou o compensa). Append-only. Tipos
+implementados: entrada, saída, ajuste positivo/negativo, transferência entre
+`StockLocation` e estorno.
 
 ### 3.2. Reservation (compromisso — não é movimento do ledger)
 Altera **reservado/disponível**, **não** o físico. Situações: ativa, consumida, liberada, expirada, cancelada. Campos: origem, quantidade, data, situação, expiração opcional, histórico.
@@ -147,8 +149,10 @@ A escolha é do cliente; o sistema respeita e sinaliza.
 
 ## 8. Saldos Derivados e Performance
 
-- O saldo pode ser **materializado** (uma tabela `StockBalance` atualizada na mesma transação do movimento) para leitura rápida — mas é **cache**, não verdade.
-- Um processo de **reconciliação** pode recomputar saldos a partir do ledger e detectar divergências (`DataTrust.md` DT9).
+- O saldo é materializado em `inventory_item`, atualizado na mesma transação do
+  movimento; é projeção, não fonte de verdade.
+- `reconcile_inventory_ledger` recompõe o saldo esperado e detecta divergências
+  sem alterar dados (`DataTrust.md` DT9).
 - Insights de estoque (ruptura, parado) leem saldos + histórico do ledger (`InsightArchitecture.md`).
 
 ---
@@ -167,4 +171,9 @@ A escolha é do cliente; o sistema respeita e sinaliza.
 
 **Fechadas:** ledger; reserva no MVP; custeio médio ponderado; estoque na variante; reserva ≠ movimento físico (FD-01, FD-02, ADR-0016, ADR-0017).
 
-**Adiadas (modelagem lógica):** estrutura física de tabelas/cache; multi-depósito/transferências; precisão decimal exata por unidade na persistência.
+**Implementadas:** estrutura física variant-scoped, múltiplas
+`StockLocation`, transferências atômicas, Reservation, Picking, Packing e
+Shipment.
+
+**Adiadas:** Warehouse como nova hierarquia, lotes, séries, validade e
+valoração/custeio físico completo.

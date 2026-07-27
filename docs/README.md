@@ -91,6 +91,7 @@ The [complete document index](./DOCUMENT_INDEX.md) lists every governed Markdown
 - [Contextual Entity Creation](./INLINE_CREATE.md)
 - [Sales Order Workspace](./SALES_WORKSPACE.md)
 - [Customer Picker](./CUSTOMER_PICKER.md)
+- [Inventory Security & Canonicalization](./INVENTORY_SECURITY_HARDENING.md)
 
 ### Architecture and decisions
 

@@ -144,19 +144,6 @@ export function can(
   ) {
     return true
   }
-  if (
-    permission === 'inventory.transfer' &&
-    granted.includes('inventory.movements.create')
-  ) {
-    return true
-  }
-  if (
-    permission === 'inventory.reverse' &&
-    granted.includes('inventory.adjust')
-  ) {
-    return true
-  }
-
   // *.write implies create/edit and Catalog lifecycle / configure actions.
   // Note: inventory.locations.manage is never mapped via *.write.
   if (

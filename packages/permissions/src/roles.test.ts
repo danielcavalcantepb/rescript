@@ -49,10 +49,13 @@ describe('role presets → permissions', () => {
     expect(grants).not.toContain('org.settings')
   })
 
-  it('inventory role can move, adjust and manage foundation', () => {
+  it('inventory role uses canonical movement permissions', () => {
     const grants = permissionsForRole('inventory')
     expect(grants).toContain('inventory.read')
-    expect(grants).toContain('inventory.move')
+    expect(grants).not.toContain('inventory.move')
+    expect(grants).toContain('inventory.movements.create')
+    expect(grants).toContain('inventory.transfer')
+    expect(grants).toContain('inventory.reverse')
     expect(grants).toContain('inventory.adjust')
     expect(grants).toContain('inventory.create')
     expect(grants).toContain('inventory.locations.manage')

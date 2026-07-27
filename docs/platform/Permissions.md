@@ -16,6 +16,16 @@ Related-Modules: All
 
 Keys are `resource.action` only. Never check role names in UI.
 
+## Inventory
+
+Inventory utiliza permissões específicas por operação: leitura
+(`inventory.read` e `inventory.movements.read`), entrada/saída manual
+(`inventory.movements.create`), ajuste (`inventory.adjust`), transferência
+(`inventory.transfer`) e estorno (`inventory.reverse`). Conceder criação de
+movimento não implica transferência; conceder ajuste não implica estorno.
+`inventory.move` permanece apenas como alias legado de
+`inventory.movements.create` e não deve aparecer em novos presets ou contratos.
+
 ## Source of grants
 
 1. Load active `membership` for `(organization_id, user_id)`
