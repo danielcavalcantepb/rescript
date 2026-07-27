@@ -11,7 +11,8 @@ import { Textarea } from '#/components/ui/textarea'
 import { formatBRL } from '#/lib/format'
 import { useCatalogVariantSearch } from '#/modules/catalog/ui/hooks/use-catalog-variants'
 import { useResolvedPrice } from '#/modules/catalog/ui/hooks/use-catalog-pricing'
-import { useCustomerSearch } from '#/modules/customers/ui/use-customer-queries'
+import { CustomerEntityPicker } from '#/modules/customers/ui/components/customer-entity-picker'
+import type { CustomerListItem } from '#/modules/customers/domain/types'
 import type { SalesDocumentType, SalesItemInput } from '#/modules/sales'
 import { PageError } from '#/platform/errors'
 import { PageLoading } from '#/platform/loading'
@@ -64,10 +65,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const createOrder = useCreateSalesOrder()
   const updateQuotation = useUpdateQuotation(id ?? '')
   const updateOrder = useUpdateSalesOrder(id ?? '')
-  const [customerId, setCustomerId] = useState('')
-  const [customerLabel, setCustomerLabel] = useState('')
-  const [customerQuery, setCustomerQuery] = useState('')
-  const customerSearch = useCustomerSearch(customerQuery)
+  const [customer, setCustomer] = useState<CustomerListItem | null>(null)
   const [currency, setCurrency] = useState('BRL')
   const [validUntil, setValidUntil] = useState('')
   const [notes, setNotes] = useState('')
@@ -76,8 +74,16 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
 
   useEffect(() => {
     if (!detail.data || !isEdit) return
-    setCustomerId(detail.data.customerId)
-    setCustomerLabel(detail.data.customerName)
+    setCustomer({
+      id: detail.data.customerId,
+      legalName: detail.data.customerName,
+      tradeName: null,
+      document: detail.data.customerDocument,
+      email: detail.data.customerEmail,
+      phone: detail.data.customerPhone,
+      status: 'active',
+      updatedAt: detail.data.createdAt,
+    })
     setCurrency(detail.data.currency)
     setValidUntil(detail.data.validUntil ?? '')
     setNotes(detail.data.notes ?? '')
@@ -115,7 +121,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
     [lines],
   )
   const canSubmit =
-    Boolean(customerId) &&
+    Boolean(customer?.id) &&
     total > 0 &&
     lines.every((line) => line.variantId && Number(line.quantity) > 0)
   const submitting =
@@ -143,7 +149,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
           await updateQuotation.mutateAsync({ currency, validUntil: validUntil || null, notes, items })
           await navigate({ to: '/sales/quotations/$quotationId', params: { quotationId: id } })
         } else {
-          const quotationId = await createQuotation.mutateAsync({ customerId, currency, validUntil: validUntil || null, notes, items })
+          const quotationId = await createQuotation.mutateAsync({ customerId: customer!.id, currency, validUntil: validUntil || null, notes, items })
           await navigate({ to: '/sales/quotations/$quotationId', params: { quotationId } })
         }
         return
@@ -152,7 +158,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
         await updateOrder.mutateAsync({ currency, notes, items })
         await navigate({ to: '/sales/orders/$orderId', params: { orderId: id } })
       } else {
-        const orderId = await createOrder.mutateAsync({ customerId, currency, notes, items })
+        const orderId = await createOrder.mutateAsync({ customerId: customer!.id, currency, notes, items })
         await navigate({ to: '/sales/orders/$orderId', params: { orderId } })
       }
     } catch (event) {
@@ -176,36 +182,11 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
       {error ? <p className="text-sm text-[var(--color-danger)]">{error}</p> : null}
       <section className="grid gap-4 rounded-[var(--radius-md)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-5 md:grid-cols-3">
         <FormField label="Cliente">
-          <Input
-            value={isEdit ? customerLabel : customerQuery}
+          <CustomerEntityPicker
+            value={customer}
             disabled={isEdit}
-            onChange={(event) => {
-              setCustomerQuery(event.target.value)
-              setCustomerId('')
-              setCustomerLabel('')
-            }}
-            placeholder="Busque por nome, documento ou e-mail"
+            onChange={setCustomer}
           />
-          {!isEdit && customerSearch.data?.length ? (
-            <div className="mt-2 max-h-36 overflow-auto rounded-[var(--radius-md)] border border-[var(--color-border-soft)]">
-              {customerSearch.data.map((customer) => (
-                <button
-                  className="block w-full px-3 py-2 text-left text-sm hover:bg-[var(--color-hover)]"
-                  key={customer.id}
-                  type="button"
-                  onClick={() => {
-                    setCustomerId(customer.id)
-                    setCustomerLabel(customer.legalName)
-                    setCustomerQuery(customer.legalName)
-                  }}
-                >
-                  {customer.legalName}
-                  {customer.document ? <span className="text-[var(--color-muted)]"> · {customer.document}</span> : null}
-                </button>
-              ))}
-            </div>
-          ) : null}
-          {customerId ? <p className="mt-1 text-xs text-[var(--color-muted)]">Selecionado: {customerLabel}</p> : null}
         </FormField>
         <FormField label="Moeda">
           <Input value={currency} maxLength={3} onChange={(event) => setCurrency(event.target.value.toUpperCase())} />

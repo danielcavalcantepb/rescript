@@ -3,18 +3,17 @@ import { RescriptLogo } from '#/components/brand/RescriptLogo'
 import { OrganizationSwitcher } from '#/platform/organization/organization-switcher'
 import { icons } from '#/platform/icons/catalog'
 import { cn } from '#/lib/utils'
+import { usePermission } from '#/platform/permissions'
 
 const links = [
   { to: '/app', label: 'Centro de Comando', icon: icons.central },
+  { to: '/analytics', label: 'Métricas', icon: icons.trending },
   { to: '/catalog/products', label: 'Produtos', icon: icons.product },
   { to: '/crm/customers', label: 'Clientes', icon: icons.customer },
   { to: '/procurement/purchases', label: 'Compras', icon: icons.product },
   { to: '/procurement/suppliers', label: 'Fornecedores', icon: icons.customer },
-  { to: '/procurement/receiving', label: 'Recebimentos', icon: icons.inventory },
   { to: '/catalog/inventory/items', label: 'Estoque', icon: icons.inventory },
-  { to: '/finance/accounts-payable', label: 'Contas a pagar', icon: icons.finance },
-  { to: '/finance/payments', label: 'Pagamentos', icon: icons.finance },
-  { to: '/finance/receivables', label: 'Contas a receber', icon: icons.finance },
+  { to: '/finance', label: 'Financeiro', icon: icons.finance },
   { to: '/sales/orders', label: 'Vendas', icon: icons.sale },
 ] as const
 
@@ -32,6 +31,7 @@ export function Sidebar({
   collapsed?: boolean
   onToggleCollapse?: () => void
 }) {
+  const { canAny } = usePermission()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
   const PanelOpen = icons.panelOpen
   const PanelClose = icons.panelClose
@@ -69,7 +69,10 @@ export function Sidebar({
         className={cn('flex-1 space-y-0.5', collapsed ? 'p-1.5' : 'p-2 pt-2.5')}
         aria-label="Navegação principal"
       >
-        {links.map((item) => {
+        {links.filter((item) =>
+          item.to !== '/finance' ||
+          canAny(['receivables.read', 'payable.read', 'payments.read']),
+        ).map((item) => {
           const active =
             item.to === '/app'
               ? pathname === '/app'

@@ -86,6 +86,9 @@ The [complete document index](./DOCUMENT_INDEX.md) lists every governed Markdown
 - [Quick Start](./QUICK_START.md)
 - [Documentation Governance](./DOCUMENTATION_GOVERNANCE.md)
 - [Marketing Website](./MARKETING_WEBSITE.md)
+- [Command Center](./COMMAND_CENTER.md)
+- [Business Analytics Platform](./ANALYTICS.md)
+- [Contextual Entity Creation](./INLINE_CREATE.md)
 
 ### Architecture and decisions
 

@@ -37,6 +37,14 @@ const orgState = vi.hoisted(() => ({
     slug: string
     status: 'active' | 'suspended' | 'canceled'
   } | null,
+  currentMembership: {
+    id: 'membership-1',
+    organizationId: 'org1',
+    userId: 'u1',
+    role: 'owner' as const,
+    status: 'active' as const,
+    isOwner: true,
+  },
   isLoading: false,
 }))
 
@@ -51,6 +59,7 @@ vi.mock('#/providers/app-session', () => ({
 vi.mock('#/platform/organization/organization-context', () => ({
   useOrganization: () => ({
     currentOrganization: orgState.currentOrganization,
+    currentMembership: orgState.currentMembership,
     isLoading: orgState.isLoading,
   }),
 }))
@@ -125,6 +134,19 @@ describe('PermissionProvider load states', () => {
     })
     expect(screen.getByTestId('can-read').textContent).toBe('true')
     expect(screen.getByText('protected')).toBeTruthy()
+  })
+
+  it('derives grants from the membership already loaded by the shell', async () => {
+    render(
+      <PermissionProvider>
+        <Probe />
+      </PermissionProvider>,
+    )
+
+    await waitFor(() => {
+      expect(screen.getByTestId('status').textContent).toBe('ready')
+    })
+    expect(screen.getByTestId('can-read').textContent).toBe('true')
   })
 
   it('denies after grants load without permission', async () => {

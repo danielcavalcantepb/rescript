@@ -1,12 +1,14 @@
+---
 Status: Active
 Owner: Product Architecture / Engineering
-Última revisão: 2026-07-26
-Versão: 1.0
-Tipo: Reference
-Escopo: Command Center, métricas operacionais, inteligência determinística
-Substitui: docs/screens/CentralDecision.md como guia de implementação atual
-Substituído por: —
-Módulos relacionados: Sales, Customers, Products, Inventory, Accounts Receivable, Accounts Payable, Payments
+Last-Reviewed: 2026-07-26
+Version: 1.0.1
+Type: Reference
+Scope: Command Center, operational metrics, deterministic intelligence
+Supersedes: docs/screens/CentralDecision.md as current implementation guide
+Superseded-By: None
+Related-Modules: Sales, Customers, Products, Inventory, Accounts Receivable, Accounts Payable, Payments
+---
 
 # Command Center
 
@@ -19,6 +21,7 @@ Ele não é um dashboard tradicional, não é BI e não executa ações de negó
 - Localização de UI: `apps/web/src/modules/command-center`.
 - Rota principal: `/app`.
 - Permissão obrigatória: `insights.view`.
+- Camadas: `ui` compõe a server function, `application` autoriza e orquestra, `infrastructure` lê projeções Supabase, `domain` calcula o snapshot.
 - Fonte de dados: tabelas e projeções existentes dos módulos operacionais.
 - Regra central: somente leitura, sem audit log, sem migrations e sem efeitos colaterais.
 - Cálculo: regras determinísticas no domínio do módulo, sem IA, OpenAI, prompts, agentes ou serviços externos.

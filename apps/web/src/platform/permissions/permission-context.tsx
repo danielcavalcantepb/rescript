@@ -11,6 +11,8 @@ import {
   canAll as canAllCheck,
   canAny as canAnyCheck,
   cannot as cannotCheck,
+  isRolePreset,
+  permissionsForRole,
   type PermissionKey,
 } from '@rescript/permissions'
 import { useSession } from '#/providers/app-session'
@@ -37,13 +39,17 @@ const PermissionContext = createContext<PermissionContextValue | null>(null)
 
 export function PermissionProvider({
   children,
-  repository = supabasePermissionRepository,
+  repository,
 }: {
   children: ReactNode
   repository?: PermissionRepository
 }) {
   const { authUser, isAuthenticated, isAuthLoading } = useSession()
-  const { currentOrganization, isLoading: orgLoading } = useOrganization()
+  const {
+    currentOrganization,
+    currentMembership,
+    isLoading: orgLoading,
+  } = useOrganization()
   const [grants, setGrants] = useState<readonly PermissionKey[]>([])
   const [status, setStatus] = useState<PermissionStatus>('loading')
   const [error, setError] = useState<Error | null>(null)
@@ -93,10 +99,17 @@ export function PermissionProvider({
       }
 
       try {
-        const next = await repository.listForMembership(
-          activeOrgId,
-          authUser.id,
-        )
+        const next = repository
+          ? await repository.listForMembership(activeOrgId, authUser.id)
+          : currentMembership?.organizationId === activeOrgId &&
+              currentMembership.userId === authUser.id &&
+              currentMembership.status === 'active' &&
+              isRolePreset(currentMembership.role)
+            ? permissionsForRole(currentMembership.role)
+            : await supabasePermissionRepository.listForMembership(
+                activeOrgId,
+                authUser.id,
+              )
         if (cancelled) return
         setGrants(next)
         setResolvedOrgId(activeOrgId)
@@ -121,6 +134,7 @@ export function PermissionProvider({
   }, [
     activeOrgId,
     authUser,
+    currentMembership,
     isAuthenticated,
     isAuthLoading,
     orgLoading,

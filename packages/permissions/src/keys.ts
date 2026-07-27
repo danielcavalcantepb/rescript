@@ -4,6 +4,7 @@
  */
 export const PERMISSIONS = [
   'insights.view',
+  'analytics.view',
   'customers.read',
   'customers.create',
   'customers.edit',

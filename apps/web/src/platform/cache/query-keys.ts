@@ -255,6 +255,12 @@ export const queryKeys = {
     overview: (organizationId: string) =>
       [...queryKeys.commandCenter.all(organizationId), 'overview'] as const,
   },
+  analytics: {
+    all: (organizationId: string) =>
+      [...queryKeys.root, 'analytics', organizationId] as const,
+    workspace: (organizationId: string, filters: Record<string, unknown>) =>
+      [...queryKeys.analytics.all(organizationId), 'workspace', filters] as const,
+  },
   insights: {
     all: (organizationId: string) =>
       [...queryKeys.root, 'insights', organizationId] as const,
@@ -277,6 +283,7 @@ export function invalidateOrganizationScope(
   invalidate(queryKeys.inventory.all(organizationId))
   invalidate(queryKeys.sales.all(organizationId))
   invalidate(queryKeys.commandCenter.all(organizationId))
+  invalidate(queryKeys.analytics.all(organizationId))
   invalidate(queryKeys.insights.all(organizationId))
   invalidate(['rescript', 'catalog', organizationId])
 }

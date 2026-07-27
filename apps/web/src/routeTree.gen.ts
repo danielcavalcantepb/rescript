@@ -24,8 +24,17 @@ import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as StatusRouteImport } from './routes/status'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as AppAccountsPayableRouteImport } from './routes/_app/accounts-payable'
+import { Route as AppAccountsReceivableRouteImport } from './routes/_app/accounts-receivable'
+import { Route as AppAnalyticsRouteImport } from './routes/_app/analytics'
 import { Route as AppAppRouteImport } from './routes/_app/app'
 import { Route as AppCatalogRouteImport } from './routes/_app/catalog'
+import { Route as AppContasAPagarRouteImport } from './routes/_app/contas-a-pagar'
+import { Route as AppContasAReceberRouteImport } from './routes/_app/contas-a-receber'
+import { Route as AppFinanceRouteImport } from './routes/_app/finance'
+import { Route as AppPagamentosRouteImport } from './routes/_app/pagamentos'
+import { Route as AppPaymentsRouteImport } from './routes/_app/payments'
+import { Route as AppReceivablesRouteImport } from './routes/_app/receivables'
 import { Route as AppCatalogIndexRouteImport } from './routes/_app/catalog/index'
 import { Route as AppCatalogAttributesRouteImport } from './routes/_app/catalog/attributes'
 import { Route as AppCatalogBrandsRouteImport } from './routes/_app/catalog/brands'
@@ -173,6 +182,21 @@ const TermsRoute = TermsRouteImport.update({
   path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AppAccountsPayableRoute = AppAccountsPayableRouteImport.update({
+  id: '/accounts-payable',
+  path: '/accounts-payable',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAccountsReceivableRoute = AppAccountsReceivableRouteImport.update({
+  id: '/accounts-receivable',
+  path: '/accounts-receivable',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAppRoute = AppAppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -181,6 +205,36 @@ const AppAppRoute = AppAppRouteImport.update({
 const AppCatalogRoute = AppCatalogRouteImport.update({
   id: '/catalog',
   path: '/catalog',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContasAPagarRoute = AppContasAPagarRouteImport.update({
+  id: '/contas-a-pagar',
+  path: '/contas-a-pagar',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppContasAReceberRoute = AppContasAReceberRouteImport.update({
+  id: '/contas-a-receber',
+  path: '/contas-a-receber',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppFinanceRoute = AppFinanceRouteImport.update({
+  id: '/finance',
+  path: '/finance',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPagamentosRoute = AppPagamentosRouteImport.update({
+  id: '/pagamentos',
+  path: '/pagamentos',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPaymentsRoute = AppPaymentsRouteImport.update({
+  id: '/payments',
+  path: '/payments',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppReceivablesRoute = AppReceivablesRouteImport.update({
+  id: '/receivables',
+  path: '/receivables',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCatalogIndexRoute = AppCatalogIndexRouteImport.update({
@@ -234,9 +288,9 @@ const AppEstoqueReservasRoute = AppEstoqueReservasRouteImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 const AppFinanceIndexRoute = AppFinanceIndexRouteImport.update({
-  id: '/finance/',
-  path: '/finance/',
-  getParentRoute: () => AppRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppFinanceRoute,
 } as any)
 const AppProcurementIndexRoute = AppProcurementIndexRouteImport.update({
   id: '/procurement/',
@@ -319,55 +373,55 @@ const AppCrmCustomersNewRoute = AppCrmCustomersNewRouteImport.update({
 } as any)
 const AppFinanceAccountsPayableIndexRoute =
   AppFinanceAccountsPayableIndexRouteImport.update({
-    id: '/finance/accounts-payable/',
-    path: '/finance/accounts-payable/',
-    getParentRoute: () => AppRoute,
+    id: '/accounts-payable/',
+    path: '/accounts-payable/',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppFinanceAccountsPayablePayableIdRoute =
   AppFinanceAccountsPayablePayableIdRouteImport.update({
-    id: '/finance/accounts-payable/$payableId',
-    path: '/finance/accounts-payable/$payableId',
-    getParentRoute: () => AppRoute,
+    id: '/accounts-payable/$payableId',
+    path: '/accounts-payable/$payableId',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppFinanceAccountsPayableNewRoute =
   AppFinanceAccountsPayableNewRouteImport.update({
-    id: '/finance/accounts-payable/new',
-    path: '/finance/accounts-payable/new',
-    getParentRoute: () => AppRoute,
+    id: '/accounts-payable/new',
+    path: '/accounts-payable/new',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppFinancePaymentsIndexRoute = AppFinancePaymentsIndexRouteImport.update({
-  id: '/finance/payments/',
-  path: '/finance/payments/',
-  getParentRoute: () => AppRoute,
+  id: '/payments/',
+  path: '/payments/',
+  getParentRoute: () => AppFinanceRoute,
 } as any)
 const AppFinancePaymentsPaymentIdRoute =
   AppFinancePaymentsPaymentIdRouteImport.update({
-    id: '/finance/payments/$paymentId',
-    path: '/finance/payments/$paymentId',
-    getParentRoute: () => AppRoute,
+    id: '/payments/$paymentId',
+    path: '/payments/$paymentId',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppFinancePaymentsNewRoute = AppFinancePaymentsNewRouteImport.update({
-  id: '/finance/payments/new',
-  path: '/finance/payments/new',
-  getParentRoute: () => AppRoute,
+  id: '/payments/new',
+  path: '/payments/new',
+  getParentRoute: () => AppFinanceRoute,
 } as any)
 const AppFinanceReceivablesIndexRoute =
   AppFinanceReceivablesIndexRouteImport.update({
-    id: '/finance/receivables/',
-    path: '/finance/receivables/',
-    getParentRoute: () => AppRoute,
+    id: '/receivables/',
+    path: '/receivables/',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppFinanceReceivablesReceivableIdRoute =
   AppFinanceReceivablesReceivableIdRouteImport.update({
-    id: '/finance/receivables/$receivableId',
-    path: '/finance/receivables/$receivableId',
-    getParentRoute: () => AppRoute,
+    id: '/receivables/$receivableId',
+    path: '/receivables/$receivableId',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppFinanceReceivablesNewRoute =
   AppFinanceReceivablesNewRouteImport.update({
-    id: '/finance/receivables/new',
-    path: '/finance/receivables/new',
-    getParentRoute: () => AppRoute,
+    id: '/receivables/new',
+    path: '/receivables/new',
+    getParentRoute: () => AppFinanceRoute,
   } as any)
 const AppProcurementPurchasesIndexRoute =
   AppProcurementPurchasesIndexRouteImport.update({
@@ -602,8 +656,17 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
   '/terms': typeof TermsRoute
+  '/accounts-payable': typeof AppAccountsPayableRoute
+  '/accounts-receivable': typeof AppAccountsReceivableRoute
+  '/analytics': typeof AppAnalyticsRoute
   '/app': typeof AppAppRoute
   '/catalog': typeof AppCatalogRouteWithChildren
+  '/contas-a-pagar': typeof AppContasAPagarRoute
+  '/contas-a-receber': typeof AppContasAReceberRoute
+  '/finance': typeof AppFinanceRouteWithChildren
+  '/pagamentos': typeof AppPagamentosRoute
+  '/payments': typeof AppPaymentsRoute
+  '/receivables': typeof AppReceivablesRoute
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -692,7 +755,15 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
   '/terms': typeof TermsRoute
+  '/accounts-payable': typeof AppAccountsPayableRoute
+  '/accounts-receivable': typeof AppAccountsReceivableRoute
+  '/analytics': typeof AppAnalyticsRoute
   '/app': typeof AppAppRoute
+  '/contas-a-pagar': typeof AppContasAPagarRoute
+  '/contas-a-receber': typeof AppContasAReceberRoute
+  '/pagamentos': typeof AppPagamentosRoute
+  '/payments': typeof AppPaymentsRoute
+  '/receivables': typeof AppReceivablesRoute
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -783,8 +854,17 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
   '/terms': typeof TermsRoute
+  '/_app/accounts-payable': typeof AppAccountsPayableRoute
+  '/_app/accounts-receivable': typeof AppAccountsReceivableRoute
+  '/_app/analytics': typeof AppAnalyticsRoute
   '/_app/app': typeof AppAppRoute
   '/_app/catalog': typeof AppCatalogRouteWithChildren
+  '/_app/contas-a-pagar': typeof AppContasAPagarRoute
+  '/_app/contas-a-receber': typeof AppContasAReceberRoute
+  '/_app/finance': typeof AppFinanceRouteWithChildren
+  '/_app/pagamentos': typeof AppPagamentosRoute
+  '/_app/payments': typeof AppPaymentsRoute
+  '/_app/receivables': typeof AppReceivablesRoute
   '/_app/catalog/attributes': typeof AppCatalogAttributesRoute
   '/_app/catalog/brands': typeof AppCatalogBrandsRoute
   '/_app/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -875,8 +955,17 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/status'
     | '/terms'
+    | '/accounts-payable'
+    | '/accounts-receivable'
+    | '/analytics'
     | '/app'
     | '/catalog'
+    | '/contas-a-pagar'
+    | '/contas-a-receber'
+    | '/finance'
+    | '/pagamentos'
+    | '/payments'
+    | '/receivables'
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
@@ -965,7 +1054,15 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/status'
     | '/terms'
+    | '/accounts-payable'
+    | '/accounts-receivable'
+    | '/analytics'
     | '/app'
+    | '/contas-a-pagar'
+    | '/contas-a-receber'
+    | '/pagamentos'
+    | '/payments'
+    | '/receivables'
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
@@ -1055,8 +1152,17 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/status'
     | '/terms'
+    | '/_app/accounts-payable'
+    | '/_app/accounts-receivable'
+    | '/_app/analytics'
     | '/_app/app'
     | '/_app/catalog'
+    | '/_app/contas-a-pagar'
+    | '/_app/contas-a-receber'
+    | '/_app/finance'
+    | '/_app/pagamentos'
+    | '/_app/payments'
+    | '/_app/receivables'
     | '/_app/catalog/attributes'
     | '/_app/catalog/brands'
     | '/_app/catalog/categories'
@@ -1256,6 +1362,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_app/accounts-payable': {
+      id: '/_app/accounts-payable'
+      path: '/accounts-payable'
+      fullPath: '/accounts-payable'
+      preLoaderRoute: typeof AppAccountsPayableRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/accounts-receivable': {
+      id: '/_app/accounts-receivable'
+      path: '/accounts-receivable'
+      fullPath: '/accounts-receivable'
+      preLoaderRoute: typeof AppAccountsReceivableRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/analytics': {
+      id: '/_app/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/app': {
       id: '/_app/app'
       path: '/app'
@@ -1268,6 +1395,48 @@ declare module '@tanstack/react-router' {
       path: '/catalog'
       fullPath: '/catalog'
       preLoaderRoute: typeof AppCatalogRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/contas-a-pagar': {
+      id: '/_app/contas-a-pagar'
+      path: '/contas-a-pagar'
+      fullPath: '/contas-a-pagar'
+      preLoaderRoute: typeof AppContasAPagarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/contas-a-receber': {
+      id: '/_app/contas-a-receber'
+      path: '/contas-a-receber'
+      fullPath: '/contas-a-receber'
+      preLoaderRoute: typeof AppContasAReceberRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/finance': {
+      id: '/_app/finance'
+      path: '/finance'
+      fullPath: '/finance'
+      preLoaderRoute: typeof AppFinanceRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/pagamentos': {
+      id: '/_app/pagamentos'
+      path: '/pagamentos'
+      fullPath: '/pagamentos'
+      preLoaderRoute: typeof AppPagamentosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/payments': {
+      id: '/_app/payments'
+      path: '/payments'
+      fullPath: '/payments'
+      preLoaderRoute: typeof AppPaymentsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/receivables': {
+      id: '/_app/receivables'
+      path: '/receivables'
+      fullPath: '/receivables'
+      preLoaderRoute: typeof AppReceivablesRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/catalog/': {
@@ -1342,10 +1511,10 @@ declare module '@tanstack/react-router' {
     }
     '/_app/finance/': {
       id: '/_app/finance/'
-      path: '/finance'
+      path: '/'
       fullPath: '/finance/'
       preLoaderRoute: typeof AppFinanceIndexRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/procurement/': {
       id: '/_app/procurement/'
@@ -1454,66 +1623,66 @@ declare module '@tanstack/react-router' {
     }
     '/_app/finance/accounts-payable/': {
       id: '/_app/finance/accounts-payable/'
-      path: '/finance/accounts-payable'
+      path: '/accounts-payable'
       fullPath: '/finance/accounts-payable/'
       preLoaderRoute: typeof AppFinanceAccountsPayableIndexRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/accounts-payable/$payableId': {
       id: '/_app/finance/accounts-payable/$payableId'
-      path: '/finance/accounts-payable/$payableId'
+      path: '/accounts-payable/$payableId'
       fullPath: '/finance/accounts-payable/$payableId'
       preLoaderRoute: typeof AppFinanceAccountsPayablePayableIdRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/accounts-payable/new': {
       id: '/_app/finance/accounts-payable/new'
-      path: '/finance/accounts-payable/new'
+      path: '/accounts-payable/new'
       fullPath: '/finance/accounts-payable/new'
       preLoaderRoute: typeof AppFinanceAccountsPayableNewRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/payments/': {
       id: '/_app/finance/payments/'
-      path: '/finance/payments'
+      path: '/payments'
       fullPath: '/finance/payments/'
       preLoaderRoute: typeof AppFinancePaymentsIndexRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/payments/$paymentId': {
       id: '/_app/finance/payments/$paymentId'
-      path: '/finance/payments/$paymentId'
+      path: '/payments/$paymentId'
       fullPath: '/finance/payments/$paymentId'
       preLoaderRoute: typeof AppFinancePaymentsPaymentIdRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/payments/new': {
       id: '/_app/finance/payments/new'
-      path: '/finance/payments/new'
+      path: '/payments/new'
       fullPath: '/finance/payments/new'
       preLoaderRoute: typeof AppFinancePaymentsNewRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/receivables/': {
       id: '/_app/finance/receivables/'
-      path: '/finance/receivables'
+      path: '/receivables'
       fullPath: '/finance/receivables/'
       preLoaderRoute: typeof AppFinanceReceivablesIndexRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/receivables/$receivableId': {
       id: '/_app/finance/receivables/$receivableId'
-      path: '/finance/receivables/$receivableId'
+      path: '/receivables/$receivableId'
       fullPath: '/finance/receivables/$receivableId'
       preLoaderRoute: typeof AppFinanceReceivablesReceivableIdRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/finance/receivables/new': {
       id: '/_app/finance/receivables/new'
-      path: '/finance/receivables/new'
+      path: '/receivables/new'
       fullPath: '/finance/receivables/new'
       preLoaderRoute: typeof AppFinanceReceivablesNewRouteImport
-      parentRoute: typeof AppRoute
+      parentRoute: typeof AppFinanceRoute
     }
     '/_app/procurement/purchases/': {
       id: '/_app/procurement/purchases/'
@@ -1853,6 +2022,38 @@ const AppCatalogRouteWithChildren = AppCatalogRoute._addFileChildren(
   AppCatalogRouteChildren,
 )
 
+interface AppFinanceRouteChildren {
+  AppFinanceIndexRoute: typeof AppFinanceIndexRoute
+  AppFinanceAccountsPayablePayableIdRoute: typeof AppFinanceAccountsPayablePayableIdRoute
+  AppFinanceAccountsPayableNewRoute: typeof AppFinanceAccountsPayableNewRoute
+  AppFinancePaymentsPaymentIdRoute: typeof AppFinancePaymentsPaymentIdRoute
+  AppFinancePaymentsNewRoute: typeof AppFinancePaymentsNewRoute
+  AppFinanceReceivablesReceivableIdRoute: typeof AppFinanceReceivablesReceivableIdRoute
+  AppFinanceReceivablesNewRoute: typeof AppFinanceReceivablesNewRoute
+  AppFinanceAccountsPayableIndexRoute: typeof AppFinanceAccountsPayableIndexRoute
+  AppFinancePaymentsIndexRoute: typeof AppFinancePaymentsIndexRoute
+  AppFinanceReceivablesIndexRoute: typeof AppFinanceReceivablesIndexRoute
+}
+
+const AppFinanceRouteChildren: AppFinanceRouteChildren = {
+  AppFinanceIndexRoute: AppFinanceIndexRoute,
+  AppFinanceAccountsPayablePayableIdRoute:
+    AppFinanceAccountsPayablePayableIdRoute,
+  AppFinanceAccountsPayableNewRoute: AppFinanceAccountsPayableNewRoute,
+  AppFinancePaymentsPaymentIdRoute: AppFinancePaymentsPaymentIdRoute,
+  AppFinancePaymentsNewRoute: AppFinancePaymentsNewRoute,
+  AppFinanceReceivablesReceivableIdRoute:
+    AppFinanceReceivablesReceivableIdRoute,
+  AppFinanceReceivablesNewRoute: AppFinanceReceivablesNewRoute,
+  AppFinanceAccountsPayableIndexRoute: AppFinanceAccountsPayableIndexRoute,
+  AppFinancePaymentsIndexRoute: AppFinancePaymentsIndexRoute,
+  AppFinanceReceivablesIndexRoute: AppFinanceReceivablesIndexRoute,
+}
+
+const AppFinanceRouteWithChildren = AppFinanceRoute._addFileChildren(
+  AppFinanceRouteChildren,
+)
+
 interface AppCrmCustomersCustomerIdRouteChildren {
   AppCrmCustomersCustomerIdEditRoute: typeof AppCrmCustomersCustomerIdEditRoute
 }
@@ -1911,8 +2112,17 @@ const AppSalesQuotationsQuotationIdRouteWithChildren =
   )
 
 interface AppRouteChildren {
+  AppAccountsPayableRoute: typeof AppAccountsPayableRoute
+  AppAccountsReceivableRoute: typeof AppAccountsReceivableRoute
+  AppAnalyticsRoute: typeof AppAnalyticsRoute
   AppAppRoute: typeof AppAppRoute
   AppCatalogRoute: typeof AppCatalogRouteWithChildren
+  AppContasAPagarRoute: typeof AppContasAPagarRoute
+  AppContasAReceberRoute: typeof AppContasAReceberRoute
+  AppFinanceRoute: typeof AppFinanceRouteWithChildren
+  AppPagamentosRoute: typeof AppPagamentosRoute
+  AppPaymentsRoute: typeof AppPaymentsRoute
+  AppReceivablesRoute: typeof AppReceivablesRoute
   AppClientesCustomerIdRoute: typeof AppClientesCustomerIdRoute
   AppEstoqueMovimentacoesRoute: typeof AppEstoqueMovimentacoesRoute
   AppEstoqueReservasRoute: typeof AppEstoqueReservasRoute
@@ -1921,19 +2131,12 @@ interface AppRouteChildren {
   AppClientesIndexRoute: typeof AppClientesIndexRoute
   AppCrmIndexRoute: typeof AppCrmIndexRoute
   AppEstoqueIndexRoute: typeof AppEstoqueIndexRoute
-  AppFinanceIndexRoute: typeof AppFinanceIndexRoute
   AppProcurementIndexRoute: typeof AppProcurementIndexRoute
   AppProdutosIndexRoute: typeof AppProdutosIndexRoute
   AppSalesIndexRoute: typeof AppSalesIndexRoute
   AppVendasIndexRoute: typeof AppVendasIndexRoute
   AppCrmCustomersCustomerIdRoute: typeof AppCrmCustomersCustomerIdRouteWithChildren
   AppCrmCustomersNewRoute: typeof AppCrmCustomersNewRoute
-  AppFinanceAccountsPayablePayableIdRoute: typeof AppFinanceAccountsPayablePayableIdRoute
-  AppFinanceAccountsPayableNewRoute: typeof AppFinanceAccountsPayableNewRoute
-  AppFinancePaymentsPaymentIdRoute: typeof AppFinancePaymentsPaymentIdRoute
-  AppFinancePaymentsNewRoute: typeof AppFinancePaymentsNewRoute
-  AppFinanceReceivablesReceivableIdRoute: typeof AppFinanceReceivablesReceivableIdRoute
-  AppFinanceReceivablesNewRoute: typeof AppFinanceReceivablesNewRoute
   AppProcurementPurchasesPurchaseIdRoute: typeof AppProcurementPurchasesPurchaseIdRoute
   AppProcurementPurchasesNewRoute: typeof AppProcurementPurchasesNewRoute
   AppProcurementReceivingReceiptIdRoute: typeof AppProcurementReceivingReceiptIdRoute
@@ -1945,9 +2148,6 @@ interface AppRouteChildren {
   AppSalesQuotationsQuotationIdRoute: typeof AppSalesQuotationsQuotationIdRouteWithChildren
   AppSalesQuotationsNewRoute: typeof AppSalesQuotationsNewRoute
   AppCrmCustomersIndexRoute: typeof AppCrmCustomersIndexRoute
-  AppFinanceAccountsPayableIndexRoute: typeof AppFinanceAccountsPayableIndexRoute
-  AppFinancePaymentsIndexRoute: typeof AppFinancePaymentsIndexRoute
-  AppFinanceReceivablesIndexRoute: typeof AppFinanceReceivablesIndexRoute
   AppProcurementPurchasesIndexRoute: typeof AppProcurementPurchasesIndexRoute
   AppProcurementReceivingIndexRoute: typeof AppProcurementReceivingIndexRoute
   AppProcurementSuppliersIndexRoute: typeof AppProcurementSuppliersIndexRoute
@@ -1956,8 +2156,17 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAccountsPayableRoute: AppAccountsPayableRoute,
+  AppAccountsReceivableRoute: AppAccountsReceivableRoute,
+  AppAnalyticsRoute: AppAnalyticsRoute,
   AppAppRoute: AppAppRoute,
   AppCatalogRoute: AppCatalogRouteWithChildren,
+  AppContasAPagarRoute: AppContasAPagarRoute,
+  AppContasAReceberRoute: AppContasAReceberRoute,
+  AppFinanceRoute: AppFinanceRouteWithChildren,
+  AppPagamentosRoute: AppPagamentosRoute,
+  AppPaymentsRoute: AppPaymentsRoute,
+  AppReceivablesRoute: AppReceivablesRoute,
   AppClientesCustomerIdRoute: AppClientesCustomerIdRoute,
   AppEstoqueMovimentacoesRoute: AppEstoqueMovimentacoesRoute,
   AppEstoqueReservasRoute: AppEstoqueReservasRoute,
@@ -1966,21 +2175,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppClientesIndexRoute: AppClientesIndexRoute,
   AppCrmIndexRoute: AppCrmIndexRoute,
   AppEstoqueIndexRoute: AppEstoqueIndexRoute,
-  AppFinanceIndexRoute: AppFinanceIndexRoute,
   AppProcurementIndexRoute: AppProcurementIndexRoute,
   AppProdutosIndexRoute: AppProdutosIndexRoute,
   AppSalesIndexRoute: AppSalesIndexRoute,
   AppVendasIndexRoute: AppVendasIndexRoute,
   AppCrmCustomersCustomerIdRoute: AppCrmCustomersCustomerIdRouteWithChildren,
   AppCrmCustomersNewRoute: AppCrmCustomersNewRoute,
-  AppFinanceAccountsPayablePayableIdRoute:
-    AppFinanceAccountsPayablePayableIdRoute,
-  AppFinanceAccountsPayableNewRoute: AppFinanceAccountsPayableNewRoute,
-  AppFinancePaymentsPaymentIdRoute: AppFinancePaymentsPaymentIdRoute,
-  AppFinancePaymentsNewRoute: AppFinancePaymentsNewRoute,
-  AppFinanceReceivablesReceivableIdRoute:
-    AppFinanceReceivablesReceivableIdRoute,
-  AppFinanceReceivablesNewRoute: AppFinanceReceivablesNewRoute,
   AppProcurementPurchasesPurchaseIdRoute:
     AppProcurementPurchasesPurchaseIdRoute,
   AppProcurementPurchasesNewRoute: AppProcurementPurchasesNewRoute,
@@ -1995,9 +2195,6 @@ const AppRouteChildren: AppRouteChildren = {
     AppSalesQuotationsQuotationIdRouteWithChildren,
   AppSalesQuotationsNewRoute: AppSalesQuotationsNewRoute,
   AppCrmCustomersIndexRoute: AppCrmCustomersIndexRoute,
-  AppFinanceAccountsPayableIndexRoute: AppFinanceAccountsPayableIndexRoute,
-  AppFinancePaymentsIndexRoute: AppFinancePaymentsIndexRoute,
-  AppFinanceReceivablesIndexRoute: AppFinanceReceivablesIndexRoute,
   AppProcurementPurchasesIndexRoute: AppProcurementPurchasesIndexRoute,
   AppProcurementReceivingIndexRoute: AppProcurementReceivingIndexRoute,
   AppProcurementSuppliersIndexRoute: AppProcurementSuppliersIndexRoute,

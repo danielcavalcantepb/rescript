@@ -17,6 +17,7 @@ const ALL: readonly PermissionKey[] = PERMISSIONS
 
 const READ_CORE: readonly PermissionKey[] = [
   'insights.view',
+  'analytics.view',
   'customers.read',
   'suppliers.read',
   'purchase.read',
@@ -164,6 +165,7 @@ export const ROLE_PERMISSIONS: Record<RolePreset, readonly PermissionKey[]> = {
   ],
   seller: [
     'insights.view',
+    'analytics.view',
     'customers.read',
     'customers.create',
     'customers.edit',
@@ -225,6 +227,7 @@ export const ROLE_PERMISSIONS: Record<RolePreset, readonly PermissionKey[]> = {
   ],
   inventory: [
     'insights.view',
+    'analytics.view',
     'receiving.read',
     'receiving.create',
     'receiving.post',
@@ -290,6 +293,7 @@ export const ROLE_PERMISSIONS: Record<RolePreset, readonly PermissionKey[]> = {
   ],
   finance: [
     'insights.view',
+    'analytics.view',
     'customers.read',
     'suppliers.read',
     'purchase.read',

@@ -29,6 +29,7 @@ Complete registry of governed Markdown documents. Classification controls author
 - [10_AI_GUIDE](./10_AI_GUIDE.md)
 - [DOCUMENTATION_GOVERNANCE](./DOCUMENTATION_GOVERNANCE.md)
 - [GLOSSARY](./GLOSSARY.md)
+- [INLINE_CREATE](./INLINE_CREATE.md)
 - [MARKETING_WEBSITE](./MARKETING_WEBSITE.md)
 - [MODULE_STATUS](./MODULE_STATUS.md)
 - [README](./README.md)

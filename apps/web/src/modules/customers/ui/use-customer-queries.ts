@@ -45,7 +45,10 @@ function useOrgId() {
   return currentOrganization?.id
 }
 
-export function useCustomers(filters: ListCustomersQuery) {
+export function useCustomers(
+  filters: ListCustomersQuery,
+  options?: { enabled?: boolean },
+) {
   const organizationId = useOrgId()
   return useInfiniteQuery({
     queryKey: queryKeys.customers.list(organizationId ?? 'none', {
@@ -53,7 +56,7 @@ export function useCustomers(filters: ListCustomersQuery) {
       status: filters.status,
       sort: filters.sort,
     }),
-    enabled: Boolean(organizationId),
+    enabled: Boolean(organizationId) && options?.enabled !== false,
     initialPageParam: null as string | null,
     queryFn: async ({ pageParam }) => {
       if (!organizationId) throw new Error('missing_org')

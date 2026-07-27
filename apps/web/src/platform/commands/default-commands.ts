@@ -53,6 +53,17 @@ export const defaultCommands: AppCommand[] = [
     run: ({ navigate }) => navigate('/app'),
   },
   {
+    id: 'nav.analytics',
+    label: 'Abrir Métricas',
+    category: 'navigate',
+    icon: 'trending',
+    keywords: ['metricas', 'métricas', 'analytics', 'indicadores', 'kpis', 'relatorios', 'relatórios'],
+    permission: 'analytics.view',
+    shortcut: 'G M',
+    priority: 69,
+    run: ({ navigate }) => navigate('/analytics'),
+  },
+  {
     id: 'nav.customers',
     label: 'Ir para Clientes',
     category: 'navigate',
