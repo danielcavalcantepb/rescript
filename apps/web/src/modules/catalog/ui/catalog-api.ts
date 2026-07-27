@@ -310,6 +310,8 @@ export const catalogCreateProduct = createServerFn({ method: 'POST' })
           unitOfMeasureId: data.command.unitOfMeasureId,
           barcode: data.command.barcode,
           tracksInventory: data.command.tracksInventory,
+          axes: data.command.axes,
+          skuPrefix: data.command.skuPrefix,
         }),
       ),
   )

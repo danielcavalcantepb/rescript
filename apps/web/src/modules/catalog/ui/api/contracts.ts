@@ -114,7 +114,7 @@ export type ArchiveAttributeValueInput = CatalogOrgScope & {
 }
 
 export type CreateProductInput = CatalogOrgScope & {
-  command: Omit<CreateProductCommand, 'axes' | 'skuPrefix'>
+  command: CreateProductCommand
 }
 
 export type CreateProductResponse = ProductResponse

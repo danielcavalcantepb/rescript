@@ -9,6 +9,7 @@ import { CatalogFilters } from '#/modules/catalog/ui/components/CatalogFilters'
 import { CatalogPagination } from '#/modules/catalog/ui/components/CatalogPagination'
 import { CatalogTable } from '#/modules/catalog/ui/components/CatalogTable'
 import { CatalogToolbar } from '#/modules/catalog/ui/components/CatalogToolbar'
+import { ProductQuickCreate } from '#/modules/catalog/ui/components/product-registration/ProductQuickCreate'
 import { CatalogEmptyState } from '#/modules/catalog/ui/empty-states/CatalogEmptyState'
 import {
   toListCatalogProductsQuery,
@@ -22,6 +23,7 @@ import {
 import { useBrands } from '#/modules/catalog/ui/hooks/use-catalog-brands'
 import { useCategories } from '#/modules/catalog/ui/hooks/use-catalog-categories'
 import { useCatalogProducts } from '#/modules/catalog/ui/hooks/use-catalog-products'
+import { useUnits } from '#/modules/catalog/ui/hooks/use-catalog-units'
 import { CatalogShell } from '#/modules/catalog/ui/layouts/CatalogShell'
 import { CatalogLoadingState } from '#/modules/catalog/ui/loading/CatalogLoadingState'
 
@@ -40,6 +42,7 @@ export function CatalogProductsPage({
   filtersRef.current = filters
   const [text, setText] = useState(filters.text)
   const [debouncedText, setDebouncedText] = useState(filters.text.trim())
+  const [quickCreateOpen, setQuickCreateOpen] = useState(false)
 
   useEffect(() => {
     setText(filters.text)
@@ -83,6 +86,10 @@ export function CatalogProductsPage({
     organizationId,
     Boolean(organizationId) && orgActive,
   )
+  const unitsQuery = useUnits(
+    organizationId,
+    Boolean(organizationId) && orgActive,
+  )
 
   const onFilterChange = (next: Partial<CatalogProductFilters>) => {
     if (next.text !== undefined) {
@@ -120,11 +127,14 @@ export function CatalogProductsPage({
       ]}
       actions={
         <FeatureGate permission="products.create">
-          <Button asChild>
-            <Link to="/catalog/products/new" search={listSearch}>
-              Novo produto
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" asChild>
+              <Link to="/catalog/products/new" search={listSearch}>
+                Cadastro avançado
+              </Link>
+            </Button>
+            <Button onClick={() => setQuickCreateOpen(true)}>Novo produto</Button>
+          </div>
         </FeatureGate>
       }
     >
@@ -172,6 +182,14 @@ export function CatalogProductsPage({
           />
         </>
       )}
+      <ProductQuickCreate
+        open={quickCreateOpen}
+        onOpenChange={setQuickCreateOpen}
+        organizationId={organizationId}
+        brands={brandsQuery.data ?? []}
+        categories={categoriesQuery.data ?? []}
+        units={unitsQuery.data ?? []}
+      />
     </CatalogShell>
   )
 }

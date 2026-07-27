@@ -40,6 +40,7 @@ Complete registry of governed Markdown documents. Classification controls author
 - [BRANDS](./BRANDS.md)
 - [ATTRIBUTES](./ATTRIBUTES.md)
 - [PRODUCT_VARIANTS](./PRODUCT_VARIANTS.md)
+- [PRODUCT_REGISTRATION_EXPERIENCE](./PRODUCT_REGISTRATION_EXPERIENCE.md)
 - [README](./README.md)
 
 ## ADR
