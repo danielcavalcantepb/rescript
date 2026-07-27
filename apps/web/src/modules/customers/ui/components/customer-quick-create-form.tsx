@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import type {
   CreateAddressInput,
   CreateCustomerInput,
@@ -50,10 +50,12 @@ export function CustomerQuickCreateForm({
   initialName,
   onCreated,
   onCancel,
+  onDirtyChange,
 }: {
   initialName: string
   onCreated: (customer: Customer) => void
   onCancel: () => void
+  onDirtyChange?: (dirty: boolean) => void
 }) {
   const { currentOrganization } = useOrganization()
   const { can } = usePermission()
@@ -61,6 +63,12 @@ export function CustomerQuickCreateForm({
   const [values, setValues] = useState(() => initialValues(initialName))
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
+
+  useEffect(() => {
+    onDirtyChange?.(
+      JSON.stringify(values) !== JSON.stringify(initialValues(initialName)),
+    )
+  }, [initialName, onDirtyChange, values])
 
   function set<K extends keyof QuickCreateValues>(
     key: K,

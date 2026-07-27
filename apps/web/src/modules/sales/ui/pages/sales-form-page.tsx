@@ -1,15 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useBlocker, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import { AppBreadcrumb } from '#/components/AppBreadcrumb'
 import { EntityCell, EntityRow, EntityTable } from '#/components/EntityTable'
 import { PageHeader } from '#/components/PageHeader'
 import { Button } from '#/components/ui/button'
 import { FormField } from '#/components/ui/form-field'
 import { Input } from '#/components/ui/input'
-import { Select } from '#/components/ui/select'
 import { Textarea } from '#/components/ui/textarea'
 import { formatBRL } from '#/lib/format'
-import { useCatalogVariantSearch } from '#/modules/catalog/ui/hooks/use-catalog-variants'
 import { useResolvedPrice } from '#/modules/catalog/ui/hooks/use-catalog-pricing'
 import { CustomerEntityPicker } from '#/modules/customers/ui/components/customer-entity-picker'
 import type { CustomerListItem } from '#/modules/customers/domain/types'
@@ -34,6 +32,8 @@ import {
   SalesTotals,
   WorkspaceSection,
 } from '../components/sales-order-workspace-components'
+import { SalesProductPicker } from '../components/sales-product-picker'
+import { UnsavedChangesGuard } from '../components/unsaved-changes-guard'
 
 type Line = SalesItemInput & {
   productId: string
@@ -81,13 +81,6 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const [lines, setLines] = useState<Line[]>([emptyLine()])
   const [error, setError] = useState<string | null>(null)
   const [dirty, setDirty] = useState(false)
-
-  useBlocker({
-    shouldBlockFn: () =>
-      dirty &&
-      !window.confirm('Existem alterações não salvas. Deseja realmente sair do pedido?'),
-    enableBeforeUnload: dirty,
-  })
 
   useEffect(() => {
     if (!detail.data || !isEdit) return
@@ -188,6 +181,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
 
     return (
       <div className="space-y-5 pb-24">
+        <UnsavedChangesGuard when={dirty && !submitting} />
         <OrderHeader
           isEdit={isEdit}
           date={new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date())}
@@ -264,11 +258,22 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
                       currency={currency}
                       organizationId={organizationId}
                       line={line}
-                      onChange={(next) =>
+                      onChange={(next) => {
+                        const duplicate = lines.some(
+                          (item, itemIndex) =>
+                            itemIndex !== index &&
+                            item.variantId &&
+                            item.variantId === next.variantId,
+                        )
+                        if (duplicate) {
+                          setError('Esta variante já está no pedido. Ajuste a quantidade do item existente.')
+                          return
+                        }
+                        setError(null)
                         updateLines((current) =>
                           current.map((item, itemIndex) => (itemIndex === index ? next : item)),
                         )
-                      }
+                      }}
                       onRemove={() =>
                         updateLines((current) => current.filter((_, itemIndex) => itemIndex !== index))
                       }
@@ -396,9 +401,7 @@ function SalesItemRow({
   onRemove: () => void
   removable: boolean
 }) {
-  const [query, setQuery] = useState('')
   const [priceAt] = useState(() => new Date().toISOString())
-  const variants = useCatalogVariantSearch(organizationId, query)
   const price = useResolvedPrice(
     organizationId,
     line.variantId ? { variantId: line.variantId, at: priceAt, currency } : undefined,
@@ -420,39 +423,34 @@ function SalesItemRow({
   return (
     <EntityRow>
       <EntityCell>
-        <Input
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-          placeholder="SKU, barcode, produto ou variante"
+        <SalesProductPicker
+          organizationId={organizationId}
+          value={
+            line.variantId
+              ? {
+                  productId: line.productId,
+                  productName: line.productName ?? '',
+                  variantId: line.variantId,
+                  variantSku: line.variantSku ?? null,
+                  brandId: null,
+                  categoryId: null,
+                  status: 'active',
+                }
+              : null
+          }
+          onSelect={(selected) => {
+            onChange({
+              ...line,
+              productId: selected.productId,
+              productName: selected.productName,
+              variantId: selected.variantId,
+              variantSku: selected.variantSku,
+              priceListId: null,
+              unitPrice: '0',
+              priceSourceLabel: 'Buscando preço…',
+            })
+          }}
         />
-        {variants.data?.length ? (
-          <Select
-            className="mt-2"
-            value=""
-            onChange={(event) => {
-              const selected = variants.data.find((item) => item.variantId === event.target.value)
-              if (!selected) return
-              onChange({
-                ...line,
-                productId: selected.productId,
-                productName: selected.productName,
-                variantId: selected.variantId,
-                variantSku: selected.variantSku,
-                priceListId: null,
-                unitPrice: '0',
-                priceSourceLabel: 'Buscando preço…',
-              })
-              setQuery(selected.variantSku ?? selected.productName)
-            }}
-          >
-            <option value="">Selecionar resultado</option>
-            {variants.data.map((item) => (
-              <option key={item.variantId} value={item.variantId}>
-                {item.variantSku ? `${item.variantSku} · ` : ''}{item.productName}
-              </option>
-            ))}
-          </Select>
-        ) : null}
       </EntityCell>
       <EntityCell>
         <div className="font-medium">{line.productName || 'Nenhum item'}</div>

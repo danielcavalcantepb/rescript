@@ -15,6 +15,8 @@ export type EntityPickerProps<TEntity> = {
   value: TEntity | null
   items: readonly TEntity[]
   isLoading?: boolean
+  isError?: boolean
+  errorMessage?: string
   isFetchingNextPage?: boolean
   hasNextPage?: boolean
   disabled?: boolean
@@ -35,6 +37,8 @@ export function EntityPicker<TEntity>({
   value,
   items,
   isLoading,
+  isError,
+  errorMessage,
   isFetchingNextPage,
   hasNextPage,
   disabled,
@@ -87,6 +91,7 @@ export function EntityPicker<TEntity>({
         aria-autocomplete="list"
         aria-controls={listboxId}
         aria-expanded={open && hasSearch}
+        aria-busy={Boolean(isLoading)}
         aria-activedescendant={
           activeIndex >= 0 ? `${listboxId}-option-${activeIndex}` : undefined
         }
@@ -152,6 +157,12 @@ export function EntityPicker<TEntity>({
             </p>
           ) : null}
 
+          {isError ? (
+            <p role="alert" className="px-3 py-2 text-sm text-[var(--color-danger)]">
+              {errorMessage ?? `Não foi possível buscar ${provider.singularLabel}.`}
+            </p>
+          ) : null}
+
           {items.map((entity, index) => {
             const id = provider.getId(entity)
             const description = provider.getDescription?.(entity)
@@ -196,10 +207,10 @@ export function EntityPicker<TEntity>({
             </Button>
           ) : null}
 
-          {showEmpty ? (
+          {showEmpty && !isError ? (
             <div className="space-y-2 px-3 py-3">
               <p className="text-sm text-[var(--color-muted)]">
-                Nenhum {provider.singularLabel} encontrado
+                Nenhum {provider.singularLabel} encontrado para “{query.trim()}”.
               </p>
               {canCreate ? (
                 <Button

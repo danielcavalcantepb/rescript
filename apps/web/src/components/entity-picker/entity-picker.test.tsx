@@ -159,4 +159,29 @@ describe('EntityPicker', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Carregar mais' }))
     expect(onLoadMore).toHaveBeenCalledOnce()
   })
+
+  it('announces search errors without offering a false empty state', () => {
+    render(
+      <EntityPicker
+        provider={provider}
+        value={null}
+        items={[]}
+        isError
+        errorMessage="Falha ao consultar clientes."
+        canCreate
+        onSearch={vi.fn()}
+        onSelect={vi.fn()}
+        onCreate={vi.fn()}
+      />,
+    )
+
+    const input = screen.getByRole('combobox')
+    fireEvent.focus(input)
+    fireEvent.change(input, { target: { value: 'Cliente' } })
+
+    expect(screen.getByRole('alert').textContent).toContain(
+      'Falha ao consultar clientes.',
+    )
+    expect(screen.queryByText(/Nenhum cliente encontrado/)).toBeNull()
+  })
 })

@@ -19,11 +19,13 @@ itens, preços, descontos, totais e observações permanecem no mesmo contexto.
 
 - busca e criação contextual de Customer pelo fluxo canônico;
 - seleção de variantes por SKU, código de barras, produto ou variante;
+- picker de catálogo com debounce, teclado, loading, erro e prevenção de duplicidade;
 - resolução server-side de Pricing e snapshot comercial por item;
 - edição inline de quantidade e desconto;
 - cálculo visual em centavos inteiros e recálculo autoritativo no servidor;
 - criação e edição de rascunho pelos RPCs oficiais de Sales;
 - bloqueio de saída quando existem alterações não salvas;
+- confirmação visual pelo serviço central de dialogs, sem `window.confirm`;
 - layout responsivo com resumo comercial persistente no desktop.
 
 ## Limites atuais
@@ -43,4 +45,3 @@ cálculo visual.
 
 Somente após contratos canônicos aprovados: seller/channel/store snapshots,
 delivery terms, payment terms e integração explícita com Accounts Receivable.
-

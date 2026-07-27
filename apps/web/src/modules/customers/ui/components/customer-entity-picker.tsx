@@ -17,6 +17,7 @@ import type {
 } from '#/modules/customers/domain/types'
 import { useCustomers } from '#/modules/customers/ui/use-customer-queries'
 import { usePermission } from '#/platform/permissions'
+import { dialogs } from '#/platform/dialogs'
 import { CustomerQuickCreateForm } from './customer-quick-create-form'
 
 const customerProvider: EntityProvider<CustomerListItem> = {
@@ -25,7 +26,7 @@ const customerProvider: EntityProvider<CustomerListItem> = {
   getId: (customer) => customer.id,
   getLabel: (customer) => customer.legalName,
   getDescription: (customer) =>
-    [customer.document, customer.email].filter(Boolean).join(' · ') || null,
+    [customer.document, customer.email, customer.phone].filter(Boolean).join(' · ') || null,
 }
 
 function toListItem(customer: Customer): CustomerListItem {
@@ -54,6 +55,7 @@ export function CustomerEntityPicker({
   const [search, setSearch] = useState('')
   const [createOpen, setCreateOpen] = useState(false)
   const [createName, setCreateName] = useState('')
+  const [createDirty, setCreateDirty] = useState(false)
   const query = useCustomers(
     { q: search, status: 'all', limit: 20, sort: 'name_asc' },
     { enabled: search.trim().length >= 2 },
@@ -71,6 +73,8 @@ export function CustomerEntityPicker({
         items={items}
         disabled={disabled}
         isLoading={query.isLoading}
+        isError={query.isError}
+        errorMessage="Não foi possível buscar clientes. Tente novamente."
         isFetchingNextPage={query.isFetchingNextPage}
         hasNextPage={query.hasNextPage}
         canCreate={can('customers.create')}
@@ -88,7 +92,21 @@ export function CustomerEntityPicker({
         }}
       />
 
-      <Drawer open={createOpen} onOpenChange={setCreateOpen}>
+      <Drawer
+        open={createOpen}
+        onOpenChange={(nextOpen) => {
+          if (nextOpen || !createDirty) {
+            setCreateOpen(nextOpen)
+            return
+          }
+          void dialogs.discard().then((result) => {
+            if (result.confirmed) {
+              setCreateDirty(false)
+              setCreateOpen(false)
+            }
+          })
+        }}
+      >
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>Novo cliente</DrawerTitle>
@@ -100,8 +118,21 @@ export function CustomerEntityPicker({
             <CustomerQuickCreateForm
               key={`${createOpen}-${createName}`}
               initialName={createName}
-              onCancel={() => setCreateOpen(false)}
+              onDirtyChange={setCreateDirty}
+              onCancel={() => {
+                if (!createDirty) {
+                  setCreateOpen(false)
+                  return
+                }
+                void dialogs.discard().then((result) => {
+                  if (result.confirmed) {
+                    setCreateDirty(false)
+                    setCreateOpen(false)
+                  }
+                })
+              }}
               onCreated={(customer) => {
+                setCreateDirty(false)
                 onChange(toListItem(customer))
                 setSearch(customer.legalName)
                 setCreateOpen(false)
