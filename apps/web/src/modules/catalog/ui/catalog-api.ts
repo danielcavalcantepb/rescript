@@ -41,6 +41,11 @@ import type {
   UpdatePriceListResponse,
   VariantPriceSummaryInput,
   VariantPriceSummaryRpcResponse,
+  CreateBrandInput,
+  UpdateBrandInput,
+  CreateCategoryInput,
+  UpdateCategoryInput,
+  MoveCategoryInput,
 } from '#/modules/catalog/ui/api/contracts'
 import { toCatalogRpcError } from '#/modules/catalog/ui/errors/catalog-rpc-errors'
 
@@ -159,6 +164,46 @@ export const catalogListCategories = createServerFn({ method: 'POST' })
   .validator((input: CatalogOrgScope) => input)
   .handler(async ({ data }) =>
     runCatalogRpc(data.organizationId, (app) => app.listCategories()),
+  )
+
+export const catalogCreateBrand = createServerFn({ method: 'POST' })
+  .validator((input: CreateBrandInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.createBrand(data.command),
+    ),
+  )
+
+export const catalogUpdateBrand = createServerFn({ method: 'POST' })
+  .validator((input: UpdateBrandInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.updateBrand(data.command),
+    ),
+  )
+
+export const catalogCreateCategory = createServerFn({ method: 'POST' })
+  .validator((input: CreateCategoryInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.createCategory(data.command),
+    ),
+  )
+
+export const catalogUpdateCategory = createServerFn({ method: 'POST' })
+  .validator((input: UpdateCategoryInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.updateCategory(data.command),
+    ),
+  )
+
+export const catalogMoveCategory = createServerFn({ method: 'POST' })
+  .validator((input: MoveCategoryInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.moveCategory(data.command),
+    ),
   )
 
 export const catalogListPriceLists = createServerFn({ method: 'POST' })

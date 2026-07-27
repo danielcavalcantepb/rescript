@@ -4,6 +4,8 @@ import type {
   ApplyVariantCombinationsResponse,
   CatalogProductDetailResponse,
   CreatePriceListCommand,
+  CreateBrandCommand,
+  CreateCategoryCommand,
   CreateProductCommand,
   LifecycleProductCommand,
   ListCatalogProductsQuery,
@@ -22,6 +24,9 @@ import type {
   CatalogSearchHitResponse,
   SearchVariantsQuery,
   UpdatePriceListCommand,
+  UpdateBrandCommand,
+  UpdateCategoryCommand,
+  MoveCategoryCommand,
   UpdateProductCommand,
   UpdateVariantCommand,
   VariantCombinationsPreviewResponse,
@@ -58,6 +63,22 @@ export type CatalogRpcResult<T> =
 export type CatalogOrgScope = {
   /** Active organization the user selected — verified via membership. */
   organizationId: string
+}
+
+export type CreateBrandInput = CatalogOrgScope & {
+  command: CreateBrandCommand
+}
+export type UpdateBrandInput = CatalogOrgScope & {
+  command: UpdateBrandCommand
+}
+export type CreateCategoryInput = CatalogOrgScope & {
+  command: CreateCategoryCommand
+}
+export type UpdateCategoryInput = CatalogOrgScope & {
+  command: UpdateCategoryCommand
+}
+export type MoveCategoryInput = CatalogOrgScope & {
+  command: MoveCategoryCommand
 }
 
 export type CreateProductInput = CatalogOrgScope & {
