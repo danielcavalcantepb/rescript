@@ -33,6 +33,10 @@ verdade do rascunho.
 - `OrderHeader`, `WorkspaceSection` e `SalesTotals`: composição visual;
 - `UnsavedChangesGuard`: bloqueio de navegação pelo dialog central.
 
+O cabeçalho oferece **Concluir pedido** somente para `sales.confirm`. A ação salva
+o rascunho e executa a transição canônica `draft → confirmed`; não cria efeitos
+financeiros ou de estoque fora do lifecycle existente.
+
 ## Pricing, estoque e segurança
 
 O valor visual ajuda o operador, mas Pricing e os snapshots são resolvidos
@@ -50,4 +54,3 @@ codificadas ou títulos financeiros fictícios.
 O Workspace empilha seções e ações em telas menores, mantém resumo sticky apenas
 em desktop e usa primitivas Radix para foco, Escape, overlay e retorno de foco.
 Pickers expõem combobox/listbox, `aria-busy`, alertas e seleção por teclado.
-

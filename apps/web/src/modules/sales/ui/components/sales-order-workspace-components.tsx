@@ -31,15 +31,19 @@ export function OrderHeader({
   date,
   submitting,
   canSubmit,
+  canConfirm,
   onCancel,
   onSave,
+  onConfirm,
 }: {
   isEdit: boolean
   date: string
   submitting: boolean
   canSubmit: boolean
+  canConfirm: boolean
   onCancel: () => void
   onSave: () => void
+  onConfirm: () => void
 }) {
   return (
     <header className="sticky top-0 z-20 -mx-4 border-b border-[var(--color-border-soft)] bg-[color:var(--color-background)/0.96] px-4 py-3 backdrop-blur md:-mx-6 md:px-6">
@@ -65,6 +69,16 @@ export function OrderHeader({
             <Save className="h-4 w-4" aria-hidden="true" />
             {submitting ? 'Salvando…' : 'Salvar rascunho'}
           </Button>
+          {canConfirm ? (
+            <Button
+              className="flex-1 gap-2 sm:flex-none"
+              disabled={submitting || !canSubmit}
+              onClick={onConfirm}
+            >
+              <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+              Concluir pedido
+            </Button>
+          ) : null}
         </div>
       </div>
     </header>

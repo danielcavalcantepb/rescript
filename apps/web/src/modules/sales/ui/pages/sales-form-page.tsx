@@ -15,13 +15,14 @@ import type { SalesDocumentType, SalesItemInput } from '#/modules/sales'
 import { PageError } from '#/platform/errors'
 import { PageLoading } from '#/platform/loading'
 import { useOrganization } from '#/platform/organization/organization-context'
-import { RequirePermission } from '#/platform/permissions'
+import { RequirePermission, usePermission } from '#/platform/permissions'
 import {
   useCreateQuotation,
   useCreateSalesOrder,
   useSalesDocument,
   useUpdateQuotation,
   useUpdateSalesOrder,
+  useTransitionSalesOrder,
 } from '../use-sales'
 import { decimalToCents, lineTotalCents } from '../sales-money'
 import {
@@ -66,6 +67,7 @@ export function SalesFormPage({ type, id }: { type: SalesDocumentType; id?: stri
 function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }) {
   const navigate = useNavigate()
   const { currentOrganization } = useOrganization()
+  const { can } = usePermission()
   const organizationId = currentOrganization?.id
   const isQuotation = type === 'quotation'
   const isEdit = Boolean(id)
@@ -74,6 +76,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const createOrder = useCreateSalesOrder()
   const updateQuotation = useUpdateQuotation(id ?? '')
   const updateOrder = useUpdateSalesOrder(id ?? '')
+  const transitionOrder = useTransitionSalesOrder()
   const [customer, setCustomer] = useState<CustomerListItem | null>(null)
   const [currency, setCurrency] = useState('BRL')
   const [validUntil, setValidUntil] = useState('')
@@ -133,14 +136,15 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
     createQuotation.isPending ||
     createOrder.isPending ||
     updateQuotation.isPending ||
-    updateOrder.isPending
+    updateOrder.isPending ||
+    transitionOrder.isPending
 
   if (isEdit && detail.isLoading) return <PageLoading />
   if (isEdit && detail.isError) {
     return <PageError error={detail.error} onRetry={() => void detail.refetch()} />
   }
 
-  async function submit() {
+  async function submit(confirmOrder = false) {
     setError(null)
     try {
       const items = lines.map(({ productId: _productId, productName: _productName, variantSku: _variantSku, priceSourceLabel: _priceSourceLabel, ...line }) => ({
@@ -161,10 +165,16 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
       }
       if (isEdit && id) {
         await updateOrder.mutateAsync({ currency, notes, items })
+        if (confirmOrder) {
+          await transitionOrder.mutateAsync({ id, to: 'confirmed' })
+        }
         setDirty(false)
         await navigate({ to: '/sales/orders/$orderId', params: { orderId: id } })
       } else {
         const orderId = await createOrder.mutateAsync({ customerId: customer!.id, currency, notes, items })
+        if (confirmOrder) {
+          await transitionOrder.mutateAsync({ id: orderId, to: 'confirmed' })
+        }
         setDirty(false)
         await navigate({ to: '/sales/orders/$orderId', params: { orderId } })
       }
@@ -187,8 +197,10 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
           date={new Intl.DateTimeFormat('pt-BR', { dateStyle: 'long' }).format(new Date())}
           submitting={submitting}
           canSubmit={canSubmit}
+          canConfirm={can('sales.confirm') && (!isEdit || detail.data?.status === 'draft')}
           onCancel={() => void navigate({ to: '/sales/orders' })}
           onSave={() => void submit()}
+          onConfirm={() => void submit(true)}
         />
         <div className="mx-auto max-w-[1500px]">
           <AppBreadcrumb
