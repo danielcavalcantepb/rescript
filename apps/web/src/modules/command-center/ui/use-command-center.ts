@@ -15,6 +15,7 @@ export function useCommandCenter() {
     queryKey: queryKeys.commandCenter.overview(organizationId ?? 'none'),
     enabled: Boolean(organizationId),
     staleTime: 60_000,
+    retry: 1,
     queryFn: async () => {
       if (!organizationId) throw new Error('missing_org')
       return unwrap(await getCommandCenter({ data: { organizationId } }))

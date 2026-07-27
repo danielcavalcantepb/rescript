@@ -93,7 +93,7 @@ async function runCommandCenterRpc<T>(
 }
 
 export const getCommandCenter = createServerFn({ method: 'POST' })
-  .inputValidator((data: { organizationId: string }) => data)
+  .validator((data: { organizationId: string }) => data)
   .handler(({ data }): Promise<CommandCenterRpcResult<CommandCenterSnapshot>> =>
     runCommandCenterRpc(data.organizationId, (app) => app.getOverview()),
   )

@@ -9,6 +9,8 @@ type QueryResult = {
   error: { message: string } | null
 }
 
+export const COMMAND_CENTER_SOURCE_TIMEOUT_MS = 8_000
+
 type ReadQuery = PromiseLike<QueryResult> & {
   eq(column: string, value: unknown): ReadQuery
   order(column: string, options?: { ascending?: boolean }): ReadQuery
@@ -73,13 +75,23 @@ async function readRows(
   return data ?? []
 }
 
-async function readSource(
+export async function readCommandCenterSource(
   sourceIssues: string[],
   label: string,
   work: () => Promise<ReadRow[]>,
+  timeoutMs = COMMAND_CENTER_SOURCE_TIMEOUT_MS,
 ): Promise<ReadRow[]> {
   try {
-    return await work()
+    return await Promise.race([
+      work(),
+      new Promise<ReadRow[]>((_, reject) => {
+        const timeout = setTimeout(
+          () => reject(new Error(`timeout_after_${timeoutMs}ms`)),
+          timeoutMs,
+        )
+        timeout.unref?.()
+      }),
+    ])
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error)
     sourceIssues.push(`${label}: ${detail}`)
@@ -123,7 +135,7 @@ export function createSupabaseCommandCenterReadRepository({
         variants,
         customers,
       ] = await Promise.all([
-        readSource(sourceIssues, 'Sales', () =>
+        readCommandCenterSource(sourceIssues, 'Sales', () =>
           readRows(
             client,
             'sales_search',
@@ -135,7 +147,7 @@ export function createSupabaseCommandCenterReadRepository({
                 .limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Accounts Receivable', () =>
+        readCommandCenterSource(sourceIssues, 'Accounts Receivable', () =>
           readRows(
             client,
             'accounts_receivable_search',
@@ -147,7 +159,7 @@ export function createSupabaseCommandCenterReadRepository({
                 .limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Accounts Payable', () =>
+        readCommandCenterSource(sourceIssues, 'Accounts Payable', () =>
           readRows(
             client,
             'accounts_payable_search',
@@ -159,7 +171,7 @@ export function createSupabaseCommandCenterReadRepository({
                 .limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Payments', () =>
+        readCommandCenterSource(sourceIssues, 'Payments', () =>
           readRows(
             client,
             'payment_search',
@@ -171,7 +183,7 @@ export function createSupabaseCommandCenterReadRepository({
                 .limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Inventory', () =>
+        readCommandCenterSource(sourceIssues, 'Inventory', () =>
           readRows(
             client,
             'inventory_item',
@@ -180,17 +192,17 @@ export function createSupabaseCommandCenterReadRepository({
               query.eq('organization_id', organizationId).eq('status', 'active').limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Products', () =>
+        readCommandCenterSource(sourceIssues, 'Products', () =>
           readRows(client, 'product', 'id,status,created_at', (query) =>
             query.eq('organization_id', organizationId).limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Variants', () =>
+        readCommandCenterSource(sourceIssues, 'Variants', () =>
           readRows(client, 'product_variant', 'id,status,created_at', (query) =>
             query.eq('organization_id', organizationId).limit(1000),
           ),
         ),
-        readSource(sourceIssues, 'Customers', () =>
+        readCommandCenterSource(sourceIssues, 'Customers', () =>
           readRows(client, 'customer_search', 'customer_id,status,created_at', (query) =>
             query.eq('organization_id', organizationId).limit(1000),
           ),
