@@ -2,6 +2,7 @@ import {
   canApprovePurchases,
   canArchivePurchases,
   canCancelPurchases,
+  canClosePurchases,
   canCreatePurchases,
   canEditPurchases,
   canManagePurchaseItems,
@@ -233,6 +234,91 @@ export function createPurchaseService(deps: PurchaseAppDeps) {
       return order
     },
 
+    async sendPurchase(purchaseOrderId: string): Promise<PurchaseOrder> {
+      if (!canApprovePurchases(deps.can)) throw new PurchasePermissionError()
+      const existing = await requirePurchase(deps, purchaseOrderId)
+      assertPurchaseTransition(existing.status, 'sent')
+      const items = await deps.items.listByPurchase(
+        deps.organizationId,
+        purchaseOrderId,
+        false,
+      )
+      if (items.length === 0) {
+        throw new PurchaseConflictError(
+          'Envie apenas pedidos com ao menos um item.',
+        )
+      }
+      const order = await deps.purchases.setStatus(
+        deps.organizationId,
+        deps.userId,
+        purchaseOrderId,
+        'sent',
+      )
+      await audit(deps, {
+        purchaseOrderId,
+        action: 'purchase.sent',
+        oldValue: existing.status,
+        newValue: 'sent',
+      })
+      deps.events.emit({
+        type: 'PurchaseSent',
+        organizationId: deps.organizationId,
+        purchaseOrderId,
+        at: deps.clock.nowIso(),
+      })
+      return order
+    },
+
+    async confirmPurchase(purchaseOrderId: string): Promise<PurchaseOrder> {
+      if (!canApprovePurchases(deps.can)) throw new PurchasePermissionError()
+      const existing = await requirePurchase(deps, purchaseOrderId)
+      assertPurchaseTransition(existing.status, 'confirmed')
+      const order = await deps.purchases.setStatus(
+        deps.organizationId,
+        deps.userId,
+        purchaseOrderId,
+        'confirmed',
+      )
+      await audit(deps, {
+        purchaseOrderId,
+        action: 'purchase.confirmed',
+        oldValue: existing.status,
+        newValue: 'confirmed',
+      })
+      deps.events.emit({
+        type: 'PurchaseConfirmed',
+        organizationId: deps.organizationId,
+        purchaseOrderId,
+        at: deps.clock.nowIso(),
+      })
+      return order
+    },
+
+    async closePurchase(purchaseOrderId: string): Promise<PurchaseOrder> {
+      if (!canClosePurchases(deps.can)) throw new PurchasePermissionError()
+      const existing = await requirePurchase(deps, purchaseOrderId)
+      assertPurchaseTransition(existing.status, 'closed')
+      const order = await deps.purchases.setStatus(
+        deps.organizationId,
+        deps.userId,
+        purchaseOrderId,
+        'closed',
+      )
+      await audit(deps, {
+        purchaseOrderId,
+        action: 'purchase.closed',
+        oldValue: existing.status,
+        newValue: 'closed',
+      })
+      deps.events.emit({
+        type: 'PurchaseClosed',
+        organizationId: deps.organizationId,
+        purchaseOrderId,
+        at: deps.clock.nowIso(),
+      })
+      return order
+    },
+
     async cancelPurchase(
       purchaseOrderId: string,
       reason?: string | null,
@@ -354,32 +440,16 @@ export function createPurchaseService(deps: PurchaseAppDeps) {
         })
       }
 
-      let priceSnapshot = input.unitPrice
-        ? {
-            currency: order.currency,
-            unitPrice: input.unitPrice,
-            priceListId: null as string | null,
-            source: 'manual' as const,
-          }
-        : await deps.snapshots.resolvePriceSnapshot(
-            deps.organizationId,
-            input.variantId,
-            order.currency,
-          )
+      const priceSnapshot = await deps.snapshots.resolvePriceSnapshot(
+        deps.organizationId,
+        input.variantId,
+        input.priceListId,
+      )
 
       if (!priceSnapshot) {
         throw new PurchaseValidationError({
           unitPrice: 'Informe o preço unitário ou configure uma lista de preços.',
         })
-      }
-
-      if (input.unitPrice !== undefined) {
-        priceSnapshot = {
-          ...priceSnapshot,
-          unitPrice: input.unitPrice,
-          source: 'manual',
-          priceListId: null,
-        }
       }
 
       const discount = input.discount ?? '0'

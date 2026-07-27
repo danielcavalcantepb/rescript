@@ -34,7 +34,7 @@ export type PurchaseSnapshotSources = {
   resolvePriceSnapshot(
     organizationId: string,
     variantId: string,
-    currency: string,
+    priceListId: string,
   ): Promise<PriceSnapshot | null>
 }
 

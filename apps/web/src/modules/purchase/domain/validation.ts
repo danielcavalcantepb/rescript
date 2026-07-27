@@ -40,15 +40,10 @@ export function validateAddItem(input: AddPurchaseItemInput): FieldErrors {
     errors.purchaseOrderId = 'Pedido obrigatório.'
   }
   if (!input.variantId?.trim()) errors.variantId = 'Variante obrigatória.'
+  if (!input.priceListId?.trim()) errors.priceListId = 'Tabela obrigatória.'
   const qty = Number(input.quantity)
   if (!Number.isFinite(qty) || qty <= 0) {
     errors.quantity = 'Quantidade deve ser maior que zero.'
-  }
-  if (input.unitPrice !== undefined) {
-    const price = Number(input.unitPrice)
-    if (!Number.isFinite(price) || price < 0) {
-      errors.unitPrice = 'Preço unitário inválido.'
-    }
   }
   if (input.discount !== undefined) {
     const discount = Number(input.discount)

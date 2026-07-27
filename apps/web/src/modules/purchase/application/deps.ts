@@ -29,23 +29,23 @@ export type PurchaseAppDeps = {
 }
 
 export function canReadPurchases(can: PurchaseAppDeps['can']): boolean {
-  return can('purchase.read')
+  return can('purchasing.orders.read') || can('purchase.read')
 }
 
 export function canCreatePurchases(can: PurchaseAppDeps['can']): boolean {
-  return can('purchase.create')
+  return can('purchasing.orders.create') || can('purchase.create')
 }
 
 export function canEditPurchases(can: PurchaseAppDeps['can']): boolean {
-  return can('purchase.edit')
+  return can('purchasing.orders.update') || can('purchase.edit')
 }
 
 export function canApprovePurchases(can: PurchaseAppDeps['can']): boolean {
-  return can('purchase.approve')
+  return can('purchasing.orders.update') || can('purchase.approve')
 }
 
 export function canCancelPurchases(can: PurchaseAppDeps['can']): boolean {
-  return can('purchase.cancel')
+  return can('purchasing.orders.cancel') || can('purchase.cancel')
 }
 
 export function canArchivePurchases(can: PurchaseAppDeps['can']): boolean {
@@ -57,5 +57,13 @@ export function canRestorePurchases(can: PurchaseAppDeps['can']): boolean {
 }
 
 export function canManagePurchaseItems(can: PurchaseAppDeps['can']): boolean {
-  return can('purchase.items.manage') || can('purchase.edit')
+  return (
+    can('purchasing.orders.update') ||
+    can('purchase.items.manage') ||
+    can('purchase.edit')
+  )
+}
+
+export function canClosePurchases(can: PurchaseAppDeps['can']): boolean {
+  return can('purchasing.orders.close')
 }

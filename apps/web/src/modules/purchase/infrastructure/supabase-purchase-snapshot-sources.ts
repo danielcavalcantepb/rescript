@@ -16,16 +16,10 @@ type VariantRow = {
   unit_of_measure: { code: string } | null
 }
 
-type PriceEntryRow = {
-  amount: number
+type ResolvedPrice = {
+  amount: string | number
   currency: string
   price_list_id: string
-  valid_to: string | null
-  price_list: {
-    status: string
-    priority: number
-    is_default: boolean
-  }
 }
 
 function formatVariantName(productName: string, sku: string | null): string {
@@ -93,43 +87,18 @@ export class SupabasePurchaseSnapshotSources implements PurchaseSnapshotSources 
   async resolvePriceSnapshot(
     organizationId: string,
     variantId: string,
-    currency: string,
+    priceListId: string,
   ): Promise<PriceSnapshot | null> {
     assertEntityOrganization(organizationId, this.options.organizationId)
-    const now = new Date().toISOString()
-    const { data, error } = await this.options.client
-      .from('price_list_entry')
-      .select(
-        `
-        amount,
-        currency,
-        price_list_id,
-        valid_to,
-        price_list!inner (
-          status,
-          priority,
-          is_default
-        )
-      `,
-      )
-      .eq('organization_id', this.options.organizationId)
-      .eq('variant_id', variantId)
-      .eq('currency', currency.toUpperCase())
-      .eq('price_list.status', 'active')
+    const { data, error } = await this.options.client.rpc('resolve_price' as never, {
+      p_organization_id: this.options.organizationId,
+      p_price_list_id: priceListId,
+      p_variant_id: variantId,
+      p_at: new Date().toISOString(),
+    } as never)
     throwIfSupabaseError(error)
-
-    const rows = (data ?? []) as unknown as PriceEntryRow[]
-    const effective = rows.filter(
-      (row) => !row.valid_to || row.valid_to > now,
-    )
-    effective.sort((a, b) => {
-      const priorityDiff = a.price_list.priority - b.price_list.priority
-      if (priorityDiff !== 0) return priorityDiff
-      return Number(b.price_list.is_default) - Number(a.price_list.is_default)
-    })
-
-    const best = effective[0]
-    if (!best) return null
+    if (!data) return null
+    const best = data as unknown as ResolvedPrice
 
     return {
       currency: best.currency,

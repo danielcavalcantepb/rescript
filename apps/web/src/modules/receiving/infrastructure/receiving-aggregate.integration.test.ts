@@ -143,8 +143,8 @@ describe.skipIf(!available)('receiving aggregate (local Supabase)', () => {
         await purchases.addItem({
           purchaseOrderId: po.id,
           variantId,
+          priceListId: list.id,
           quantity: '100',
-          unitPrice: '5',
         })
         await purchases.approvePurchase(po.id)
 

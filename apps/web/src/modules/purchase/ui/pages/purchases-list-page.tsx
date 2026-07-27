@@ -7,19 +7,35 @@ import { PageHeader } from '#/components/PageHeader'
 import { SearchBar } from '#/components/SearchBar'
 import { StatusBadge } from '#/components/StatusBadge'
 import { Button } from '#/components/ui/button'
+import {
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+} from '#/components/ui/drawer'
 import { formatBRL, formatDate } from '#/lib/format'
 import { purchaseStatusLabel } from '#/modules/purchase/domain/lifecycle'
 import type { PurchaseStatus } from '#/modules/purchase/domain/types'
-import { usePurchases } from '#/modules/purchase/ui/use-purchase-queries'
+import { PurchaseForm } from '#/modules/purchase/ui/purchase-form'
+import {
+  toFormError,
+  useCreatePurchase,
+  usePurchases,
+} from '#/modules/purchase/ui/use-purchase-queries'
 import {
   FeatureGate,
   RequirePermission,
 } from '#/platform/permissions'
 import { PageLoading, TableLoading, ButtonLoading } from '#/platform/loading'
 import { useOrganization } from '#/platform/organization/organization-context'
+import { notificationService } from '#/platform/services'
 
 const STATUS_FILTERS: Array<{ value: PurchaseStatus | 'all'; label: string }> = [
   { value: 'draft', label: 'Rascunho' },
+  { value: 'sent', label: 'Enviados' },
+  { value: 'confirmed', label: 'Confirmados' },
   { value: 'approved', label: 'Aprovados' },
   { value: 'cancelled', label: 'Cancelados' },
   { value: 'closed', label: 'Fechados' },
@@ -39,7 +55,7 @@ function formatTotal(currency: string, amount: string): string {
 export function PurchasesListPage() {
   return (
     <RequirePermission
-      permission="purchase.read"
+      permission="purchasing.orders.read"
       forbiddenDescription="Você não tem permissão para ver pedidos de compra."
     >
       <PurchasesListContent />
@@ -54,6 +70,10 @@ function PurchasesListContent() {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [status, setStatus] = useState<PurchaseStatus | 'all'>('all')
+  const [createOpen, setCreateOpen] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
+  const [formError, setFormError] = useState<string | null>(null)
+  const create = useCreatePurchase()
 
   useEffect(() => {
     const t = window.setTimeout(() => setDebouncedQuery(query.trim()), 250)
@@ -79,8 +99,10 @@ function PurchasesListContent() {
         title="Pedidos de compra"
         description="Intenção de compra — rascunho, aprovação e totais congelados."
         actions={
-          <FeatureGate permission="purchase.create">
-            <Button asChild><Link to="/procurement/purchases/new">Novo pedido</Link></Button>
+          <FeatureGate permission="purchasing.orders.create">
+            <Button type="button" onClick={() => setCreateOpen(true)}>
+              Novo pedido
+            </Button>
           </FeatureGate>
         }
       />
@@ -120,8 +142,10 @@ function PurchasesListContent() {
           title="Nenhum pedido"
           description="Crie o primeiro pedido de compra desta organização."
           action={
-            <FeatureGate permission="purchase.create">
-              <Button asChild><Link to="/procurement/purchases/new">Novo pedido</Link></Button>
+            <FeatureGate permission="purchasing.orders.create">
+              <Button type="button" onClick={() => setCreateOpen(true)}>
+                Novo pedido
+              </Button>
             </FeatureGate>
           }
         />
@@ -185,6 +209,46 @@ function PurchasesListContent() {
         </div>
       ) : null}
 
+      <Drawer open={createOpen} onOpenChange={setCreateOpen}>
+        <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Novo pedido de compra</DrawerTitle>
+            <DrawerDescription>
+              Selecione o fornecedor e preserve o contexto da consulta.
+            </DrawerDescription>
+          </DrawerHeader>
+          <DrawerBody>
+            <PurchaseForm
+              submitting={create.isPending}
+              fieldErrors={fieldErrors}
+              formError={formError}
+              submitLabel="Criar pedido"
+              onCancel={() => setCreateOpen(false)}
+              onSubmit={async (values) => {
+                setFieldErrors({})
+                setFormError(null)
+                try {
+                  const order = await create.mutateAsync({
+                    supplierId: values.supplierId,
+                    currency: values.currency,
+                    notes: values.notes,
+                  })
+                  setCreateOpen(false)
+                  notificationService.success('Pedido criado.')
+                  await navigate({
+                    to: '/procurement/purchases/$purchaseId',
+                    params: { purchaseId: order.id },
+                  })
+                } catch (error) {
+                  const mapped = toFormError(error)
+                  setFieldErrors(mapped.fieldErrors)
+                  setFormError(mapped.formError)
+                }
+              }}
+            />
+          </DrawerBody>
+        </DrawerContent>
+      </Drawer>
     </div>
   )
 }

@@ -146,6 +146,30 @@ export const purchaseApprove = createServerFn({ method: 'POST' })
     ),
   )
 
+export const purchaseSend = createServerFn({ method: 'POST' })
+  .inputValidator((data: { organizationId: string; purchaseOrderId: string }) => data)
+  .handler(({ data }) =>
+    runPurchaseRpc(data.organizationId, (app) =>
+      app.sendPurchase(data.purchaseOrderId),
+    ),
+  )
+
+export const purchaseConfirm = createServerFn({ method: 'POST' })
+  .inputValidator((data: { organizationId: string; purchaseOrderId: string }) => data)
+  .handler(({ data }) =>
+    runPurchaseRpc(data.organizationId, (app) =>
+      app.confirmPurchase(data.purchaseOrderId),
+    ),
+  )
+
+export const purchaseClose = createServerFn({ method: 'POST' })
+  .inputValidator((data: { organizationId: string; purchaseOrderId: string }) => data)
+  .handler(({ data }) =>
+    runPurchaseRpc(data.organizationId, (app) =>
+      app.closePurchase(data.purchaseOrderId),
+    ),
+  )
+
 export const purchaseCancel = createServerFn({ method: 'POST' })
   .inputValidator(
     (data: {

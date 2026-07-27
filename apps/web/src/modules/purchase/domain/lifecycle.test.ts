@@ -7,9 +7,10 @@ import {
 
 describe('purchase lifecycle', () => {
   it('allows draft → approved → cancelled/archived', () => {
-    expect(canTransitionPurchaseStatus('draft', 'approved')).toBe(true)
-    expect(canTransitionPurchaseStatus('approved', 'cancelled')).toBe(true)
-    expect(canTransitionPurchaseStatus('approved', 'closed')).toBe(true)
+    expect(canTransitionPurchaseStatus('draft', 'sent')).toBe(true)
+    expect(canTransitionPurchaseStatus('sent', 'confirmed')).toBe(true)
+    expect(canTransitionPurchaseStatus('confirmed', 'closed')).toBe(true)
+    expect(canTransitionPurchaseStatus('confirmed', 'cancelled')).toBe(true)
     expect(canTransitionPurchaseStatus('cancelled', 'draft')).toBe(false)
   })
 
@@ -19,7 +20,7 @@ describe('purchase lifecycle', () => {
   })
 
   it('throws on invalid transition', () => {
-    expect(() => assertPurchaseTransition('cancelled', 'approved')).toThrow(
+    expect(() => assertPurchaseTransition('cancelled', 'confirmed')).toThrow(
       /invalid_purchase_transition/,
     )
   })

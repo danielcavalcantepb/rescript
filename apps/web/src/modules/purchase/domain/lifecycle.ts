@@ -1,7 +1,12 @@
 import type { PurchaseStatus } from '#/modules/purchase/domain/types'
 
 const TRANSITIONS: Record<PurchaseStatus, readonly PurchaseStatus[]> = {
-  draft: ['approved', 'cancelled', 'archived'],
+  // approved is a compatibility transition used only by the pre-foundation
+  // receiving contract. The canonical UI uses sent → confirmed.
+  draft: ['sent', 'approved', 'cancelled', 'archived'],
+  sent: ['confirmed', 'cancelled'],
+  confirmed: ['closed', 'cancelled', 'archived'],
+  // Kept for persisted legacy orders. New orders never transition to approved.
   approved: ['cancelled', 'closed', 'archived'],
   cancelled: ['archived'],
   closed: ['archived'],
@@ -29,6 +34,10 @@ export function purchaseStatusLabel(status: PurchaseStatus): string {
   switch (status) {
     case 'draft':
       return 'Rascunho'
+    case 'sent':
+      return 'Enviado'
+    case 'confirmed':
+      return 'Confirmado'
     case 'approved':
       return 'Aprovado'
     case 'cancelled':

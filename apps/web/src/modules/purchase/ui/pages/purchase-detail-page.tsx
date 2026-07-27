@@ -14,6 +14,7 @@ import {
 } from '#/components/ui/dialog'
 import { FormField } from '#/components/ui/form-field'
 import { Input } from '#/components/ui/input'
+import { Select } from '#/components/ui/select'
 import { Textarea } from '#/components/ui/textarea'
 import { formatBRL, formatDateTime } from '#/lib/format'
 import {
@@ -25,13 +26,15 @@ import { PurchaseRpcClientError } from '#/modules/purchase/ui/errors/purchase-rp
 import {
   toFormError,
   useAddPurchaseItem,
-  useApprovePurchase,
   useArchivePurchase,
   useCancelPurchase,
+  useClosePurchase,
+  useConfirmPurchase,
   usePurchase,
   usePurchaseHistory,
   useRemovePurchaseItem,
   useRestorePurchase,
+  useSendPurchase,
   useUpdatePurchaseItem,
 } from '#/modules/purchase/ui/use-purchase-queries'
 import { dialogs } from '#/platform/dialogs'
@@ -43,6 +46,8 @@ import {
   usePermission,
 } from '#/platform/permissions'
 import { notificationService } from '#/platform/services'
+import { usePriceLists } from '#/modules/pricing/ui/use-pricing'
+import { useOrganization } from '#/platform/organization/organization-context'
 
 function formatTotal(currency: string, amount: string): string {
   const value = Number(amount)
@@ -56,7 +61,7 @@ function formatTotal(currency: string, amount: string): string {
 export function PurchaseDetailPage({ purchaseId }: { purchaseId: string }) {
   return (
     <RequirePermission
-      permission="purchase.read"
+      permission="purchasing.orders.read"
       forbiddenDescription="Você não tem permissão para ver pedidos de compra."
     >
       <PurchaseDetailContent purchaseId={purchaseId} />
@@ -66,10 +71,22 @@ export function PurchaseDetailPage({ purchaseId }: { purchaseId: string }) {
 
 function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
   const { can } = usePermission()
+  const { currentOrganization } = useOrganization()
+  const priceLists = usePriceLists(
+    {
+      organizationId: currentOrganization?.id ?? '',
+      status: 'active',
+      page: 1,
+      pageSize: 100,
+    },
+    Boolean(currentOrganization?.id),
+  )
   const detail = usePurchase(purchaseId)
   const history = usePurchaseHistory(purchaseId)
-  const approve = useApprovePurchase()
   const cancel = useCancelPurchase()
+  const send = useSendPurchase()
+  const confirm = useConfirmPurchase()
+  const close = useClosePurchase()
   const archive = useArchivePurchase()
   const restore = useRestorePurchase()
   const addItem = useAddPurchaseItem(purchaseId)
@@ -81,6 +98,7 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
   const [variantId, setVariantId] = useState('')
   const [quantity, setQuantity] = useState('1')
   const [unitPrice, setUnitPrice] = useState('')
+  const [priceListId, setPriceListId] = useState('')
   const [discount, setDiscount] = useState('0')
   const [description, setDescription] = useState('')
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
@@ -112,6 +130,7 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
     setVariantId('')
     setQuantity('1')
     setUnitPrice('')
+    setPriceListId('')
     setDiscount('0')
     setDescription('')
     setFieldErrors({})
@@ -124,8 +143,8 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
     try {
       await addItem.mutateAsync({
         variantId,
+        priceListId,
         quantity,
-        unitPrice: unitPrice.trim() ? unitPrice : undefined,
         discount: discount.trim() ? discount : undefined,
         description: description.trim() ? description : undefined,
       })
@@ -187,6 +206,7 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
     setVariantId(item.variantId)
     setQuantity(item.quantity)
     setUnitPrice(item.unitPrice)
+    setPriceListId(item.priceListId ?? '')
     setDiscount(item.discount)
     setDescription(item.description ?? '')
     setFieldErrors({})
@@ -209,22 +229,51 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
         actions={
           <div className="flex flex-wrap gap-2">
             <StatusBadge status={purchaseStatusLabel(order.status)} />
-            {order.status === 'draft' && can('purchase.approve') ? (
+            {order.status === 'draft' && can('purchasing.orders.update') ? (
               <Button
                 type="button"
-                disabled={approve.isPending}
+                disabled={send.isPending}
                 onClick={() =>
-                  void approve.mutateAsync(purchaseId).then(() => {
-                    notificationService.success('Pedido aprovado.')
+                  void send.mutateAsync(purchaseId).then(() => {
+                    notificationService.success('Pedido enviado.')
                     void detail.refetch()
                   })
                 }
               >
-                Aprovar
+                Enviar
               </Button>
             ) : null}
-            {(order.status === 'draft' || order.status === 'approved') &&
-            can('purchase.cancel') ? (
+            {order.status === 'sent' && can('purchasing.orders.update') ? (
+              <Button
+                type="button"
+                disabled={confirm.isPending}
+                onClick={() =>
+                  void confirm.mutateAsync(purchaseId).then(() => {
+                    notificationService.success('Pedido confirmado.')
+                    void detail.refetch()
+                  })
+                }
+              >
+                Confirmar
+              </Button>
+            ) : null}
+            {order.status === 'confirmed' && can('purchasing.orders.close') ? (
+              <Button
+                type="button"
+                disabled={close.isPending}
+                onClick={() =>
+                  void close.mutateAsync(purchaseId).then(() => {
+                    notificationService.success('Pedido encerrado.')
+                    void detail.refetch()
+                  })
+                }
+              >
+                Encerrar
+              </Button>
+            ) : null}
+            {(['draft', 'sent', 'confirmed', 'approved'] as const).includes(
+              order.status as 'draft' | 'sent' | 'confirmed' | 'approved',
+            ) && can('purchasing.orders.cancel') ? (
               <Button
                 type="button"
                 variant="secondary"
@@ -418,6 +467,9 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
             setVariantId={setVariantId}
             quantity={quantity}
             setQuantity={setQuantity}
+            priceListId={priceListId}
+            setPriceListId={setPriceListId}
+            priceLists={priceLists.data?.items ?? []}
             unitPrice={unitPrice}
             setUnitPrice={setUnitPrice}
             discount={discount}
@@ -444,6 +496,9 @@ function PurchaseDetailContent({ purchaseId }: { purchaseId: string }) {
             variantReadOnly
             quantity={quantity}
             setQuantity={setQuantity}
+            priceListId={priceListId}
+            setPriceListId={setPriceListId}
+            priceLists={priceLists.data?.items ?? []}
             unitPrice={unitPrice}
             setUnitPrice={setUnitPrice}
             discount={discount}
@@ -469,6 +524,9 @@ function ItemForm({
   variantReadOnly,
   quantity,
   setQuantity,
+  priceListId,
+  setPriceListId,
+  priceLists,
   unitPrice,
   setUnitPrice,
   discount,
@@ -487,6 +545,9 @@ function ItemForm({
   variantReadOnly?: boolean
   quantity: string
   setQuantity: (v: string) => void
+  priceListId: string
+  setPriceListId: (v: string) => void
+  priceLists: Array<{ id: string; name: string; code: string; currency: string }>
   unitPrice: string
   setUnitPrice: (v: string) => void
   discount: string
@@ -516,6 +577,18 @@ function ItemForm({
       <FormField label="Quantidade" error={fieldErrors.quantity}>
         <Input value={quantity} onChange={(e) => setQuantity(e.target.value)} />
       </FormField>
+      {!variantReadOnly ? (
+        <FormField label="Tabela de preço" error={fieldErrors.priceListId}>
+          <Select value={priceListId} onChange={(e) => setPriceListId(e.target.value)}>
+            <option value="">Selecione</option>
+            {priceLists.map((list) => (
+              <option key={list.id} value={list.id}>
+                {list.name} · {list.code} · {list.currency}
+              </option>
+            ))}
+          </Select>
+        </FormField>
+      ) : null}
       <FormField label="Preço unitário (opcional)" error={fieldErrors.unitPrice}>
         <Input value={unitPrice} onChange={(e) => setUnitPrice(e.target.value)} />
       </FormField>

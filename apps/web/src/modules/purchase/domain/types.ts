@@ -1,5 +1,7 @@
 export type PurchaseStatus =
   | 'draft'
+  | 'sent'
+  | 'confirmed'
   | 'approved'
   | 'cancelled'
   | 'closed'
@@ -126,12 +128,10 @@ export type UpdatePurchaseInput = {
 export type AddPurchaseItemInput = {
   purchaseOrderId: string
   variantId: string
+  priceListId: string
   quantity: string
-  unitPrice?: string
   discount?: string
   description?: string | null
-  /** When omitted, resolve from price engine if available; else require unitPrice. */
-  usePriceList?: boolean
 }
 
 export type UpdatePurchaseItemInput = {

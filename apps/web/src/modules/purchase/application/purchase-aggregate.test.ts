@@ -13,6 +13,11 @@ const ALL_PURCHASE: PermissionKey[] = [
   'purchase.archive',
   'purchase.restore',
   'purchase.items.manage',
+  'purchasing.orders.read',
+  'purchasing.orders.create',
+  'purchasing.orders.update',
+  'purchasing.orders.cancel',
+  'purchasing.orders.close',
 ]
 
 function app(grants: PermissionKey[] = ALL_PURCHASE) {
@@ -78,6 +83,7 @@ describe('Purchase aggregate application', () => {
     const item = await service.addItem({
       purchaseOrderId: order.id,
       variantId: 'var_1',
+      priceListId: 'pl_1',
       quantity: '2',
     })
     expect(item.variantName).toBe('Produto A')
@@ -88,15 +94,17 @@ describe('Purchase aggregate application', () => {
     expect(snap.order.totals.grandTotal).toBe('20.0000')
     expect(snap.items).toHaveLength(1)
 
-    const approved = await service.approvePurchase(order.id)
-    expect(approved.status).toBe('approved')
+    const sent = await service.sendPurchase(order.id)
+    expect(sent.status).toBe('sent')
+    const confirmed = await service.confirmPurchase(order.id)
+    expect(confirmed.status).toBe('confirmed')
 
     await expect(
       service.addItem({
         purchaseOrderId: order.id,
         variantId: 'var_1',
+        priceListId: 'pl_1',
         quantity: '1',
-        unitPrice: '5',
       }),
     ).rejects.toThrow(/rascunho/i)
 
@@ -115,7 +123,8 @@ describe('Purchase aggregate application', () => {
     const drained = events.drain()
     expect(drained.some((e) => e.type === 'PurchaseCreated')).toBe(true)
     expect(drained.some((e) => e.type === 'PurchaseItemAdded')).toBe(true)
-    expect(drained.some((e) => e.type === 'PurchaseApproved')).toBe(true)
+    expect(drained.some((e) => e.type === 'PurchaseSent')).toBe(true)
+    expect(drained.some((e) => e.type === 'PurchaseConfirmed')).toBe(true)
   })
 
   it('freezes price snapshot and ignores later price seed changes', async () => {
@@ -124,6 +133,7 @@ describe('Purchase aggregate application', () => {
     const item = await service.addItem({
       purchaseOrderId: order.id,
       variantId: 'var_1',
+      priceListId: 'pl_1',
       quantity: '1',
     })
     expect(item.unitPrice).toBe('10.0000')
@@ -135,6 +145,24 @@ describe('Purchase aggregate application', () => {
     })
     const again = await service.listItems(order.id)
     expect(again[0]!.unitPrice).toBe('10.0000')
+  })
+
+  it('enforces the canonical Draft → Sent → Confirmed → Closed workflow', async () => {
+    const { service } = app()
+    const order = await service.createPurchase({ supplierId: 'sup_1' })
+    await service.addItem({
+      purchaseOrderId: order.id,
+      variantId: 'var_1',
+      priceListId: 'pl_1',
+      quantity: '1',
+    })
+
+    await expect(service.confirmPurchase(order.id)).rejects.toThrow(
+      /invalid_purchase_transition/,
+    )
+    expect((await service.sendPurchase(order.id)).status).toBe('sent')
+    expect((await service.confirmPurchase(order.id)).status).toBe('confirmed')
+    expect((await service.closePurchase(order.id)).status).toBe('closed')
   })
 
   it('enforces permissions', async () => {
@@ -189,7 +217,7 @@ describe('Purchase aggregate application', () => {
     expect(hits).toHaveLength(0)
   })
 
-  it('requires unit price when price list missing', async () => {
+  it('rejects an item when Pricing has no valid price', async () => {
     const repos = createMemoryPurchaseRepos({
       suppliers: [
         {
@@ -229,15 +257,9 @@ describe('Purchase aggregate application', () => {
       service.addItem({
         purchaseOrderId: order.id,
         variantId: 'var_x',
+        priceListId: 'pl_missing',
         quantity: '1',
       }),
     ).rejects.toThrow(/validation/)
-    const item = await service.addItem({
-      purchaseOrderId: order.id,
-      variantId: 'var_x',
-      quantity: '1',
-      unitPrice: '7.5',
-    })
-    expect(item.priceSource).toBe('manual')
   })
 })

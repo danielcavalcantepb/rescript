@@ -120,6 +120,7 @@ describe.skipIf(!available)('purchase aggregate (local Supabase)', () => {
         const item = await appA.addItem({
           purchaseOrderId: order.id,
           variantId,
+          priceListId: list.id,
           quantity: '2',
         })
         expect(item.unitPrice).toBe('12.5000')
@@ -129,7 +130,8 @@ describe.skipIf(!available)('purchase aggregate (local Supabase)', () => {
         const snap = await appA.getPurchaseSnapshot(order.id)
         expect(snap.order.totals.grandTotal).toBe('25.0000')
 
-        await appA.approvePurchase(order.id)
+        await appA.sendPurchase(order.id)
+        await appA.confirmPurchase(order.id)
         const search = await appA.searchPurchases({ q: order.number })
         expect(search.some((x) => x.id === order.id)).toBe(true)
 

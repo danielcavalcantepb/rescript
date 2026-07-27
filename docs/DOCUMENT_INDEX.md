@@ -169,6 +169,7 @@ Complete registry of governed Markdown documents. Classification controls author
 - [database/PaymentsModel](./database/PaymentsModel.md)
 - [database/Performance](./database/Performance.md)
 - [database/PricingModel](./database/PricingModel.md)
+- [PURCHASING_FOUNDATION](./PURCHASING_FOUNDATION.md)
 - [database/ProductModel](./database/ProductModel.md)
 - [database/README](./database/README.md)
 - [database/ReceivablesModel](./database/ReceivablesModel.md)

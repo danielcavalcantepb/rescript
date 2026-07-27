@@ -19,6 +19,12 @@ export type PurchaseDomainEvent =
       at: string
     }
   | {
+      type: 'PurchaseSent' | 'PurchaseConfirmed' | 'PurchaseClosed'
+      organizationId: string
+      purchaseOrderId: string
+      at: string
+    }
+  | {
       type: 'PurchaseCancelled'
       organizationId: string
       purchaseOrderId: string

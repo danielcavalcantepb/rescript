@@ -18,6 +18,8 @@ import {
   purchaseApprove,
   purchaseArchive,
   purchaseCancel,
+  purchaseClose,
+  purchaseConfirm,
   purchaseCreate,
   purchaseGetSnapshot,
   purchaseList,
@@ -25,6 +27,7 @@ import {
   purchaseListItems,
   purchaseRemoveItem,
   purchaseRestore,
+  purchaseSend,
   purchaseSearch,
   purchaseUpdate,
   purchaseUpdateItem,
@@ -203,6 +206,18 @@ function usePurchaseLifecycleMutation(
 
 export function useApprovePurchase() {
   return usePurchaseLifecycleMutation(purchaseApprove)
+}
+
+export function useSendPurchase() {
+  return usePurchaseLifecycleMutation(purchaseSend)
+}
+
+export function useConfirmPurchase() {
+  return usePurchaseLifecycleMutation(purchaseConfirm)
+}
+
+export function useClosePurchase() {
+  return usePurchaseLifecycleMutation(purchaseClose)
 }
 
 export function useCancelPurchase() {
