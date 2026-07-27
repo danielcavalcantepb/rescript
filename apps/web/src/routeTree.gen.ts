@@ -39,6 +39,7 @@ import { Route as AppCatalogIndexRouteImport } from './routes/_app/catalog/index
 import { Route as AppCatalogAttributesRouteImport } from './routes/_app/catalog/attributes'
 import { Route as AppCatalogBrandsRouteImport } from './routes/_app/catalog/brands'
 import { Route as AppCatalogCategoriesRouteImport } from './routes/_app/catalog/categories'
+import { Route as AppCatalogPricingRouteImport } from './routes/_app/catalog/pricing'
 import { Route as AppClientesIndexRouteImport } from './routes/_app/clientes/index'
 import { Route as AppClientesCustomerIdRouteImport } from './routes/_app/clientes/$customerId'
 import { Route as AppCrmIndexRouteImport } from './routes/_app/crm/index'
@@ -255,6 +256,11 @@ const AppCatalogBrandsRoute = AppCatalogBrandsRouteImport.update({
 const AppCatalogCategoriesRoute = AppCatalogCategoriesRouteImport.update({
   id: '/categories',
   path: '/categories',
+  getParentRoute: () => AppCatalogRoute,
+} as any)
+const AppCatalogPricingRoute = AppCatalogPricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => AppCatalogRoute,
 } as any)
 const AppClientesIndexRoute = AppClientesIndexRouteImport.update({
@@ -670,6 +676,7 @@ export interface FileRoutesByFullPath {
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
+  '/catalog/pricing': typeof AppCatalogPricingRoute
   '/clientes/$customerId': typeof AppClientesCustomerIdRoute
   '/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/estoque/reservas': typeof AppEstoqueReservasRoute
@@ -767,6 +774,7 @@ export interface FileRoutesByTo {
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
+  '/catalog/pricing': typeof AppCatalogPricingRoute
   '/clientes/$customerId': typeof AppClientesCustomerIdRoute
   '/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/estoque/reservas': typeof AppEstoqueReservasRoute
@@ -868,6 +876,7 @@ export interface FileRoutesById {
   '/_app/catalog/attributes': typeof AppCatalogAttributesRoute
   '/_app/catalog/brands': typeof AppCatalogBrandsRoute
   '/_app/catalog/categories': typeof AppCatalogCategoriesRoute
+  '/_app/catalog/pricing': typeof AppCatalogPricingRoute
   '/_app/clientes/$customerId': typeof AppClientesCustomerIdRoute
   '/_app/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/_app/estoque/reservas': typeof AppEstoqueReservasRoute
@@ -969,6 +978,7 @@ export interface FileRouteTypes {
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
+    | '/catalog/pricing'
     | '/clientes/$customerId'
     | '/estoque/movimentacoes'
     | '/estoque/reservas'
@@ -1066,6 +1076,7 @@ export interface FileRouteTypes {
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
+    | '/catalog/pricing'
     | '/clientes/$customerId'
     | '/estoque/movimentacoes'
     | '/estoque/reservas'
@@ -1166,6 +1177,7 @@ export interface FileRouteTypes {
     | '/_app/catalog/attributes'
     | '/_app/catalog/brands'
     | '/_app/catalog/categories'
+    | '/_app/catalog/pricing'
     | '/_app/clientes/$customerId'
     | '/_app/estoque/movimentacoes'
     | '/_app/estoque/reservas'
@@ -1465,6 +1477,13 @@ declare module '@tanstack/react-router' {
       path: '/categories'
       fullPath: '/catalog/categories'
       preLoaderRoute: typeof AppCatalogCategoriesRouteImport
+      parentRoute: typeof AppCatalogRoute
+    }
+    '/_app/catalog/pricing': {
+      id: '/_app/catalog/pricing'
+      path: '/pricing'
+      fullPath: '/catalog/pricing'
+      preLoaderRoute: typeof AppCatalogPricingRouteImport
       parentRoute: typeof AppCatalogRoute
     }
     '/_app/clientes/': {
@@ -1950,6 +1969,7 @@ interface AppCatalogRouteChildren {
   AppCatalogAttributesRoute: typeof AppCatalogAttributesRoute
   AppCatalogBrandsRoute: typeof AppCatalogBrandsRoute
   AppCatalogCategoriesRoute: typeof AppCatalogCategoriesRoute
+  AppCatalogPricingRoute: typeof AppCatalogPricingRoute
   AppCatalogIndexRoute: typeof AppCatalogIndexRoute
   AppCatalogPriceListsPriceListIdRoute: typeof AppCatalogPriceListsPriceListIdRoute
   AppCatalogPriceListsNewRoute: typeof AppCatalogPriceListsNewRoute
@@ -1981,6 +2001,7 @@ const AppCatalogRouteChildren: AppCatalogRouteChildren = {
   AppCatalogAttributesRoute: AppCatalogAttributesRoute,
   AppCatalogBrandsRoute: AppCatalogBrandsRoute,
   AppCatalogCategoriesRoute: AppCatalogCategoriesRoute,
+  AppCatalogPricingRoute: AppCatalogPricingRoute,
   AppCatalogIndexRoute: AppCatalogIndexRoute,
   AppCatalogPriceListsPriceListIdRoute: AppCatalogPriceListsPriceListIdRoute,
   AppCatalogPriceListsNewRoute: AppCatalogPriceListsNewRoute,

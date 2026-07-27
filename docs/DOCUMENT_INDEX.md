@@ -1,8 +1,8 @@
 ---
 Status: Active
 Owner: Architecture & Engineering
-Last-Reviewed: 2026-07-26
-Version: 1.0.0
+Last-Reviewed: 2026-07-27
+Version: 1.1.0
 Type: Reference
 Scope: Complete documentation registry
 Supersedes: None
@@ -42,6 +42,7 @@ Complete registry of governed Markdown documents. Classification controls author
 - [PRODUCT_VARIANTS](./PRODUCT_VARIANTS.md)
 - [PRODUCT_REGISTRATION_EXPERIENCE](./PRODUCT_REGISTRATION_EXPERIENCE.md)
 - [INVENTORY_SECURITY_HARDENING](./INVENTORY_SECURITY_HARDENING.md)
+- [PRICING_FOUNDATION](./PRICING_FOUNDATION.md)
 - [README](./README.md)
 
 ## ADR

@@ -1,16 +1,19 @@
 ---
-Status: Active
+Status: Superseded
 Owner: Data Architecture
-Last-Reviewed: 2026-07-26
-Version: 1.0.0
-Type: Reference
+Last-Reviewed: 2026-07-27
+Version: 1.1.0
+Type: Historical
 Scope: database / PricingModel
 Supersedes: None
-Superseded-By: None
+Superseded-By: ../PRICING_FOUNDATION.md
 Related-Modules: All
 ---
 
-# Modelo Lógico — Preços
+# Modelo Lógico — Preços (histórico)
+
+> Este modelo `PriceCurrent` foi substituído pela fundação canônica
+> [Pricing Foundation](../PRICING_FOUNDATION.md), alinhada à ADR-0021.
 
 ---
 

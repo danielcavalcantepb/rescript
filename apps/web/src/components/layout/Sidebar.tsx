@@ -13,6 +13,7 @@ const links = [
   { to: '/procurement/purchases', label: 'Compras', icon: icons.product },
   { to: '/procurement/suppliers', label: 'Fornecedores', icon: icons.customer },
   { to: '/catalog/inventory/items', label: 'Estoque', icon: icons.inventory },
+  { to: '/catalog/pricing', label: 'Preços', icon: icons.finance },
   { to: '/finance', label: 'Financeiro', icon: icons.finance },
   { to: '/sales/orders', label: 'Vendas', icon: icons.sale },
 ] as const

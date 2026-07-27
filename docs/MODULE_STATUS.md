@@ -1,8 +1,8 @@
 ---
 Status: Active
 Owner: Architecture & Engineering
-Last-Reviewed: 2026-07-26
-Version: 1.0.0
+Last-Reviewed: 2026-07-27
+Version: 1.1.0
 Type: Canonical
 Scope: Official implementation and maturity registry
 Supersedes: None
@@ -35,7 +35,7 @@ This is the official reference for what exists today. `Implemented` means produc
 | Business Analytics / Métricas | Partial | Foundation | Implemented read-only Workspace at `/analytics` | Server function `getAnalyticsWorkspace` through application/provider port | Consumes existing read projections; dedicated analytical projections planned | No persisted audit by design in read-only foundation | `analytics.view` enforced in UI and server | Domain, application, permission, filter, comparative, no-data, and large-volume tests | Add materialized analytical projections, complete all dimensions, export architecture, AI insights, and Supabase RLS/performance tests |
 | Search / Command Palette | Partial | Foundation | N/A | Partial | Catalog/customer/supplier projections | N/A | Partial | Partial | Deliver universal permission-aware search and exact quick actions |
 | Catalog / Products / Variants | Implemented | Partial enterprise | Overview, Products, Categories, Brands, Attributes, quick product creation and four-step Product Registration Workspace implemented | Canonical Product, Variant, Category, Brand, Attribute and Attribute Value server commands | Foundation tables plus structured Variant projection implemented | Append-only taxonomy/assignment history plus Product lifecycle history | Canonical `catalog.*` keys with legacy compatibility | Unit, persistence, RLS, projection and registration-orchestration coverage | Advanced filters, images, fiscal context, cross-domain inline picker integration and route cutover |
-| Pricing | Implemented | Functional | Partial inside Product | Implemented | Implemented | Partial | Implemented | Implemented | Add scale workflows, simulation, bulk changes, and complete Workspace context |
+| Pricing | Implemented | Functional | Three-tab Workspace at `/catalog/pricing` | Permission-aware PostgreSQL commands plus canonical resolver | Price List, Items, append-only history and search projection | Central immutable audit events | `prices.*` enforced in UI and PostgreSQL | Unit plus local Supabase resolution, projection, concurrency, RLS and tenant coverage | Add bulk changes and approved integrations without introducing fallback rules |
 | Inventory Foundation | Implemented | Hardened foundation | Partial | Permission-aware | Implemented | Persisted audit + history | Implemented | Unit, integration, transactional and RLS coverage | Retire frozen product-scoped routes in a dedicated cutover |
 | Inventory Ledger | Implemented | Hardened | Partial | Permission-aware atomic movement/transfer RPCs | Append-only ledger + read-only reconciliation | Implemented | Implemented | Unit, integration, concurrency, rollback, idempotency and RLS coverage | Add valuation only in its approved future sprint |
 | Customers | Implemented | Functional | Partial | Server functions | Aggregate, children, history, search | Implemented | Implemented | Unit/integration/client-boundary coverage | Replace complex modals and add commercial/financial Customer Workspace context |
