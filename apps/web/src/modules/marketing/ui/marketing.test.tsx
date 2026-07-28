@@ -11,11 +11,11 @@ describe('Marketing website', () => {
   it('renders the public home as a premium operational platform narrative', () => {
     render(<MarketingHomePage />)
 
-    expect(screen.getByRole('heading', { name: /A empresa inteira\.\s*No mesmo sistema\./i })).toBeTruthy()
+    expect(screen.getByRole('heading', { name: /Tenha os n.meros da sua empresa nas m.os\.\s*Venda, controle e cres.a\./i })).toBeTruthy()
     expect(screen.getAllByText('Começar Agora').length).toBeGreaterThan(1)
     expect(screen.getAllByText('Conhecer os planos').length).toBeGreaterThanOrEqual(1)
     expect(screen.queryByText(/Agendar/i)).toBeNull()
-    expect(screen.queryByText(/Demonstra/i)).toBeNull()
+    expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThanOrEqual(1)
     expect(screen.getAllByText(marketingSite.positioning).length).toBeGreaterThanOrEqual(1)
     expect(screen.getByLabelText('Síntese visual da proposta da Rescript')).toBeTruthy()
     expect(screen.getByText('Relação, venda e lucro em uma linha só.')).toBeTruthy()

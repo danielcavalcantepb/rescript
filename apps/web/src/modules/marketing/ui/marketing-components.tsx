@@ -115,22 +115,22 @@ export function HeroSection() {
             <div className="mx-auto max-w-5xl">
               <BrandBars className="mx-auto mb-8 w-14" />
               <p className="mx-auto mb-5 max-w-max rounded-lg border border-white/10 bg-white/[0.045] px-3 py-2 text-xs font-medium tracking-[0.08em] text-white/64 uppercase">
-                Plataforma de Operação Comercial
+                Gestão comercial, estoque e indicadores
               </p>
               <h1 className="mx-auto max-w-5xl text-5xl leading-[0.91] font-medium tracking-[-0.075em] text-balance text-white sm:text-7xl lg:text-[7.8rem]">
-                A empresa inteira.
-                <span className="block text-white/74">No mesmo sistema.</span>
+                Tenha os números da sua empresa nas mãos.
+                <span className="block text-white/74">Venda, controle e cresça.</span>
               </h1>
               <p className="mx-auto mt-7 max-w-2xl text-lg leading-8 text-white/60 sm:text-xl">
-                Da primeira conversa ao caixa, a Rescript mantém cliente, pedido, estoque,
-                margem e métricas dentro de uma única verdade operacional.
+                Centralize vendas, estoque, compras e financeiro em um sistema visual que mostra
+                o que realmente acontece no seu negócio.
               </p>
               <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
                 <a href="/pricing" className={`${primaryCta} ${focusRing}`}>
-                  Começar Agora
+                  Solicitar demonstração
                 </a>
-                <a href="/pricing" className={`${secondaryCta} ${focusRing}`}>
-                  Conhecer os planos
+                <a href="#plataforma" className={`${secondaryCta} ${focusRing}`}>
+                  Conhecer a plataforma
                 </a>
               </div>
             </div>
@@ -202,6 +202,7 @@ function BrandStatementPanel() {
 
   return (
     <div
+      id="plataforma"
       className="relative overflow-hidden rounded-[1.75rem] border border-white/12 bg-[#070908] p-6 text-left shadow-[0_42px_150px_rgb(0_0_0/0.46)] sm:p-8"
       aria-label="Síntese visual da proposta da Rescript"
     >
