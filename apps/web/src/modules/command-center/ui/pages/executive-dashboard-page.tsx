@@ -59,7 +59,7 @@ export function ExecutiveDashboardPage() {
   ]
   const maxRevenue = Math.max(...data.revenue.map((row) => row.value), 1)
   return (
-    <main className="min-h-full bg-[#101314] p-4 text-[#f3f7f4] sm:p-6 lg:p-8">
+    <main className="min-h-full bg-[var(--color-bg)] p-4 text-[var(--color-ink)] sm:p-6 lg:p-8">
       <div className="mx-auto max-w-[1500px] space-y-6">
         <header className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
