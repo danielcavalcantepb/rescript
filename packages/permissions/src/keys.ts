@@ -61,6 +61,8 @@ export const PERMISSIONS = [
   'fiscal.update',
   'fiscal.archive',
   'fiscal.rules.manage',
+  'fiscal.preview',
+  'fiscal.resolve',
   'products.read',
   'products.create',
   'products.edit',
