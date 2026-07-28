@@ -12,7 +12,7 @@ describe('Marketing website', () => {
     render(<MarketingHomePage />)
 
     expect(screen.getByRole('heading', { name: /Tenha os n.meros da sua empresa nas m.os\.\s*Venda, controle e cres.a\./i })).toBeTruthy()
-    expect(screen.getAllByText('Começar Agora').length).toBeGreaterThan(1)
+    expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThan(1)
     expect(screen.getAllByText('Conhecer os planos').length).toBeGreaterThanOrEqual(1)
     expect(screen.queryByText(/Agendar/i)).toBeNull()
     expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThanOrEqual(1)
@@ -38,7 +38,7 @@ describe('Marketing website', () => {
 
     expect(button.getAttribute('aria-expanded')).toBe('true')
     expect(screen.getAllByText('Entrar').length).toBeGreaterThanOrEqual(1)
-    expect(screen.getAllByText('Começar Agora').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders FAQ as native accordion content', () => {

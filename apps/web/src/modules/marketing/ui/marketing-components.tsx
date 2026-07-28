@@ -22,7 +22,7 @@ const secondaryCta =
 
 export function MarketingLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#030504] text-white selection:bg-emerald-300/25">
+    <div className="min-h-screen bg-[#030504] text-white selection:bg-emerald-300/25 [background-image:radial-gradient(circle_at_50%_0%,rgb(95_224_154/0.08),transparent_28rem),linear-gradient(90deg,rgb(255_255_255/0.025)_1px,transparent_1px),linear-gradient(rgb(255_255_255/0.025)_1px,transparent_1px)] [background-size:auto,72px_72px,72px_72px]">
       <MarketingNavbar />
       <main>{children}</main>
       <MarketingFooter />
@@ -36,7 +36,7 @@ export function MarketingNavbar() {
   return (
     <header className="fixed inset-x-0 top-5 z-50 px-4">
       <nav
-        className="mx-auto flex h-16 max-w-5xl items-center justify-between rounded-[1.25rem] border border-white/10 bg-[#070908]/84 px-4 shadow-[0_20px_70px_rgb(0_0_0/0.36)] backdrop-blur-2xl sm:px-5"
+        className="mx-auto flex h-16 max-w-6xl items-center justify-between rounded-[1.25rem] border border-white/10 bg-[#070908]/84 px-4 shadow-[0_20px_70px_rgb(0_0_0/0.36)] backdrop-blur-2xl sm:px-5"
         aria-label="Navegação principal"
       >
         <a href="/" className={`flex items-center gap-3 rounded-xl ${focusRing}`} aria-label="Rescript">
@@ -63,8 +63,8 @@ export function MarketingNavbar() {
           >
             Entrar
           </a>
-          <a href="/pricing" className={`${primaryCta} ${focusRing}`}>
-            Começar Agora
+          <a href="/contact" className={`${primaryCta} ${focusRing}`}>
+            Solicitar demonstração
           </a>
         </div>
 
@@ -94,8 +94,8 @@ export function MarketingNavbar() {
             <a href="/login" className="rounded-xl px-3 py-3 text-sm text-white/72 hover:bg-white/[0.08] hover:text-white">
               Entrar
             </a>
-            <a href="/pricing" className="mt-2 rounded-xl bg-[#5FE09A] px-4 py-3 text-center text-sm font-semibold text-[#03110c]">
-              Começar Agora
+            <a href="/contact" className="mt-2 rounded-xl bg-[#5FE09A] px-4 py-3 text-center text-sm font-semibold text-[#03110c]">
+              Solicitar demonstração
             </a>
           </div>
         </div>
