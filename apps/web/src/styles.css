@@ -44,12 +44,12 @@
   --color-accent-hover: #259366;
   --color-accent-subtle: #e8f7f0;
 
-  /* Institutional KPI identity — intentionally theme-invariant. */
-  --color-kpi-card: linear-gradient(135deg, #176345 0%, #1f7a56 48%, #2f9a6c 100%);
-  --color-kpi-text: #ffffff;
-  --color-kpi-text-muted: rgb(255 255 255 / 0.76);
-  --color-kpi-border: rgb(111 228 168 / 0.42);
-  --color-kpi-accent: #72e1a9;
+  /* KPI cards are brand-forward only in the light application theme. */
+  --kpi-card-background: linear-gradient(135deg, #176345 0%, #1f7a56 48%, #2f9a6c 100%);
+  --kpi-card-foreground: #ffffff;
+  --kpi-card-muted: rgb(255 255 255 / 0.76);
+  --kpi-card-border: rgb(111 228 168 / 0.42);
+  --kpi-card-icon: #d5f8e4;
   --color-ink-muted: #4a5568;
   --color-line: #e8ebf0;
 
@@ -142,12 +142,12 @@
   --color-accent-hover: #4fd194;
   --color-accent-subtle: rgb(61 186 132 / 0.14);
 
-  /* Keep KPI cards visually identical between light and dark themes. */
-  --color-kpi-card: linear-gradient(135deg, #176345 0%, #1f7a56 48%, #2f9a6c 100%);
-  --color-kpi-text: #ffffff;
-  --color-kpi-text-muted: rgb(255 255 255 / 0.76);
-  --color-kpi-border: rgb(111 228 168 / 0.42);
-  --color-kpi-accent: #72e1a9;
+  /* Preserve the original dark dashboard KPI surface and contrast. */
+  --kpi-card-background: var(--color-surface);
+  --kpi-card-foreground: var(--color-ink);
+  --kpi-card-muted: var(--color-muted);
+  --kpi-card-border: var(--color-border-soft);
+  --kpi-card-icon: var(--color-primary);
 
   --color-danger: #f97066;
   --color-danger-bg: rgb(249 112 102 / 0.12);
@@ -249,14 +249,23 @@
   }
 
   .kpi-card {
-    background: var(--color-kpi-card);
-    border-color: var(--color-kpi-border);
-    color: var(--color-kpi-text);
+    background: var(--kpi-card-background);
+    border-color: var(--kpi-card-border);
+    color: var(--kpi-card-foreground);
     box-shadow: 0 14px 30px rgb(23 99 69 / 0.18);
   }
 
   .kpi-card:hover {
     box-shadow: 0 18px 36px rgb(23 99 69 / 0.25);
+  }
+
+  .dark .kpi-card {
+    box-shadow: none;
+  }
+
+  .dark .kpi-card:hover {
+    border-color: rgb(61 186 132 / 0.5);
+    box-shadow: none;
   }
 }
 
