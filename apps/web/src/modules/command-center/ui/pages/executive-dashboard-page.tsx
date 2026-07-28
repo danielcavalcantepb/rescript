@@ -30,20 +30,20 @@ export function ExecutiveDashboardPage() {
   })
   if (query.isLoading)
     return (
-      <main className="min-h-full bg-[#101314] p-8 text-sm text-[#9aa6a0]">
+      <main className="min-h-full bg-[var(--color-bg)] p-8 text-sm text-[var(--color-muted)]">
         Carregando visão executiva…
       </main>
     )
   if (query.isError)
     return (
-      <main className="min-h-full bg-[#101314] p-8 text-sm text-red-300">
+      <main className="min-h-full bg-[var(--color-bg)] p-8 text-sm text-[var(--color-danger)]">
         Não foi possível carregar o dashboard.
       </main>
     )
   const data = query.data as DashboardData | undefined
   if (!data)
     return (
-      <main className="min-h-full bg-[#101314] p-8 text-sm text-[#9aa6a0]">
+      <main className="min-h-full bg-[var(--color-bg)] p-8 text-sm text-[var(--color-muted)]">
         Nenhum dado disponível.
       </main>
     )
