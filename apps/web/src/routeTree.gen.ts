@@ -73,6 +73,7 @@ import { Route as AppFinancePaymentsNewRouteImport } from './routes/_app/finance
 import { Route as AppFinanceReceivablesIndexRouteImport } from './routes/_app/finance/receivables/index'
 import { Route as AppFinanceReceivablesReceivableIdRouteImport } from './routes/_app/finance/receivables/$receivableId'
 import { Route as AppFinanceReceivablesNewRouteImport } from './routes/_app/finance/receivables/new'
+import { Route as AppFiscalDocumentsDocumentIdRouteImport } from './routes/_app/fiscal/documents/$documentId'
 import { Route as AppProcurementPurchasesIndexRouteImport } from './routes/_app/procurement/purchases/index'
 import { Route as AppProcurementPurchasesPurchaseIdRouteImport } from './routes/_app/procurement/purchases/$purchaseId'
 import { Route as AppProcurementPurchasesNewRouteImport } from './routes/_app/procurement/purchases/new'
@@ -445,6 +446,12 @@ const AppFinanceReceivablesNewRoute =
     path: '/receivables/new',
     getParentRoute: () => AppFinanceRoute,
   } as any)
+const AppFiscalDocumentsDocumentIdRoute =
+  AppFiscalDocumentsDocumentIdRouteImport.update({
+    id: '/fiscal/documents/$documentId',
+    path: '/fiscal/documents/$documentId',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppProcurementPurchasesIndexRoute =
   AppProcurementPurchasesIndexRouteImport.update({
     id: '/procurement/purchases/',
@@ -743,6 +750,7 @@ export interface FileRoutesByFullPath {
   '/finance/payments/new': typeof AppFinancePaymentsNewRoute
   '/finance/receivables/$receivableId': typeof AppFinanceReceivablesReceivableIdRoute
   '/finance/receivables/new': typeof AppFinanceReceivablesNewRoute
+  '/fiscal/documents/$documentId': typeof AppFiscalDocumentsDocumentIdRoute
   '/procurement/purchases/$purchaseId': typeof AppProcurementPurchasesPurchaseIdRoute
   '/procurement/purchases/new': typeof AppProcurementPurchasesNewRoute
   '/procurement/receiving/$receiptId': typeof AppProcurementReceivingReceiptIdRoute
@@ -847,6 +855,7 @@ export interface FileRoutesByTo {
   '/finance/payments/new': typeof AppFinancePaymentsNewRoute
   '/finance/receivables/$receivableId': typeof AppFinanceReceivablesReceivableIdRoute
   '/finance/receivables/new': typeof AppFinanceReceivablesNewRoute
+  '/fiscal/documents/$documentId': typeof AppFiscalDocumentsDocumentIdRoute
   '/procurement/purchases/$purchaseId': typeof AppProcurementPurchasesPurchaseIdRoute
   '/procurement/purchases/new': typeof AppProcurementPurchasesNewRoute
   '/procurement/receiving/$receiptId': typeof AppProcurementReceivingReceiptIdRoute
@@ -955,6 +964,7 @@ export interface FileRoutesById {
   '/_app/finance/payments/new': typeof AppFinancePaymentsNewRoute
   '/_app/finance/receivables/$receivableId': typeof AppFinanceReceivablesReceivableIdRoute
   '/_app/finance/receivables/new': typeof AppFinanceReceivablesNewRoute
+  '/_app/fiscal/documents/$documentId': typeof AppFiscalDocumentsDocumentIdRoute
   '/_app/procurement/purchases/$purchaseId': typeof AppProcurementPurchasesPurchaseIdRoute
   '/_app/procurement/purchases/new': typeof AppProcurementPurchasesNewRoute
   '/_app/procurement/receiving/$receiptId': typeof AppProcurementReceivingReceiptIdRoute
@@ -1063,6 +1073,7 @@ export interface FileRouteTypes {
     | '/finance/payments/new'
     | '/finance/receivables/$receivableId'
     | '/finance/receivables/new'
+    | '/fiscal/documents/$documentId'
     | '/procurement/purchases/$purchaseId'
     | '/procurement/purchases/new'
     | '/procurement/receiving/$receiptId'
@@ -1167,6 +1178,7 @@ export interface FileRouteTypes {
     | '/finance/payments/new'
     | '/finance/receivables/$receivableId'
     | '/finance/receivables/new'
+    | '/fiscal/documents/$documentId'
     | '/procurement/purchases/$purchaseId'
     | '/procurement/purchases/new'
     | '/procurement/receiving/$receiptId'
@@ -1274,6 +1286,7 @@ export interface FileRouteTypes {
     | '/_app/finance/payments/new'
     | '/_app/finance/receivables/$receivableId'
     | '/_app/finance/receivables/new'
+    | '/_app/fiscal/documents/$documentId'
     | '/_app/procurement/purchases/$purchaseId'
     | '/_app/procurement/purchases/new'
     | '/_app/procurement/receiving/$receiptId'
@@ -1793,6 +1806,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFinanceReceivablesNewRouteImport
       parentRoute: typeof AppFinanceRoute
     }
+    '/_app/fiscal/documents/$documentId': {
+      id: '/_app/fiscal/documents/$documentId'
+      path: '/fiscal/documents/$documentId'
+      fullPath: '/fiscal/documents/$documentId'
+      preLoaderRoute: typeof AppFiscalDocumentsDocumentIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/procurement/purchases/': {
       id: '/_app/procurement/purchases/'
       path: '/procurement/purchases'
@@ -2279,6 +2299,7 @@ interface AppRouteChildren {
   AppVendasIndexRoute: typeof AppVendasIndexRoute
   AppCrmCustomersCustomerIdRoute: typeof AppCrmCustomersCustomerIdRouteWithChildren
   AppCrmCustomersNewRoute: typeof AppCrmCustomersNewRoute
+  AppFiscalDocumentsDocumentIdRoute: typeof AppFiscalDocumentsDocumentIdRoute
   AppProcurementPurchasesPurchaseIdRoute: typeof AppProcurementPurchasesPurchaseIdRoute
   AppProcurementPurchasesNewRoute: typeof AppProcurementPurchasesNewRoute
   AppProcurementReceivingReceiptIdRoute: typeof AppProcurementReceivingReceiptIdRoute
@@ -2328,6 +2349,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppVendasIndexRoute: AppVendasIndexRoute,
   AppCrmCustomersCustomerIdRoute: AppCrmCustomersCustomerIdRouteWithChildren,
   AppCrmCustomersNewRoute: AppCrmCustomersNewRoute,
+  AppFiscalDocumentsDocumentIdRoute: AppFiscalDocumentsDocumentIdRoute,
   AppProcurementPurchasesPurchaseIdRoute:
     AppProcurementPurchasesPurchaseIdRoute,
   AppProcurementPurchasesNewRoute: AppProcurementPurchasesNewRoute,

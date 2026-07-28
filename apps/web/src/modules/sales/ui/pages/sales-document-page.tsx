@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useMutation } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { AppBreadcrumb } from '#/components/AppBreadcrumb'
 import { EntityCell, EntityRow, EntityTable } from '#/components/EntityTable'
@@ -29,6 +30,7 @@ import {
   useInventoryPackings,
 } from '#/modules/inventory/ui/hooks/use-inventory-packings'
 import { useCreateInventoryShipment } from '#/modules/inventory/ui/hooks/use-inventory-shipments'
+import { buildFiscalDocumentFromSales } from '#/modules/fiscal/ui/fiscal-api'
 import {
   useConvertQuotationToSalesOrder,
   useSalesDocument,
@@ -55,6 +57,7 @@ function SalesDocumentContent({ type, id }: { type: SalesDocumentType; id: strin
   const createPicking = useCreateInventoryPicking(currentOrganization?.id)
   const createPacking = useCreateInventoryPacking(currentOrganization?.id)
   const createShipment = useCreateInventoryShipment(currentOrganization?.id)
+  const fiscalBuild = useMutation({ mutationFn: () => buildFiscalDocumentFromSales({ data: { organizationId: currentOrganization?.id ?? '', salesOrderId: id } }) })
   const relatedPickings = useInventoryPickings(
     currentOrganization?.id,
     { q: query.data?.number, limit: 10 },
@@ -149,6 +152,12 @@ function SalesDocumentContent({ type, id }: { type: SalesDocumentType; id: strin
     })
   }
 
+  async function buildFiscalFromOrder() {
+    const result = await fiscalBuild.mutateAsync()
+    if (!result.ok) throw new Error(result.error.code)
+    await navigate({ to: '/fiscal/documents/$documentId', params: { documentId: String(result.data.fiscal_document_id) } })
+  }
+
   return (
     <div className="space-y-6">
       <AppBreadcrumb
@@ -179,6 +188,7 @@ function SalesDocumentContent({ type, id }: { type: SalesDocumentType; id: strin
                 createPicking.isPending ||
                 createPacking.isPending ||
                 createShipment.isPending
+                || fiscalBuild.isPending
               }
               onCreateReservation={createReservationFromOrder}
               onOpenPicking={openPickingFromOrder}
@@ -186,6 +196,7 @@ function SalesDocumentContent({ type, id }: { type: SalesDocumentType; id: strin
               onOpenPacking={openPackingFromOrder}
               canOpenShipment={Boolean(completedPacking)}
               onOpenShipment={openShipmentFromOrder}
+              onBuildFiscal={buildFiscalFromOrder}
             />
           </div>
         }
@@ -269,6 +280,7 @@ function Actions({
   onOpenPacking,
   canOpenShipment,
   onOpenShipment,
+  onBuildFiscal,
   busy,
 }: {
   document: SalesDocumentDetail
@@ -283,6 +295,7 @@ function Actions({
   onOpenPacking: () => Promise<void>
   canOpenShipment: boolean
   onOpenShipment: () => Promise<void>
+  onBuildFiscal: () => Promise<void>
   busy: boolean
 }) {
   const isQuotation = type === 'quotation'
@@ -332,6 +345,11 @@ function Actions({
       {!isQuotation && document.status === 'confirmed' ? (
         <FeatureGate permission="picking.create">
           <Button variant="secondary" disabled={busy} onClick={() => void onOpenPicking()}>Abrir Picking</Button>
+        </FeatureGate>
+      ) : null}
+      {!isQuotation && document.status === 'confirmed' ? (
+        <FeatureGate permission="fiscal.documents.create">
+          <Button variant="secondary" disabled={busy} onClick={() => void onBuildFiscal()}>Gerar documento fiscal</Button>
         </FeatureGate>
       ) : null}
       {!isQuotation && document.status === 'confirmed' && canOpenPacking ? (
