@@ -65,6 +65,7 @@ import { Route as AppCrmCustomersNewRouteImport } from './routes/_app/crm/custom
 import { Route as AppFinanceAccountsPayableIndexRouteImport } from './routes/_app/finance/accounts-payable/index'
 import { Route as AppFinanceAccountsPayablePayableIdRouteImport } from './routes/_app/finance/accounts-payable/$payableId'
 import { Route as AppFinanceAccountsPayableNewRouteImport } from './routes/_app/finance/accounts-payable/new'
+import { Route as AppFinanceCashIndexRouteImport } from './routes/_app/finance/cash/index'
 import { Route as AppFinancePaymentsIndexRouteImport } from './routes/_app/finance/payments/index'
 import { Route as AppFinancePaymentsPaymentIdRouteImport } from './routes/_app/finance/payments/$paymentId'
 import { Route as AppFinancePaymentsNewRouteImport } from './routes/_app/finance/payments/new'
@@ -399,6 +400,11 @@ const AppFinanceAccountsPayableNewRoute =
     path: '/accounts-payable/new',
     getParentRoute: () => AppFinanceRoute,
   } as any)
+const AppFinanceCashIndexRoute = AppFinanceCashIndexRouteImport.update({
+  id: '/cash/',
+  path: '/cash/',
+  getParentRoute: () => AppFinanceRoute,
+} as any)
 const AppFinancePaymentsIndexRoute = AppFinancePaymentsIndexRouteImport.update({
   id: '/payments/',
   path: '/payments/',
@@ -747,6 +753,7 @@ export interface FileRoutesByFullPath {
   '/catalog/products/': typeof AppCatalogProductsIndexRoute
   '/crm/customers/': typeof AppCrmCustomersIndexRoute
   '/finance/accounts-payable/': typeof AppFinanceAccountsPayableIndexRoute
+  '/finance/cash/': typeof AppFinanceCashIndexRoute
   '/finance/payments/': typeof AppFinancePaymentsIndexRoute
   '/finance/receivables/': typeof AppFinanceReceivablesIndexRoute
   '/procurement/purchases/': typeof AppProcurementPurchasesIndexRoute
@@ -849,6 +856,7 @@ export interface FileRoutesByTo {
   '/catalog/products': typeof AppCatalogProductsIndexRoute
   '/crm/customers': typeof AppCrmCustomersIndexRoute
   '/finance/accounts-payable': typeof AppFinanceAccountsPayableIndexRoute
+  '/finance/cash': typeof AppFinanceCashIndexRoute
   '/finance/payments': typeof AppFinancePaymentsIndexRoute
   '/finance/receivables': typeof AppFinanceReceivablesIndexRoute
   '/procurement/purchases': typeof AppProcurementPurchasesIndexRoute
@@ -955,6 +963,7 @@ export interface FileRoutesById {
   '/_app/catalog/products/': typeof AppCatalogProductsIndexRoute
   '/_app/crm/customers/': typeof AppCrmCustomersIndexRoute
   '/_app/finance/accounts-payable/': typeof AppFinanceAccountsPayableIndexRoute
+  '/_app/finance/cash/': typeof AppFinanceCashIndexRoute
   '/_app/finance/payments/': typeof AppFinancePaymentsIndexRoute
   '/_app/finance/receivables/': typeof AppFinanceReceivablesIndexRoute
   '/_app/procurement/purchases/': typeof AppProcurementPurchasesIndexRoute
@@ -1061,6 +1070,7 @@ export interface FileRouteTypes {
     | '/catalog/products/'
     | '/crm/customers/'
     | '/finance/accounts-payable/'
+    | '/finance/cash/'
     | '/finance/payments/'
     | '/finance/receivables/'
     | '/procurement/purchases/'
@@ -1163,6 +1173,7 @@ export interface FileRouteTypes {
     | '/catalog/products'
     | '/crm/customers'
     | '/finance/accounts-payable'
+    | '/finance/cash'
     | '/finance/payments'
     | '/finance/receivables'
     | '/procurement/purchases'
@@ -1268,6 +1279,7 @@ export interface FileRouteTypes {
     | '/_app/catalog/products/'
     | '/_app/crm/customers/'
     | '/_app/finance/accounts-payable/'
+    | '/_app/finance/cash/'
     | '/_app/finance/payments/'
     | '/_app/finance/receivables/'
     | '/_app/procurement/purchases/'
@@ -1713,6 +1725,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFinanceAccountsPayableNewRouteImport
       parentRoute: typeof AppFinanceRoute
     }
+    '/_app/finance/cash/': {
+      id: '/_app/finance/cash/'
+      path: '/cash'
+      fullPath: '/finance/cash/'
+      preLoaderRoute: typeof AppFinanceCashIndexRouteImport
+      parentRoute: typeof AppFinanceRoute
+    }
     '/_app/finance/payments/': {
       id: '/_app/finance/payments/'
       path: '/payments'
@@ -2132,6 +2151,7 @@ interface AppFinanceRouteChildren {
   AppFinanceReceivablesReceivableIdRoute: typeof AppFinanceReceivablesReceivableIdRoute
   AppFinanceReceivablesNewRoute: typeof AppFinanceReceivablesNewRoute
   AppFinanceAccountsPayableIndexRoute: typeof AppFinanceAccountsPayableIndexRoute
+  AppFinanceCashIndexRoute: typeof AppFinanceCashIndexRoute
   AppFinancePaymentsIndexRoute: typeof AppFinancePaymentsIndexRoute
   AppFinanceReceivablesIndexRoute: typeof AppFinanceReceivablesIndexRoute
 }
@@ -2147,6 +2167,7 @@ const AppFinanceRouteChildren: AppFinanceRouteChildren = {
     AppFinanceReceivablesReceivableIdRoute,
   AppFinanceReceivablesNewRoute: AppFinanceReceivablesNewRoute,
   AppFinanceAccountsPayableIndexRoute: AppFinanceAccountsPayableIndexRoute,
+  AppFinanceCashIndexRoute: AppFinanceCashIndexRoute,
   AppFinancePaymentsIndexRoute: AppFinancePaymentsIndexRoute,
   AppFinanceReceivablesIndexRoute: AppFinanceReceivablesIndexRoute,
 }
