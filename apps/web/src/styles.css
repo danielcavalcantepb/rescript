@@ -14,10 +14,14 @@
   --color-primary-hover: #259366;
   --color-primary-active: #176345;
   --color-primary-soft: #e8f7f0;
-  --color-canvas: #f3f5f7;
+  /* Application surfaces — these adapt with the selected theme. */
+  --color-background: #f3f5f7;
+  --color-bg: var(--color-background);
+  --color-canvas: var(--color-background);
   --color-surface: #ffffff;
   --color-surface-alt: #f8fafb;
   --color-surface-elevated: #ffffff;
+  --color-panel: #ffffff;
   --color-border: #e8ebf0;
   --color-border-soft: #f0f2f5;
   --color-ink: #0b1220;
@@ -39,6 +43,13 @@
   --color-accent: #1f7a56;
   --color-accent-hover: #259366;
   --color-accent-subtle: #e8f7f0;
+
+  /* Institutional KPI identity — intentionally theme-invariant. */
+  --color-kpi-card: linear-gradient(135deg, #176345 0%, #1f7a56 48%, #2f9a6c 100%);
+  --color-kpi-text: #ffffff;
+  --color-kpi-text-muted: rgb(255 255 255 / 0.76);
+  --color-kpi-border: rgb(111 228 168 / 0.42);
+  --color-kpi-accent: #72e1a9;
   --color-ink-muted: #4a5568;
   --color-line: #e8ebf0;
 
@@ -111,10 +122,13 @@
   --color-muted: #6f7f76;
   --color-ink-muted: #9aa89f;
 
-  --color-canvas: #0a0f0d;
+  --color-background: #0a0f0d;
+  --color-bg: var(--color-background);
+  --color-canvas: var(--color-background);
   --color-surface: #111816;
   --color-surface-alt: #0d1311;
   --color-surface-elevated: #171f1c;
+  --color-panel: #111816;
   --color-border: #24302b;
   --color-border-soft: #1a221e;
   --color-line: #24302b;
@@ -127,6 +141,13 @@
   --color-accent: #3dba84;
   --color-accent-hover: #4fd194;
   --color-accent-subtle: rgb(61 186 132 / 0.14);
+
+  /* Keep KPI cards visually identical between light and dark themes. */
+  --color-kpi-card: linear-gradient(135deg, #176345 0%, #1f7a56 48%, #2f9a6c 100%);
+  --color-kpi-text: #ffffff;
+  --color-kpi-text-muted: rgb(255 255 255 / 0.76);
+  --color-kpi-border: rgb(111 228 168 / 0.42);
+  --color-kpi-accent: #72e1a9;
 
   --color-danger: #f97066;
   --color-danger-bg: rgb(249 112 102 / 0.12);
@@ -225,6 +246,17 @@
     transition-property: color, background-color, border-color, opacity, transform;
     transition-duration: var(--motion-fast);
     transition-timing-function: var(--ease-out);
+  }
+
+  .kpi-card {
+    background: var(--color-kpi-card);
+    border-color: var(--color-kpi-border);
+    color: var(--color-kpi-text);
+    box-shadow: 0 14px 30px rgb(23 99 69 / 0.18);
+  }
+
+  .kpi-card:hover {
+    box-shadow: 0 18px 36px rgb(23 99 69 / 0.25);
   }
 }
 
