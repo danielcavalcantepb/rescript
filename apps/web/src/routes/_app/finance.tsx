@@ -12,6 +12,7 @@ const areas = [
   { to: '/finance/receivables', label: 'Contas a receber', permissions: ['receivables.read'] },
   { to: '/finance/accounts-payable', label: 'Contas a pagar', permissions: ['payable.read'] },
   { to: '/finance/payments', label: 'Pagamentos', permissions: ['payments.read'] },
+  { to: '/finance/cash', label: 'Caixa e fluxo', permissions: ['finance.cash_flow.read'] },
 ] as const
 
 function FinancialWorkspace() {

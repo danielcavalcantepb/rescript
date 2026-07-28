@@ -1,8 +1,8 @@
 ---
 Status: Active
 Owner: Architecture & Engineering
-Last-Reviewed: 2026-07-27
-Version: 1.1.0
+Last-Reviewed: 2026-07-28
+Version: 1.6.0
 Type: Reference
 Scope: Complete documentation registry
 Supersedes: None
@@ -16,6 +16,11 @@ Complete registry of governed Markdown documents. Classification controls author
 
 ## Canonical
 
+- [MASTER_PRODUCT_DOCUMENT](./MASTER_PRODUCT_DOCUMENT.md)
+- [ENGINEERING_BACKLOG](./ENGINEERING_BACKLOG.md)
+- [DOMAIN_AUDIT](./DOMAIN_AUDIT.md)
+- [CORE_DOMAIN_SPECIFICATION](./CORE_DOMAIN_SPECIFICATION.md)
+- [IMPLEMENTATION_PROGRAM](./IMPLEMENTATION_PROGRAM.md)
 - [00_PRODUCT_VISION](./00_PRODUCT_VISION.md)
 - [01_PROJECT_ARCHITECTURE](./01_PROJECT_ARCHITECTURE.md)
 - [02_ENGINEERING_GUIDE](./02_ENGINEERING_GUIDE.md)

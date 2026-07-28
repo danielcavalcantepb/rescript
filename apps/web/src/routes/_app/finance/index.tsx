@@ -11,11 +11,12 @@ function FinanceOverview() {
     { to: '/finance/receivables', label: 'Contas a receber', description: 'Acompanhe obrigações de clientes, vencimentos e saldos.', permission: 'receivables.read' },
     { to: '/finance/accounts-payable', label: 'Contas a pagar', description: 'Controle compromissos, parcelas e vencimentos com fornecedores.', permission: 'payable.read' },
     { to: '/finance/payments', label: 'Pagamentos', description: 'Registre e acompanhe pagamentos efetuados.', permission: 'payments.read' },
+    { to: '/finance/cash', label: 'Caixa e fluxo', description: 'Consulte saldos realizados, títulos em aberto e a projeção financeira.', permission: 'finance.cash_flow.read' },
   ] as const
   const visible = areas.filter((area) => can(area.permission))
 
   return (
-    <section className="grid gap-3 md:grid-cols-3">
+    <section className="grid gap-3 md:grid-cols-3 xl:grid-cols-4">
       {visible.map((area) => (
         <Link
           key={area.to}

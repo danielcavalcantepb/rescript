@@ -1,8 +1,8 @@
 ---
 Status: Active
 Owner: Architecture & Engineering
-Last-Reviewed: 2026-07-26
-Version: 1.0.0
+Last-Reviewed: 2026-07-28
+Version: 1.3.0
 Type: Canonical
 Scope: Documentation portal and authority hierarchy
 Supersedes: None
@@ -18,22 +18,27 @@ This is the mandatory entry point for every developer, architect, designer, prod
 
 Rescript is a multi-tenant Enterprise ERP SaaS organized as a modular monolith. The product prioritizes operational productivity, permanent context, reliable financial and inventory facts, and entity-centered Workspaces. Documentation defines approved intent and constraints; migrations, generated types, and executable tests demonstrate the implemented state. [Module Status](./MODULE_STATUS.md) reconciles both.
 
+The mandatory functional starting point is the [Master Product Document](./MASTER_PRODUCT_DOCUMENT.md). It defines product scope, module responsibilities, operational flows, UX intent, data boundaries and roadmap. ADRs and narrower Canonical documents remain authoritative for their technical decisions.
+
 ## Official reading order
 
 Read before any contribution:
 
 1. [Product Vision](./00_PRODUCT_VISION.md)
-2. [Product Design](./03_PRODUCT_DESIGN.md)
-3. [Project Architecture](./01_PROJECT_ARCHITECTURE.md)
-4. [Engineering Guide](./02_ENGINEERING_GUIDE.md)
-5. [UI Guidelines](./04_UI_GUIDELINES.md) for any user-facing work
-6. [Module Standards](./05_MODULE_STANDARDS.md)
-7. [Domain Guide](./06_DOMAIN_GUIDE.md)
-8. [Architecture Decisions](./08_ARCHITECTURE_DECISIONS.md) and applicable detailed ADRs
-9. [Development Workflow](./09_DEVELOPMENT_WORKFLOW.md)
-10. [Module Status](./MODULE_STATUS.md)
-11. The relevant Reference, Runbook, migration, module implementation, and tests
-12. [AI Guide](./10_AI_GUIDE.md) when the contributor is an AI agent
+2. [Master Product Document](./MASTER_PRODUCT_DOCUMENT.md)
+3. [Engineering Backlog](./ENGINEERING_BACKLOG.md)
+4. [Domain Audit](./DOMAIN_AUDIT.md)
+5. [Product Design](./03_PRODUCT_DESIGN.md)
+6. [Project Architecture](./01_PROJECT_ARCHITECTURE.md)
+7. [Engineering Guide](./02_ENGINEERING_GUIDE.md)
+8. [UI Guidelines](./04_UI_GUIDELINES.md) for any user-facing work
+9. [Module Standards](./05_MODULE_STANDARDS.md)
+10. [Domain Guide](./06_DOMAIN_GUIDE.md)
+11. [Architecture Decisions](./08_ARCHITECTURE_DECISIONS.md) and applicable detailed ADRs
+12. [Development Workflow](./09_DEVELOPMENT_WORKFLOW.md)
+13. [Module Status](./MODULE_STATUS.md)
+14. The relevant Reference, Runbook, migration, module implementation, and tests
+15. [AI Guide](./10_AI_GUIDE.md) when the contributor is an AI agent
 
 Start a local environment with [Quick Start](./QUICK_START.md). Use [Glossary](./GLOSSARY.md) for canonical terminology and [Documentation Governance](./DOCUMENTATION_GOVERNANCE.md) when changing documentation.
 
@@ -71,6 +76,9 @@ The [complete document index](./DOCUMENT_INDEX.md) lists every governed Markdown
 ### Canonical foundation
 
 - [Product Vision](./00_PRODUCT_VISION.md)
+- [Master Product Document](./MASTER_PRODUCT_DOCUMENT.md)
+- [Engineering Backlog](./ENGINEERING_BACKLOG.md)
+- [Domain Audit](./DOMAIN_AUDIT.md)
 - [Project Architecture](./01_PROJECT_ARCHITECTURE.md)
 - [Engineering Guide](./02_ENGINEERING_GUIDE.md)
 - [Product Design](./03_PRODUCT_DESIGN.md)

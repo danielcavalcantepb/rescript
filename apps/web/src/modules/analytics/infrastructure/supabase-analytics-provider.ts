@@ -69,30 +69,27 @@ async function safeRead(
 }
 
 function mapSales(row: Row): AnalyticsRecord | null {
-  const type = toString(row.aggregate_type)
-  const status = toString(row.status)
-  if (type !== 'sales_order' || status !== 'confirmed') return null
   return {
-    id: String(row.aggregate_id),
+    id: String(row.sales_order_id),
     source: 'sales',
-    date: toString(row.created_at) ?? new Date(0).toISOString(),
-    amount: toNumber(row.grand_total),
-    discount: toNumber(row.discount_amount),
-    status,
+    date: toString(row.confirmed_at) ?? new Date(0).toISOString(),
+    amount: toNumber(row.revenue),
+    status: 'confirmed',
     customerName: toString(row.customer_name),
     customerId: toString(row.customer_id),
+    sellerId: toString(row.seller_user_id),
+    branchId: toString(row.branch_id),
     origin: 'sales',
   }
 }
 
 function mapReceivable(row: Row): AnalyticsRecord {
   return {
-    id: String(row.accounts_receivable_id),
+    id: String(row.receivable_id),
     source: 'receivables',
     date: toString(row.due_date) ?? new Date(0).toISOString(),
     amount: toNumber(row.open_amount),
     status: toString(row.status),
-    customerName: toString(row.customer_name),
     customerId: toString(row.customer_id),
     origin: 'receivable',
   }
@@ -100,12 +97,11 @@ function mapReceivable(row: Row): AnalyticsRecord {
 
 function mapPayable(row: Row): AnalyticsRecord {
   return {
-    id: String(row.accounts_payable_id),
+    id: String(row.payable_id),
     source: 'payables',
-    date: toString(row.next_due_date) ?? new Date(0).toISOString(),
-    amount: toNumber(row.open_balance),
+    date: toString(row.due_date) ?? new Date(0).toISOString(),
+    amount: toNumber(row.open_amount),
     status: toString(row.status),
-    supplierName: toString(row.supplier_name),
     supplierId: toString(row.supplier_id),
     origin: 'payable',
   }
@@ -113,10 +109,10 @@ function mapPayable(row: Row): AnalyticsRecord {
 
 function mapInventory(row: Row, generatedAt: string): AnalyticsRecord {
   return {
-    id: String(row.id),
+    id: String(row.inventory_item_id),
     source: 'inventory',
     date: generatedAt,
-    quantity: toNumber(row.qty_on_hand),
+    quantity: toNumber(row.qty_available),
     status: toString(row.status),
     productId: toString(row.product_id),
     origin: 'inventory',
@@ -147,17 +143,17 @@ export function createSupabaseAnalyticsProvider({
         safeRead(sourceIssues, 'Sales', () =>
           readRows(
             client,
-            'sales_search',
-            'aggregate_id,aggregate_type,status,grand_total,discount_amount,customer_id,customer_name,created_at',
+            'analytics_sales_order_fact',
+            'sales_order_id,confirmed_at,revenue,customer_id,customer_name,seller_user_id,branch_id',
             organizationId,
-            'created_at',
+            'confirmed_at',
           ),
         ),
         safeRead(sourceIssues, 'Accounts Receivable', () =>
           readRows(
             client,
-            'accounts_receivable_search',
-            'accounts_receivable_id,status,due_date,open_amount,customer_id,customer_name',
+            'analytics_receivable_open_fact',
+            'receivable_id,status,due_date,open_amount,customer_id',
             organizationId,
             'due_date',
           ),
@@ -165,24 +161,24 @@ export function createSupabaseAnalyticsProvider({
         safeRead(sourceIssues, 'Accounts Payable', () =>
           readRows(
             client,
-            'accounts_payable_search',
-            'accounts_payable_id,status,next_due_date,open_balance,supplier_id,supplier_name',
+            'analytics_payable_open_fact',
+            'payable_id,status,due_date,open_amount,supplier_id',
             organizationId,
-            'next_due_date',
+            'due_date',
           ),
         ),
         safeRead(sourceIssues, 'Inventory', () =>
           readRows(
             client,
-            'inventory_item',
-            'id,status,product_id,qty_on_hand',
+            'analytics_inventory_preparation_fact',
+            'inventory_item_id,status,product_id,qty_available',
             organizationId,
           ),
         ),
         safeRead(sourceIssues, 'Customers', () =>
           readRows(
             client,
-            'customer_search',
+            'analytics_customer_fact',
             'customer_id,status,name,created_at',
             organizationId,
             'created_at',

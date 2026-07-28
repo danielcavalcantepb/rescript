@@ -85,7 +85,7 @@ export function OrderHeader({
   )
 }
 
-export function PaymentSection() {
+export function PaymentSection({ paymentTermName: _paymentTermName }: { paymentTermName?: string | null }) {
   return (
     <WorkspaceSection
       title="Pagamento"

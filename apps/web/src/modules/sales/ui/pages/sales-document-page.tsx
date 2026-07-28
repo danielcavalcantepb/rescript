@@ -201,12 +201,13 @@ function SalesDocumentContent({ type, id }: { type: SalesDocumentType; id: strin
           </div>
         }
       />
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
         <Card label="Cliente" value={document.customerName} />
         <Card label="Total" value={formatBRL(Number(document.grandTotal))} />
         <Card label="Descontos" value={formatBRL(Number(document.discountTotal))} />
         <Card label="Itens" value={String(document.items.length)} />
         <Card label="Status" value={statusLabel} />
+        {!isQuotation ? <Card label="Pagamento" value={document.paymentTermName ?? 'Não definido'} /> : null}
       </section>
       <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">
@@ -249,6 +250,10 @@ function SalesDocumentContent({ type, id }: { type: SalesDocumentType; id: strin
           <Info label="Subtotal" value={formatBRL(Number(document.subtotal))} />
           <Info label="Total" value={formatBRL(Number(document.grandTotal))} />
           <Info label="Moeda" value={document.currency} />
+          {!isQuotation ? <Info label="Filial" value={document.branchId ? 'Filial vinculada' : 'Não definida'} /> : null}
+          {!isQuotation ? <Info label="Condição" value={document.paymentTermName ?? 'Não definida'} /> : null}
+          {document.confirmedAt ? <Info label="Confirmado em" value={formatDateTime(document.confirmedAt)} /> : null}
+          {document.cancellationReason ? <Info label="Motivo do cancelamento" value={document.cancellationReason} /> : null}
           {isQuotation ? <Info label="Validade" value={document.validUntil ?? '—'} /> : null}
           {document.quotationId ? (
             <Link className="text-sm text-[var(--color-primary)] hover:underline" to="/sales/quotations/$quotationId" params={{ quotationId: document.quotationId }}>

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { AppBreadcrumb } from '#/components/AppBreadcrumb'
 import { EntityCell, EntityRow, EntityTable } from '#/components/EntityTable'
@@ -35,6 +36,7 @@ import {
 } from '../components/sales-order-workspace-components'
 import { SalesProductPicker } from '../components/sales-product-picker'
 import { UnsavedChangesGuard } from '../components/unsaved-changes-guard'
+import { listSalesBranches, listSalesPaymentTerms } from '../sales-api'
 
 type Line = SalesItemInput & {
   productId: string
@@ -81,9 +83,13 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const [currency, setCurrency] = useState('BRL')
   const [validUntil, setValidUntil] = useState('')
   const [notes, setNotes] = useState('')
+  const [branchId, setBranchId] = useState('')
+  const [paymentTermId, setPaymentTermId] = useState('')
   const [lines, setLines] = useState<Line[]>([emptyLine()])
   const [error, setError] = useState<string | null>(null)
   const [dirty, setDirty] = useState(false)
+  const branches = useQuery({ queryKey: ['sales', 'branches', organizationId], enabled: Boolean(organizationId && !isQuotation), queryFn: async () => { const result = await listSalesBranches({ data: { organizationId: organizationId! } }); if (!result.ok) throw new Error(result.error.code); return result.data } })
+  const paymentTerms = useQuery({ queryKey: ['sales', 'payment-terms', organizationId], enabled: Boolean(organizationId && !isQuotation), queryFn: async () => { const result = await listSalesPaymentTerms({ data: { organizationId: organizationId! } }); if (!result.ok) throw new Error(result.error.code); return result.data } })
 
   useEffect(() => {
     if (!detail.data || !isEdit) return
@@ -100,6 +106,8 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
     setCurrency(detail.data.currency)
     setValidUntil(detail.data.validUntil ?? '')
     setNotes(detail.data.notes ?? '')
+    setBranchId(detail.data.branchId ?? '')
+    setPaymentTermId(detail.data.paymentTermId ?? '')
     setLines(
       detail.data.items.map((item) => ({
         productId: item.productId,
@@ -118,6 +126,13 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
       })),
     )
   }, [detail.data, isEdit])
+
+  useEffect(() => {
+    if (!branchId && branches.data?.[0]) setBranchId(branches.data.find((branch) => branch.isDefault)?.id ?? branches.data[0].id)
+  }, [branchId, branches.data])
+  useEffect(() => {
+    if (!paymentTermId && paymentTerms.data?.[0]) setPaymentTermId(paymentTerms.data.find((term) => term.isDefault)?.id ?? paymentTerms.data[0].id)
+  }, [paymentTermId, paymentTerms.data])
 
   const subtotalCents = useMemo(
     () => lines.reduce((sum, line) => sum + lineTotalCents(line.quantity, line.unitPrice), 0),
@@ -147,6 +162,10 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   async function submit(confirmOrder = false) {
     setError(null)
     try {
+      if (confirmOrder && !isQuotation) {
+        const { validateSalesOrderConfirmationInput } = await import('../../domain/validation')
+        validateSalesOrderConfirmationInput({ branchId, paymentTermId })
+      }
       const items = lines.map(({ productId: _productId, productName: _productName, variantSku: _variantSku, priceSourceLabel: _priceSourceLabel, ...line }) => ({
         ...line,
         description: line.description?.trim() || null,
@@ -164,14 +183,14 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
         return
       }
       if (isEdit && id) {
-        await updateOrder.mutateAsync({ currency, notes, items })
+        await updateOrder.mutateAsync({ currency, notes, branchId: branchId || null, paymentTermId: paymentTermId || null, items })
         if (confirmOrder) {
           await transitionOrder.mutateAsync({ id, to: 'confirmed' })
         }
         setDirty(false)
         await navigate({ to: '/sales/orders/$orderId', params: { orderId: id } })
       } else {
-        const orderId = await createOrder.mutateAsync({ customerId: customer!.id, currency, notes, items })
+        const orderId = await createOrder.mutateAsync({ customerId: customer!.id, currency, notes, branchId: branchId || null, paymentTermId: paymentTermId || null, items })
         if (confirmOrder) {
           await transitionOrder.mutateAsync({ id: orderId, to: 'confirmed' })
         }
@@ -222,7 +241,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
               title="Dados comerciais"
               description="Defina o cliente e o contexto monetário sem abandonar o pedido."
             >
-              <div className="grid gap-4 md:grid-cols-[minmax(0,2fr)_minmax(180px,1fr)]">
+              <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <FormField label="Cliente">
                   <CustomerEntityPicker
                     value={customer}
@@ -242,6 +261,18 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
                       setDirty(true)
                     }}
                   />
+                </FormField>
+                <FormField label="Filial">
+                  <select className="h-10 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 text-sm" value={branchId} onChange={(event) => { setBranchId(event.target.value); setDirty(true) }} disabled={branches.isLoading}>
+                    <option value="">Selecione uma filial</option>
+                    {branches.data?.map((branch) => <option key={branch.id} value={branch.id}>{branch.name}{branch.isDefault ? ' (principal)' : ''}</option>)}
+                  </select>
+                </FormField>
+                <FormField label="Condição de pagamento">
+                  <select className="h-10 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-background)] px-3 text-sm" value={paymentTermId} onChange={(event) => { setPaymentTermId(event.target.value); setDirty(true) }} disabled={paymentTerms.isLoading}>
+                    <option value="">Selecione uma condição</option>
+                    {paymentTerms.data?.map((term) => <option key={term.id} value={term.id}>{term.name}</option>)}
+                  </select>
                 </FormField>
               </div>
               <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -295,7 +326,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
                 </EntityTable>
               </div>
             </WorkspaceSection>
-            <PaymentSection />
+            <PaymentSection paymentTermName={paymentTerms.data?.find((term) => term.id === paymentTermId)?.name} />
             <DeliverySection />
             <NotesSection
               value={notes}
