@@ -683,8 +683,8 @@ export function MarketingSection({
   children: ReactNode
 }) {
   return (
-    <section className="px-4 py-24 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
+    <section className="relative px-4 py-24 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl rounded-[2rem] border border-white/[0.08] bg-[#070908]/70 px-5 py-14 shadow-[0_30px_120px_rgb(0_0_0/0.28)] sm:px-10 lg:px-14">
         <div className="mx-auto mb-12 max-w-3xl text-center">
           <p className="text-sm font-semibold text-emerald-200">{eyebrow}</p>
           <h2 className="mt-4 text-5xl leading-[0.95] font-medium tracking-[-0.065em] text-balance sm:text-6xl">
@@ -700,7 +700,7 @@ export function MarketingSection({
 
 function MarketingCard({ title, text }: { title: string; text: string }) {
   return (
-    <article className="bg-[#090c0a] p-6 transition hover:bg-white/[0.055]">
+    <article className="min-h-48 rounded-[1.35rem] border border-white/[0.10] bg-[radial-gradient(circle_at_80%_0%,rgb(95_224_154/0.10),transparent_48%),#090c0a] p-7 shadow-[inset_0_1px_rgb(255_255_255/0.04)] transition duration-300 hover:-translate-y-1 hover:border-emerald-200/35 hover:bg-[#0d1711]">
       <h3 className="text-xl font-medium tracking-[-0.035em]">{title}</h3>
       <p className="mt-3 text-sm leading-6 text-white/52">{text}</p>
     </article>
