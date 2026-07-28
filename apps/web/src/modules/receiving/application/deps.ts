@@ -31,23 +31,33 @@ export type ReceivingAppDeps = {
 }
 
 export function canReadReceiving(can: ReceivingAppDeps['can']): boolean {
-  return can('receiving.read')
+  return can('goods.receiving.read') || can('receiving.read')
 }
 
 export function canCreateReceiving(can: ReceivingAppDeps['can']): boolean {
-  return can('receiving.create')
+  return can('goods.receiving.create') || can('receiving.create')
 }
 
 export function canPostReceiving(can: ReceivingAppDeps['can']): boolean {
-  return can('receiving.post') || can('receiving.receive')
+  return (
+    can('goods.receiving.complete') ||
+    can('receiving.post') ||
+    can('receiving.receive')
+  )
 }
 
 export function canReceiveItems(can: ReceivingAppDeps['can']): boolean {
-  return can('receiving.receive') || can('receiving.create') || can('receiving.post')
+  return (
+    can('goods.receiving.start') ||
+    can('goods.receiving.create') ||
+    can('receiving.receive') ||
+    can('receiving.create') ||
+    can('receiving.post')
+  )
 }
 
 export function canCancelReceiving(can: ReceivingAppDeps['can']): boolean {
-  return can('receiving.cancel')
+  return can('goods.receiving.cancel') || can('receiving.cancel')
 }
 
 export function canArchiveReceiving(can: ReceivingAppDeps['can']): boolean {

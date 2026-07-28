@@ -129,6 +129,22 @@ describe('Receiving aggregate application', () => {
     ).rejects.toThrow(/permission/)
   })
 
+  it('accepts the canonical confirmed Purchase Order lifecycle', async () => {
+    const { service, repos } = app()
+    repos._purchases.get('po_1')!.status = 'confirmed'
+    const created = await service.createReceipt({
+      purchaseOrderId: 'po_1',
+      locationId: 'loc_1',
+      items: [{ purchaseItemId: 'pi_1', receivedQuantity: '10' }],
+    })
+    const completed = await service.postReceipt({
+      goodsReceiptId: created.receipt.id,
+      idempotencyKey: 'confirmed-po',
+    })
+    expect(completed.receipt.status).toBe('posted')
+    expect(repos._ledger).toHaveLength(1)
+  })
+
   it('isolates organizations in search', async () => {
     const repos = createMemoryReceivingRepos({
       purchases: [seedPurchase()],

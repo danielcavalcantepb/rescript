@@ -310,7 +310,10 @@ export function createMemoryReceivingRepos(seed?: {
       if (!receipt.locationId) throw new Error('location_required')
 
       const purchase = purchases.get(receipt.purchaseOrderId)
-      if (!purchase || purchase.status !== 'approved') {
+      if (
+        !purchase ||
+        (purchase.status !== 'approved' && purchase.status !== 'confirmed')
+      ) {
         throw new Error('purchase_not_receivable')
       }
 

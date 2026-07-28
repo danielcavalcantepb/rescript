@@ -80,6 +80,9 @@ import { Route as AppProcurementReceivingNewRouteImport } from './routes/_app/pr
 import { Route as AppProcurementSuppliersIndexRouteImport } from './routes/_app/procurement/suppliers/index'
 import { Route as AppProcurementSuppliersSupplierIdRouteImport } from './routes/_app/procurement/suppliers/$supplierId'
 import { Route as AppProcurementSuppliersNewRouteImport } from './routes/_app/procurement/suppliers/new'
+import { Route as AppPurchasingReceivingIndexRouteImport } from './routes/_app/purchasing/receiving/index'
+import { Route as AppPurchasingReceivingReceiptIdRouteImport } from './routes/_app/purchasing/receiving/$receiptId'
+import { Route as AppPurchasingReceivingNewRouteImport } from './routes/_app/purchasing/receiving/new'
 import { Route as AppSalesOrdersIndexRouteImport } from './routes/_app/sales/orders/index'
 import { Route as AppSalesOrdersOrderIdRouteImport } from './routes/_app/sales/orders/$orderId'
 import { Route as AppSalesOrdersNewRouteImport } from './routes/_app/sales/orders/new'
@@ -483,6 +486,24 @@ const AppProcurementSuppliersNewRoute =
     path: '/procurement/suppliers/new',
     getParentRoute: () => AppRoute,
   } as any)
+const AppPurchasingReceivingIndexRoute =
+  AppPurchasingReceivingIndexRouteImport.update({
+    id: '/purchasing/receiving/',
+    path: '/purchasing/receiving/',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppPurchasingReceivingReceiptIdRoute =
+  AppPurchasingReceivingReceiptIdRouteImport.update({
+    id: '/purchasing/receiving/$receiptId',
+    path: '/purchasing/receiving/$receiptId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppPurchasingReceivingNewRoute =
+  AppPurchasingReceivingNewRouteImport.update({
+    id: '/purchasing/receiving/new',
+    path: '/purchasing/receiving/new',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppSalesOrdersIndexRoute = AppSalesOrdersIndexRouteImport.update({
   id: '/sales/orders/',
   path: '/sales/orders/',
@@ -708,6 +729,8 @@ export interface FileRoutesByFullPath {
   '/procurement/receiving/new': typeof AppProcurementReceivingNewRoute
   '/procurement/suppliers/$supplierId': typeof AppProcurementSuppliersSupplierIdRouteWithChildren
   '/procurement/suppliers/new': typeof AppProcurementSuppliersNewRoute
+  '/purchasing/receiving/$receiptId': typeof AppPurchasingReceivingReceiptIdRoute
+  '/purchasing/receiving/new': typeof AppPurchasingReceivingNewRoute
   '/sales/orders/$orderId': typeof AppSalesOrdersOrderIdRouteWithChildren
   '/sales/orders/new': typeof AppSalesOrdersNewRoute
   '/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRouteWithChildren
@@ -722,6 +745,7 @@ export interface FileRoutesByFullPath {
   '/procurement/purchases/': typeof AppProcurementPurchasesIndexRoute
   '/procurement/receiving/': typeof AppProcurementReceivingIndexRoute
   '/procurement/suppliers/': typeof AppProcurementSuppliersIndexRoute
+  '/purchasing/receiving/': typeof AppPurchasingReceivingIndexRoute
   '/sales/orders/': typeof AppSalesOrdersIndexRoute
   '/sales/quotations/': typeof AppSalesQuotationsIndexRoute
   '/catalog/inventory/items/$inventoryItemId': typeof AppCatalogInventoryItemsInventoryItemIdRoute
@@ -806,6 +830,8 @@ export interface FileRoutesByTo {
   '/procurement/receiving/new': typeof AppProcurementReceivingNewRoute
   '/procurement/suppliers/$supplierId': typeof AppProcurementSuppliersSupplierIdRouteWithChildren
   '/procurement/suppliers/new': typeof AppProcurementSuppliersNewRoute
+  '/purchasing/receiving/$receiptId': typeof AppPurchasingReceivingReceiptIdRoute
+  '/purchasing/receiving/new': typeof AppPurchasingReceivingNewRoute
   '/sales/orders/$orderId': typeof AppSalesOrdersOrderIdRouteWithChildren
   '/sales/orders/new': typeof AppSalesOrdersNewRoute
   '/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRouteWithChildren
@@ -820,6 +846,7 @@ export interface FileRoutesByTo {
   '/procurement/purchases': typeof AppProcurementPurchasesIndexRoute
   '/procurement/receiving': typeof AppProcurementReceivingIndexRoute
   '/procurement/suppliers': typeof AppProcurementSuppliersIndexRoute
+  '/purchasing/receiving': typeof AppPurchasingReceivingIndexRoute
   '/sales/orders': typeof AppSalesOrdersIndexRoute
   '/sales/quotations': typeof AppSalesQuotationsIndexRoute
   '/catalog/inventory/items/$inventoryItemId': typeof AppCatalogInventoryItemsInventoryItemIdRoute
@@ -908,6 +935,8 @@ export interface FileRoutesById {
   '/_app/procurement/receiving/new': typeof AppProcurementReceivingNewRoute
   '/_app/procurement/suppliers/$supplierId': typeof AppProcurementSuppliersSupplierIdRouteWithChildren
   '/_app/procurement/suppliers/new': typeof AppProcurementSuppliersNewRoute
+  '/_app/purchasing/receiving/$receiptId': typeof AppPurchasingReceivingReceiptIdRoute
+  '/_app/purchasing/receiving/new': typeof AppPurchasingReceivingNewRoute
   '/_app/sales/orders/$orderId': typeof AppSalesOrdersOrderIdRouteWithChildren
   '/_app/sales/orders/new': typeof AppSalesOrdersNewRoute
   '/_app/sales/quotations/$quotationId': typeof AppSalesQuotationsQuotationIdRouteWithChildren
@@ -922,6 +951,7 @@ export interface FileRoutesById {
   '/_app/procurement/purchases/': typeof AppProcurementPurchasesIndexRoute
   '/_app/procurement/receiving/': typeof AppProcurementReceivingIndexRoute
   '/_app/procurement/suppliers/': typeof AppProcurementSuppliersIndexRoute
+  '/_app/purchasing/receiving/': typeof AppPurchasingReceivingIndexRoute
   '/_app/sales/orders/': typeof AppSalesOrdersIndexRoute
   '/_app/sales/quotations/': typeof AppSalesQuotationsIndexRoute
   '/_app/catalog/inventory/items/$inventoryItemId': typeof AppCatalogInventoryItemsInventoryItemIdRoute
@@ -1010,6 +1040,8 @@ export interface FileRouteTypes {
     | '/procurement/receiving/new'
     | '/procurement/suppliers/$supplierId'
     | '/procurement/suppliers/new'
+    | '/purchasing/receiving/$receiptId'
+    | '/purchasing/receiving/new'
     | '/sales/orders/$orderId'
     | '/sales/orders/new'
     | '/sales/quotations/$quotationId'
@@ -1024,6 +1056,7 @@ export interface FileRouteTypes {
     | '/procurement/purchases/'
     | '/procurement/receiving/'
     | '/procurement/suppliers/'
+    | '/purchasing/receiving/'
     | '/sales/orders/'
     | '/sales/quotations/'
     | '/catalog/inventory/items/$inventoryItemId'
@@ -1108,6 +1141,8 @@ export interface FileRouteTypes {
     | '/procurement/receiving/new'
     | '/procurement/suppliers/$supplierId'
     | '/procurement/suppliers/new'
+    | '/purchasing/receiving/$receiptId'
+    | '/purchasing/receiving/new'
     | '/sales/orders/$orderId'
     | '/sales/orders/new'
     | '/sales/quotations/$quotationId'
@@ -1122,6 +1157,7 @@ export interface FileRouteTypes {
     | '/procurement/purchases'
     | '/procurement/receiving'
     | '/procurement/suppliers'
+    | '/purchasing/receiving'
     | '/sales/orders'
     | '/sales/quotations'
     | '/catalog/inventory/items/$inventoryItemId'
@@ -1209,6 +1245,8 @@ export interface FileRouteTypes {
     | '/_app/procurement/receiving/new'
     | '/_app/procurement/suppliers/$supplierId'
     | '/_app/procurement/suppliers/new'
+    | '/_app/purchasing/receiving/$receiptId'
+    | '/_app/purchasing/receiving/new'
     | '/_app/sales/orders/$orderId'
     | '/_app/sales/orders/new'
     | '/_app/sales/quotations/$quotationId'
@@ -1223,6 +1261,7 @@ export interface FileRouteTypes {
     | '/_app/procurement/purchases/'
     | '/_app/procurement/receiving/'
     | '/_app/procurement/suppliers/'
+    | '/_app/purchasing/receiving/'
     | '/_app/sales/orders/'
     | '/_app/sales/quotations/'
     | '/_app/catalog/inventory/items/$inventoryItemId'
@@ -1766,6 +1805,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProcurementSuppliersNewRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/purchasing/receiving/': {
+      id: '/_app/purchasing/receiving/'
+      path: '/purchasing/receiving'
+      fullPath: '/purchasing/receiving/'
+      preLoaderRoute: typeof AppPurchasingReceivingIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/purchasing/receiving/$receiptId': {
+      id: '/_app/purchasing/receiving/$receiptId'
+      path: '/purchasing/receiving/$receiptId'
+      fullPath: '/purchasing/receiving/$receiptId'
+      preLoaderRoute: typeof AppPurchasingReceivingReceiptIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/purchasing/receiving/new': {
+      id: '/_app/purchasing/receiving/new'
+      path: '/purchasing/receiving/new'
+      fullPath: '/purchasing/receiving/new'
+      preLoaderRoute: typeof AppPurchasingReceivingNewRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/sales/orders/': {
       id: '/_app/sales/orders/'
       path: '/sales/orders'
@@ -2164,6 +2224,8 @@ interface AppRouteChildren {
   AppProcurementReceivingNewRoute: typeof AppProcurementReceivingNewRoute
   AppProcurementSuppliersSupplierIdRoute: typeof AppProcurementSuppliersSupplierIdRouteWithChildren
   AppProcurementSuppliersNewRoute: typeof AppProcurementSuppliersNewRoute
+  AppPurchasingReceivingReceiptIdRoute: typeof AppPurchasingReceivingReceiptIdRoute
+  AppPurchasingReceivingNewRoute: typeof AppPurchasingReceivingNewRoute
   AppSalesOrdersOrderIdRoute: typeof AppSalesOrdersOrderIdRouteWithChildren
   AppSalesOrdersNewRoute: typeof AppSalesOrdersNewRoute
   AppSalesQuotationsQuotationIdRoute: typeof AppSalesQuotationsQuotationIdRouteWithChildren
@@ -2172,6 +2234,7 @@ interface AppRouteChildren {
   AppProcurementPurchasesIndexRoute: typeof AppProcurementPurchasesIndexRoute
   AppProcurementReceivingIndexRoute: typeof AppProcurementReceivingIndexRoute
   AppProcurementSuppliersIndexRoute: typeof AppProcurementSuppliersIndexRoute
+  AppPurchasingReceivingIndexRoute: typeof AppPurchasingReceivingIndexRoute
   AppSalesOrdersIndexRoute: typeof AppSalesOrdersIndexRoute
   AppSalesQuotationsIndexRoute: typeof AppSalesQuotationsIndexRoute
 }
@@ -2210,6 +2273,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppProcurementSuppliersSupplierIdRoute:
     AppProcurementSuppliersSupplierIdRouteWithChildren,
   AppProcurementSuppliersNewRoute: AppProcurementSuppliersNewRoute,
+  AppPurchasingReceivingReceiptIdRoute: AppPurchasingReceivingReceiptIdRoute,
+  AppPurchasingReceivingNewRoute: AppPurchasingReceivingNewRoute,
   AppSalesOrdersOrderIdRoute: AppSalesOrdersOrderIdRouteWithChildren,
   AppSalesOrdersNewRoute: AppSalesOrdersNewRoute,
   AppSalesQuotationsQuotationIdRoute:
@@ -2219,6 +2284,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProcurementPurchasesIndexRoute: AppProcurementPurchasesIndexRoute,
   AppProcurementReceivingIndexRoute: AppProcurementReceivingIndexRoute,
   AppProcurementSuppliersIndexRoute: AppProcurementSuppliersIndexRoute,
+  AppPurchasingReceivingIndexRoute: AppPurchasingReceivingIndexRoute,
   AppSalesOrdersIndexRoute: AppSalesOrdersIndexRoute,
   AppSalesQuotationsIndexRoute: AppSalesQuotationsIndexRoute,
 }

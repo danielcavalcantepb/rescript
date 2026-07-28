@@ -90,9 +90,9 @@ export function createReceivingService(deps: ReceivingAppDeps) {
           purchaseOrderId: 'Pedido não encontrado ou não recebível.',
         })
       }
-      if (purchase.status !== 'approved') {
+      if (purchase.status !== 'approved' && purchase.status !== 'confirmed') {
         throw new ReceivingConflictError(
-          'Somente pedidos aprovados podem ser recebidos.',
+          'Somente pedidos confirmados podem ser recebidos.',
         )
       }
 
