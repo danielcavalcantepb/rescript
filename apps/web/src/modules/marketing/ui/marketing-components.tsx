@@ -206,6 +206,12 @@ function BrandStatementPanel() {
       className="relative overflow-hidden rounded-[1.75rem] border border-white/12 bg-[#070908] p-6 text-left shadow-[0_42px_150px_rgb(0_0_0/0.46)] sm:p-8"
       aria-label="Síntese visual da proposta da Rescript"
     >
+      <div className="mb-7 flex items-center gap-2 border-b border-white/10 pb-4" aria-hidden="true">
+        <span className="size-2 rounded-full bg-[#5FE09A]" />
+        <span className="size-2 rounded-full bg-white/20" />
+        <span className="size-2 rounded-full bg-white/20" />
+        <span className="ml-3 h-2 flex-1 rounded-full bg-white/[0.06]" />
+      </div>
       <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgb(255_255_255/0.032)_1px,transparent_1px)] bg-[size:112px_112px] opacity-45" aria-hidden />
       <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-emerald-200/26 to-transparent" aria-hidden />
       <div className="relative grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
