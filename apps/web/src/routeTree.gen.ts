@@ -47,6 +47,7 @@ import { Route as AppEstoqueIndexRouteImport } from './routes/_app/estoque/index
 import { Route as AppEstoqueMovimentacoesRouteImport } from './routes/_app/estoque/movimentacoes'
 import { Route as AppEstoqueReservasRouteImport } from './routes/_app/estoque/reservas'
 import { Route as AppFinanceIndexRouteImport } from './routes/_app/finance/index'
+import { Route as AppFiscalIndexRouteImport } from './routes/_app/fiscal/index'
 import { Route as AppProcurementIndexRouteImport } from './routes/_app/procurement/index'
 import { Route as AppProdutosIndexRouteImport } from './routes/_app/produtos/index'
 import { Route as AppProdutosProductIdRouteImport } from './routes/_app/produtos/$productId'
@@ -302,6 +303,11 @@ const AppFinanceIndexRoute = AppFinanceIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppFinanceRoute,
+} as any)
+const AppFiscalIndexRoute = AppFiscalIndexRouteImport.update({
+  id: '/fiscal/',
+  path: '/fiscal/',
+  getParentRoute: () => AppRoute,
 } as any)
 const AppProcurementIndexRoute = AppProcurementIndexRouteImport.update({
   id: '/procurement/',
@@ -721,6 +727,7 @@ export interface FileRoutesByFullPath {
   '/crm/': typeof AppCrmIndexRoute
   '/estoque/': typeof AppEstoqueIndexRoute
   '/finance/': typeof AppFinanceIndexRoute
+  '/fiscal/': typeof AppFiscalIndexRoute
   '/procurement/': typeof AppProcurementIndexRoute
   '/produtos/': typeof AppProdutosIndexRoute
   '/sales/': typeof AppSalesIndexRoute
@@ -824,6 +831,7 @@ export interface FileRoutesByTo {
   '/crm': typeof AppCrmIndexRoute
   '/estoque': typeof AppEstoqueIndexRoute
   '/finance': typeof AppFinanceIndexRoute
+  '/fiscal': typeof AppFiscalIndexRoute
   '/procurement': typeof AppProcurementIndexRoute
   '/produtos': typeof AppProdutosIndexRoute
   '/sales': typeof AppSalesIndexRoute
@@ -931,6 +939,7 @@ export interface FileRoutesById {
   '/_app/crm/': typeof AppCrmIndexRoute
   '/_app/estoque/': typeof AppEstoqueIndexRoute
   '/_app/finance/': typeof AppFinanceIndexRoute
+  '/_app/fiscal/': typeof AppFiscalIndexRoute
   '/_app/procurement/': typeof AppProcurementIndexRoute
   '/_app/produtos/': typeof AppProdutosIndexRoute
   '/_app/sales/': typeof AppSalesIndexRoute
@@ -1038,6 +1047,7 @@ export interface FileRouteTypes {
     | '/crm/'
     | '/estoque/'
     | '/finance/'
+    | '/fiscal/'
     | '/procurement/'
     | '/produtos/'
     | '/sales/'
@@ -1141,6 +1151,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/estoque'
     | '/finance'
+    | '/fiscal'
     | '/procurement'
     | '/produtos'
     | '/sales'
@@ -1247,6 +1258,7 @@ export interface FileRouteTypes {
     | '/_app/crm/'
     | '/_app/estoque/'
     | '/_app/finance/'
+    | '/_app/fiscal/'
     | '/_app/procurement/'
     | '/_app/produtos/'
     | '/_app/sales/'
@@ -1598,6 +1610,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/finance/'
       preLoaderRoute: typeof AppFinanceIndexRouteImport
       parentRoute: typeof AppFinanceRoute
+    }
+    '/_app/fiscal/': {
+      id: '/_app/fiscal/'
+      path: '/fiscal'
+      fullPath: '/fiscal/'
+      preLoaderRoute: typeof AppFiscalIndexRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/procurement/': {
       id: '/_app/procurement/'
@@ -2253,6 +2272,7 @@ interface AppRouteChildren {
   AppClientesIndexRoute: typeof AppClientesIndexRoute
   AppCrmIndexRoute: typeof AppCrmIndexRoute
   AppEstoqueIndexRoute: typeof AppEstoqueIndexRoute
+  AppFiscalIndexRoute: typeof AppFiscalIndexRoute
   AppProcurementIndexRoute: typeof AppProcurementIndexRoute
   AppProdutosIndexRoute: typeof AppProdutosIndexRoute
   AppSalesIndexRoute: typeof AppSalesIndexRoute
@@ -2301,6 +2321,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppClientesIndexRoute: AppClientesIndexRoute,
   AppCrmIndexRoute: AppCrmIndexRoute,
   AppEstoqueIndexRoute: AppEstoqueIndexRoute,
+  AppFiscalIndexRoute: AppFiscalIndexRoute,
   AppProcurementIndexRoute: AppProcurementIndexRoute,
   AppProdutosIndexRoute: AppProdutosIndexRoute,
   AppSalesIndexRoute: AppSalesIndexRoute,
