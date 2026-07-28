@@ -10,9 +10,9 @@ describe('Marketing website', () => {
   it('renders the rebuilt Rescripet commercial experience', () => {
     render(<MarketingHomePage />)
     expect(screen.getByRole('heading', { name: /Seus/ })).toBeTruthy()
-    expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThan(1)
+    expect(screen.getAllByText('Solicitar demonstracao').length).toBeGreaterThan(1)
     expect(screen.getByText('Conhecer a Rescripet')).toBeTruthy()
-    expect(screen.getByText('PLATAFORMA DE GESTÃO RESCRIPET')).toBeTruthy()
+    expect(screen.getByText('PLATAFORMA DE GESTAO RESCRIPET')).toBeTruthy()
     expect(screen.getByText('Vendas conectadas')).toBeTruthy()
     expect(screen.getAllByText('Estoque por marca').length).toBeGreaterThanOrEqual(1)
   })
