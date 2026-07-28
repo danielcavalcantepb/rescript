@@ -1,46 +1,18 @@
 import { features, marketingSite, modules, plans } from '../content'
 import { OrganizationStructuredData } from '../seo'
 import {
-  BenefitsSection,
-  EcosystemSection,
-  FaqSection,
-  FeaturesSection,
   FinalCtaSection,
-  HeroSection,
-  HowItWorksSection,
   MarketingFaq,
   MarketingLayout,
   MarketingSection,
   ModuleGrid,
-  ModulesSection,
   PricingSection,
-  ProblemSection,
-  RelationshipSection,
-  ScaleSection,
   TestimonialsSection,
-  TransformationSection,
 } from './marketing-components'
+import { RescripetMarketingPage } from './rescripet-landing'
 
 export function MarketingHomePage() {
-  return (
-    <MarketingLayout>
-      <OrganizationStructuredData />
-      <HeroSection />
-      <RelationshipSection />
-      <ScaleSection />
-      <TransformationSection />
-      <EcosystemSection />
-      <ProblemSection />
-      <ModulesSection />
-      <FeaturesSection />
-      <HowItWorksSection />
-      <BenefitsSection />
-      <PricingSection />
-      <TestimonialsSection />
-      <FaqSection />
-      <FinalCtaSection />
-    </MarketingLayout>
-  )
+  return <><OrganizationStructuredData /><RescripetMarketingPage /></>
 }
 
 export function MarketingFeaturesPage() {
