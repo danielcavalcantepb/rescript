@@ -7,14 +7,14 @@ import { MarketingFaq, MarketingNavbar, PricingSection } from './marketing-compo
 import { MarketingHomePage } from './marketing-pages'
 
 describe('Marketing website', () => {
-  it('renders the rebuilt Rescripet commercial experience', () => {
+  it('renders the reconstructed premium Rescript landing', () => {
     render(<MarketingHomePage />)
-    expect(screen.getByRole('heading', { name: /Seus/ })).toBeTruthy()
-    expect(screen.getAllByText('Solicitar demonstracao').length).toBeGreaterThan(1)
-    expect(screen.getByText('Conhecer a Rescripet')).toBeTruthy()
-    expect(screen.getByText('PLATAFORMA DE GESTAO RESCRIPET')).toBeTruthy()
-    expect(screen.getByText('Vendas conectadas')).toBeTruthy()
-    expect(screen.getAllByText('Estoque por marca').length).toBeGreaterThanOrEqual(1)
+    expect(screen.getByRole('heading', { name: /Sob controle/i })).toBeTruthy()
+    expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThan(1)
+    expect(screen.getByText('Explorar a plataforma')).toBeTruthy()
+    expect(screen.getByText('Gestão para operações que querem crescer')).toBeTruthy()
+    expect(screen.getByText('Estoque inteligente')).toBeTruthy()
+    expect(screen.getByText('Benefícios da Rescript')).toBeTruthy()
   })
 
   it('keeps the responsive menu keyboard-addressable', () => {

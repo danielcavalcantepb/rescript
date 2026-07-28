@@ -1,9 +1,9 @@
 export const marketingSite = {
   name: 'Rescript',
   domain: 'https://rescript.com.br',
-  positioning: 'A empresa inteira no mesmo sistema.',
+  positioning: 'Vendas, estoque, financeiro e indicadores em uma leitura clara.',
   description:
-    'A Rescript conecta relacionamento, vendas, compras, estoque, financeiro e indicadores para empresas que precisam operar com uma única verdade.',
+    'Controle vendas, produtos, estoque, compras e financeiro enquanto acompanha os indicadores que movem sua empresa.',
 }
 
 export const marketingNav = [

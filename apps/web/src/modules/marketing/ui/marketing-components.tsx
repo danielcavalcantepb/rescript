@@ -20,12 +20,20 @@ const primaryCta =
 const secondaryCta =
   'inline-flex items-center justify-center rounded-2xl border border-white/12 bg-white/[0.045] px-5 py-3 text-sm font-semibold text-white/86 transition hover:-translate-y-0.5 hover:border-white/22 hover:bg-white/[0.08]'
 
-export function MarketingLayout({ children }: { children: ReactNode }) {
+export function MarketingLayout({
+  children,
+  chrome = true,
+  className = '',
+}: {
+  children: ReactNode
+  chrome?: boolean
+  className?: string
+}) {
   return (
-    <div className="min-h-screen bg-[#030504] text-white selection:bg-emerald-300/25 [background-image:radial-gradient(circle_at_50%_0%,rgb(95_224_154/0.08),transparent_28rem),linear-gradient(90deg,rgb(255_255_255/0.025)_1px,transparent_1px),linear-gradient(rgb(255_255_255/0.025)_1px,transparent_1px)] [background-size:auto,72px_72px,72px_72px]">
-      <MarketingNavbar />
+    <div className={`min-h-screen bg-[#030504] text-white selection:bg-emerald-300/25 ${className}`}>
+      {chrome ? <MarketingNavbar /> : null}
       <main>{children}</main>
-      <MarketingFooter />
+      {chrome ? <MarketingFooter /> : null}
     </div>
   )
 }
