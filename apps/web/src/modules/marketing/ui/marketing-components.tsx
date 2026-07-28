@@ -126,7 +126,7 @@ export function HeroSection() {
                 o que realmente acontece no seu negócio.
               </p>
               <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                <a href="/pricing" className={`${primaryCta} ${focusRing}`}>
+                <a href="/contact" className={`${primaryCta} ${focusRing}`}>
                   Solicitar demonstração
                 </a>
                 <a href="#plataforma" className={`${secondaryCta} ${focusRing}`}>
