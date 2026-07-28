@@ -59,7 +59,8 @@ export function ExecutiveDashboardPage() {
   ]
   const maxRevenue = Math.max(...data.revenue.map((row) => row.value), 1)
   return (
-    <main className="min-h-full bg-[var(--color-bg)] p-4 text-[var(--color-ink)] sm:p-6 lg:p-8">
+    <main className="dashboard-executive min-h-full bg-[var(--color-bg)] p-4 text-[var(--color-ink)] sm:p-6 lg:p-8">
+      <style>{` .dashboard-executive .bg-\\[\\#1a1e20\\] { background-color: var(--color-surface) !important; } .dashboard-executive .border-white\\/10 { border-color: var(--color-border-soft) !important; } .dashboard-executive .text-\\[\\#9aa6a0\\] { color: var(--color-text-secondary) !important; } .dashboard-executive .text-\\[\\#f3f7f4\\] { color: var(--color-ink) !important; } `}</style>
       <div className="mx-auto max-w-[1500px] space-y-6">
         <header className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-end sm:justify-between">
           <div>
