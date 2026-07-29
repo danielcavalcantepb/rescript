@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { CreateAttributeCommand } from '#/modules/catalog/application'
 import {
+  catalogArchiveAttribute,
   catalogCreateAttribute,
   catalogListAttributes,
 } from '#/modules/catalog/ui/catalog-api'
@@ -42,5 +43,21 @@ export function useCatalogAttributeActions(
       })
     },
   })
-  return { create }
+  const archive = useMutation({
+    mutationFn: async (attributeId: string) => {
+      if (!organizationId) throw new Error('missing_org')
+      return unwrapCatalogRpc(
+        await catalogArchiveAttribute({
+          data: { organizationId, command: { attributeId } },
+        }),
+      )
+    },
+    onSuccess: async () => {
+      if (!organizationId) return
+      await queryClient.invalidateQueries({
+        queryKey: catalogQueryKeys.attributes(organizationId),
+      })
+    },
+  })
+  return { create, archive }
 }

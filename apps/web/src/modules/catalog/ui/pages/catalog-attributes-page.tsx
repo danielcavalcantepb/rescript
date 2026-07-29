@@ -8,6 +8,7 @@ import {
   useCatalogAttributes,
 } from '#/modules/catalog/ui/hooks/use-catalog-attributes'
 import { CatalogShell } from '#/modules/catalog/ui/layouts/CatalogShell'
+import { dialogs } from '#/platform/dialogs'
 import { PageLoading } from '#/platform/loading'
 import { useOrganization } from '#/platform/organization/organization-context'
 import { usePermission } from '#/platform/permissions'
@@ -60,6 +61,23 @@ export function CatalogAttributesPage() {
       notificationService.success('Atributo criado')
     } catch {
       notificationService.error('Não foi possível criar o atributo.')
+    }
+  }
+
+  async function archiveAttribute(attributeId: string, name: string) {
+    const confirmed = await dialogs.confirm({
+      title: `Arquivar ${name}?`,
+      description:
+        'O atributo deixa de estar disponível para novos produtos, mas permanece preservado no histórico.',
+      confirmLabel: 'Arquivar',
+      tone: 'danger',
+    })
+    if (!confirmed.confirmed) return
+    try {
+      await actions.archive.mutateAsync(attributeId)
+      notificationService.success('Atributo arquivado')
+    } catch {
+      notificationService.error('Não foi possível arquivar o atributo.')
     }
   }
 
@@ -130,9 +148,25 @@ export function CatalogAttributesPage() {
                 <p className="font-medium text-[var(--color-ink)]">
                   {attribute.name}
                 </p>
-                <span className="text-xs text-[var(--color-text-secondary)]">
-                  {attribute.status === 'active' ? 'Ativo' : 'Arquivado'}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-[var(--color-text-secondary)]">
+                    {attribute.status === 'active' ? 'Ativo' : 'Arquivado'}
+                  </span>
+                  {can('catalog.attributes.write') &&
+                  attribute.status === 'active' ? (
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="ghost"
+                      disabled={actions.archive.isPending}
+                      onClick={() =>
+                        void archiveAttribute(attribute.id, attribute.name)
+                      }
+                    >
+                      Arquivar
+                    </Button>
+                  ) : null}
+                </div>
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
                 {attribute.values.map((value) => (
