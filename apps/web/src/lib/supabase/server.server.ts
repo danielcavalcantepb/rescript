@@ -7,8 +7,14 @@ import type { Database } from '@rescript/database'
  * Filename `.server.ts` keeps it out of the browser bundle.
  */
 export function createServerSupabaseClient() {
-  const url = process.env.VITE_SUPABASE_URL
-  const publishableKey = process.env.VITE_SUPABASE_PUBLISHABLE_KEY
+  // Nitro's production runtime does not guarantee VITE_* variables remain on
+  // process.env. Vite embeds the public values during the build, which is the
+  // same source used by the browser client. Prefer the runtime value when it
+  // exists and otherwise use that SSR-safe build-time value.
+  const url = process.env.VITE_SUPABASE_URL ?? import.meta.env.VITE_SUPABASE_URL
+  const publishableKey =
+    process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
 
   if (!url || !publishableKey) {
     throw new Error(
