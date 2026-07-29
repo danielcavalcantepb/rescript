@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
 import type {
   AttributeResponse,
@@ -412,10 +413,22 @@ function VariantsStep({ draft, attributes, combinations, update }: {
   update: (next: Partial<Draft>) => void
 }) {
   if (draft.kind === 'simple') return <div className="space-y-4"><StepHeading title="Variante padrão" description="Produtos simples recebem automaticamente uma variante padrão pelo domínio." /><div className="rounded-[var(--radius-md)] border border-[var(--color-border)] p-5"><strong>{draft.name || 'Produto'}</strong><p className="mt-1 text-sm text-[var(--color-ink-muted)]">SKU {draft.sku || 'não informado'}</p></div></div>
+  const variantAxes = attributes.filter(
+    (item) => item.isVariantAxis && item.status === 'active',
+  )
   return (
     <div className="space-y-6">
       <StepHeading title="Grades e variantes" description="Defina os valores de cada grade e confira todas as combinações que serão criadas." />
-      {attributes.filter((item) => item.isVariantAxis && item.status === 'active').map((attribute) => (
+      {variantAxes.length === 0 ? (
+        <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-5">
+          <h3 className="text-sm font-semibold">Cadastre as grades do produto</h3>
+          <p className="mt-2 max-w-xl text-sm text-[var(--color-ink-muted)]">Ainda não há atributos configurados como eixo de variante. Crie, por exemplo, Grade, Cor ou Tamanho e marque-os para uso em variantes.</p>
+          <Button asChild className="mt-4" size="sm">
+            <Link to="/catalog/attributes">Cadastrar atributos</Link>
+          </Button>
+        </div>
+      ) : null}
+      {variantAxes.map((attribute) => (
         <div key={attribute.id}><p className="mb-2 text-sm font-semibold">{attribute.name}</p><div className="flex flex-wrap gap-2">{attribute.values.filter((value) => value.status === 'active').map((value) => { const checked = draft.selections[attribute.id]?.includes(value.id) ?? false; return <label key={value.id} className="flex items-center gap-2 rounded-full border px-3 py-2 text-sm"><input type="checkbox" checked={checked} onChange={() => update({ selections: { ...draft.selections, [attribute.id]: checked ? (draft.selections[attribute.id] ?? []).filter((id) => id !== value.id) : [...(draft.selections[attribute.id] ?? []), value.id] } })} />{value.label}</label> })}</div></div>
       ))}
       <div className="rounded-[var(--radius-md)] border border-[var(--color-border-soft)]">

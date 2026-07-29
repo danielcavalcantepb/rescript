@@ -152,7 +152,16 @@ async function runCatalogRpc<T>(
     const data = await run(app)
     return { ok: true, data }
   } catch (error) {
-    return { ok: false, error: toCatalogRpcError(error) }
+    const mapped = toCatalogRpcError(error)
+    const rawMessage = error instanceof Error ? error.message : 'unknown'
+    console.error('[catalog.rpc.failed]', {
+      code: mapped.code,
+      name: error instanceof Error ? error.name : 'unknown',
+      message: rawMessage
+        .replace(/postgres(?:ql)?:\/\/[^\s]+/gi, 'postgresql://***')
+        .replace(/password=[^&\s]+/gi, 'password=***'),
+    })
+    return { ok: false, error: mapped }
   }
 }
 
