@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { AppBreadcrumb } from '#/components/AppBreadcrumb'
 import { PageHeader } from '#/components/PageHeader'
@@ -19,6 +19,7 @@ function NewCustomerPage() {
   const navigate = useNavigate()
   const create = useCreateCustomer()
   const createAddress = useCreateCustomerAddress()
+  const createdCustomerId = useRef<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -40,7 +41,7 @@ function NewCustomerPage() {
         />
         <div className="rounded-[var(--radius-lg)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-5">
           <CustomerForm
-            submitting={create.isPending}
+            submitting={create.isPending || createAddress.isPending}
             fieldErrors={fieldErrors}
             formError={formError}
             submitLabel="Criar cliente"
@@ -49,7 +50,10 @@ function NewCustomerPage() {
               setFieldErrors({})
               setFormError(null)
               try {
-                const customer = await create.mutateAsync(values)
+                const customer = createdCustomerId.current
+                  ? { id: createdCustomerId.current }
+                  : await create.mutateAsync(values)
+                createdCustomerId.current = customer.id
                 if (address) {
                   await createAddress.mutateAsync({
                     customerId: customer.id,
@@ -64,6 +68,7 @@ function NewCustomerPage() {
                     isPrimary: true,
                   })
                 }
+                createdCustomerId.current = null
                 notificationService.success('Cliente criado.')
                 void navigate({
                   to: '/crm/customers/$customerId',
@@ -72,7 +77,11 @@ function NewCustomerPage() {
               } catch (error) {
                 const mapped = toFormError(error)
                 setFieldErrors(mapped.fieldErrors)
-                setFormError(mapped.formError)
+                setFormError(
+                  createdCustomerId.current && address
+                    ? 'O cliente foi criado, mas não foi possível salvar o endereço. Tente novamente para concluir sem duplicar o cadastro.'
+                    : mapped.formError,
+                )
               }
             }}
           />

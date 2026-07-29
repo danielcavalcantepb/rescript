@@ -57,6 +57,14 @@ function ProductCreateContent({
   const createMutation = useCreateProduct(organizationId)
 
   const [formError, setFormError] = useState<string | null>(null)
+  const unitsError = unitsQuery.isError
+    ? (() => {
+        const rpc = getCatalogRpcError(unitsQuery.error)
+        return rpc
+          ? catalogErrorMessage(rpc)
+          : 'Não foi possível carregar as unidades de medida.'
+      })()
+    : null
 
   if (orgLoading || !organizationId) {
     return <PageLoading label="Carregando organização…" />
@@ -107,6 +115,7 @@ function ProductCreateContent({
         categories={categoriesQuery.data ?? []}
         attributes={attributesQuery.data ?? []}
         units={unitsQuery.data ?? []}
+        unitsError={unitsError}
         submitting={createMutation.isPending}
         error={formError}
         onSubmit={handleSubmit}

@@ -12,6 +12,32 @@ type CustomerUpdate = Database['public']['Tables']['customer']['Update']
 export class SupabaseCustomerRepository implements CustomerRepository {
   constructor(private readonly options: CustomerReposOptions) {}
 
+  /** Ensures legacy organizations also satisfy the mandatory Branch scope. */
+  private async getDefaultBranchId(): Promise<string> {
+    const { data: branch, error: branchError } = await this.options.client
+      .from('branch')
+      .select('id')
+      .eq('organization_id', this.options.organizationId)
+      .eq('is_default', true)
+      .eq('status', 'active')
+      .maybeSingle()
+    throwIfSupabaseError(branchError)
+    if (branch) return branch.id
+
+    const { data, error } = await this.options.client.rpc(
+      'ensure_default_branch' as never,
+      {
+        p_org: this.options.organizationId,
+        p_actor: this.options.actorUserId,
+      } as never,
+    )
+    throwIfSupabaseError(error)
+    if (typeof data !== 'string' || !data) {
+      throw new Error('default_branch_unavailable')
+    }
+    return data
+  }
+
   async getById(organizationId: string, id: string): Promise<Customer | null> {
     assertEntityOrganization(organizationId, this.options.organizationId)
     const { data, error } = await this.options.client
@@ -30,22 +56,14 @@ export class SupabaseCustomerRepository implements CustomerRepository {
     input: Parameters<CustomerRepository['create']>[2],
   ): Promise<Customer> {
     assertEntityOrganization(organizationId, this.options.organizationId)
-    const { data: branch, error: branchError } = await this.options.client
-      .from('branch')
-      .select('id')
-      .eq('organization_id', this.options.organizationId)
-      .eq('is_default', true)
-      .eq('status', 'active')
-      .maybeSingle()
-    throwIfSupabaseError(branchError)
-    if (!branch) throw new Error('default_branch_not_found')
+    const branchId = await this.getDefaultBranchId()
 
     const { data, error } = await this.options.client
       .from('customer')
       .insert({
         organization_id: this.options.organizationId,
         company_id: this.options.organizationId,
-        branch_id: branch.id,
+        branch_id: branchId,
         name: input.legalName.trim(),
         short_name: input.shortName?.trim() || input.tradeName?.trim() || input.legalName.trim(),
         trade_name: input.tradeName?.trim() || null,

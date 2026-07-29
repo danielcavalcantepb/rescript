@@ -37,6 +37,16 @@ export function toCustomerRpcError(error: unknown): CustomerRpcError {
     if (error.message === 'not_authenticated' || error.message === 'not_org_member') {
       return { code: error.message, message: 'Sessão inválida ou sem acesso à organização.' }
     }
+    if (
+      error.message === 'default_branch_not_found' ||
+      error.message === 'default_branch_unavailable'
+    ) {
+      return {
+        code: 'default_branch_unavailable',
+        message:
+          'Não foi possível preparar a unidade principal da empresa. Atualize a página e tente novamente.',
+      }
+    }
   }
   return {
     code: 'unexpected',

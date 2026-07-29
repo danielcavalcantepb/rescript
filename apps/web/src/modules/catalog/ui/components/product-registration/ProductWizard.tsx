@@ -17,6 +17,7 @@ type Draft = {
   brandId: string
   categoryId: string
   unitId: string
+  unitCode: string
   kind: ProductKind
   selections: Record<string, string[]>
 }
@@ -42,9 +43,50 @@ const emptyDraft = (unitId: string): Draft => ({
   brandId: '',
   categoryId: '',
   unitId,
+  unitCode: '',
   kind: 'simple',
   selections: {},
 })
+
+type StoredDraft = {
+  version: 1
+  step: number
+  draft: Draft
+}
+
+function readDraft(storageKey: string): StoredDraft | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const value: unknown = JSON.parse(window.localStorage.getItem(storageKey) ?? 'null')
+    if (
+      !value ||
+      typeof value !== 'object' ||
+      !('draft' in value)
+    ) {
+      if (
+        value &&
+        typeof value === 'object' &&
+        'name' in value &&
+        'kind' in value
+      ) {
+        return { version: 1, step: 1, draft: value as Draft }
+      }
+      return null
+    }
+    if (
+      !('step' in value) ||
+      typeof value.step !== 'number' ||
+      value.step < 1 ||
+      value.step > 4 ||
+      typeof value.draft !== 'object' ||
+      value.draft === null
+    ) return null
+    return value as StoredDraft
+  } catch {
+    window.localStorage.removeItem(storageKey)
+    return null
+  }
+}
 
 const fieldClass =
   'h-10 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-focus)]'
@@ -55,6 +97,7 @@ export function ProductWizard({
   categories,
   attributes,
   units,
+  unitsError,
   submitting,
   error,
   onSubmit,
@@ -65,6 +108,7 @@ export function ProductWizard({
   categories: CategoryResponse[]
   attributes: AttributeResponse[]
   units: UnitOfMeasureResponse[]
+  unitsError?: string | null
   submitting: boolean
   error: string | null
   onSubmit: (command: CreateProductCommand) => Promise<void>
@@ -72,27 +116,33 @@ export function ProductWizard({
 }) {
   const storageKey = `catalog-product-draft:${organizationId}`
   const defaultUnitId = units[0]?.id ?? ''
-  const [step, setStep] = useState(1)
-  const [draft, setDraft] = useState<Draft>(() => emptyDraft(defaultUnitId))
-  const [touched, setTouched] = useState(false)
+  const [restored] = useState(() => readDraft(storageKey))
+  const [step, setStep] = useState(restored?.step ?? 1)
+  const [draft, setDraft] = useState<Draft>(() =>
+    restored?.draft ? { ...emptyDraft(''), ...restored.draft } : emptyDraft(''),
+  )
+  const [touched, setTouched] = useState(Boolean(restored))
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(storageKey)
-    if (saved) {
-      try {
-        setDraft({ ...emptyDraft(defaultUnitId), ...JSON.parse(saved) })
-      } catch {
-        window.localStorage.removeItem(storageKey)
+    if (!defaultUnitId) return
+    setDraft((current) => {
+      if (current.unitId) return current
+      const unit = units.find((item) => item.id === defaultUnitId)
+      return {
+        ...current,
+        unitId: defaultUnitId,
+        unitCode: current.unitCode || unit?.code || '',
       }
-    } else if (defaultUnitId) {
-      setDraft((current) => ({ ...current, unitId: current.unitId || defaultUnitId }))
-    }
-  }, [defaultUnitId, storageKey])
+    })
+  }, [defaultUnitId, units])
 
   useEffect(() => {
     if (!touched) return
-    window.localStorage.setItem(storageKey, JSON.stringify(draft))
-  }, [draft, storageKey, touched])
+    window.localStorage.setItem(
+      storageKey,
+      JSON.stringify({ version: 1, step, draft }),
+    )
+  }, [draft, step, storageKey, touched])
 
   useEffect(() => {
     const preventLoss = (event: BeforeUnloadEvent) => {
@@ -130,9 +180,19 @@ export function ProductWizard({
     setDraft((current) => ({ ...current, ...next }))
   }
 
+  function goToStep(nextStep: number) {
+    setTouched(true)
+    setStep(nextStep)
+  }
+
   const canContinue =
     step !== 1 ||
-    Boolean(draft.name.trim() && draft.unitId && (draft.kind === 'variable' || draft.sku.trim()))
+    Boolean(
+      !unitsError &&
+        draft.name.trim() &&
+        draft.unitId &&
+        (draft.kind === 'variable' || draft.sku.trim()),
+    )
   const canSave =
     canContinue && (draft.kind === 'simple' || selectedAxes.length > 0)
 
@@ -187,7 +247,7 @@ export function ProductWizard({
 
         <div className="min-h-[440px] p-5 sm:p-7">
           {step === 1 ? (
-            <BasicStep draft={draft} units={units} categories={categories} brands={brands} update={update} />
+          <BasicStep draft={draft} units={units} categories={categories} brands={brands} update={update} />
           ) : null}
           {step === 2 ? (
             <ClassificationStep
@@ -216,14 +276,15 @@ export function ProductWizard({
             />
           ) : null}
           {error ? <p role="alert" className="mt-5 text-sm text-[var(--color-danger)]">{error}</p> : null}
+          {unitsError ? <p role="alert" className="mt-5 text-sm text-[var(--color-danger)]">{unitsError}</p> : null}
         </div>
 
         <footer className="flex flex-wrap justify-between gap-3 border-t border-[var(--color-border-soft)] p-5">
-          <Button type="button" variant="secondary" onClick={step === 1 ? onCancel : () => setStep(step - 1)}>
+          <Button type="button" variant="secondary" onClick={step === 1 ? onCancel : () => goToStep(step - 1)}>
             {step === 1 ? 'Cancelar' : 'Voltar'}
           </Button>
           {step < 4 ? (
-            <Button type="button" disabled={!canContinue} onClick={() => setStep(step + 1)}>
+            <Button type="button" disabled={!canContinue} onClick={() => goToStep(step + 1)}>
               Continuar
             </Button>
           ) : (
@@ -259,6 +320,19 @@ function BasicStep({ draft, units, categories, brands, update }: {
   brands: BrandResponse[]
   update: (next: Partial<Draft>) => void
 }) {
+  const matchedUnit = units.find((item) => item.id === draft.unitId)
+  const unitValue = draft.unitCode || matchedUnit?.code || ''
+
+  function updateUnit(value: string) {
+    const normalized = value.trim().toLocaleLowerCase('pt-BR')
+    const match = units.find(
+      (item) =>
+        item.code.toLocaleLowerCase('pt-BR') === normalized ||
+        item.name.toLocaleLowerCase('pt-BR') === normalized,
+    )
+    update({ unitCode: value, unitId: match?.id ?? '' })
+  }
+
   return (
     <div className="space-y-6">
       <StepHeading title="Dados básicos" description="Identificação operacional do produto e de sua variante padrão." />
@@ -271,9 +345,28 @@ function BasicStep({ draft, units, categories, brands, update }: {
           </select>
         </Field>
         <Field label="Unidade" required>
-          <select className={fieldClass} value={draft.unitId} onChange={(e) => update({ unitId: e.target.value })}>
-            <option value="">Selecione</option>{units.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
-          </select>
+          <>
+            <input
+              className={fieldClass}
+              list="catalog-unit-options"
+              value={unitValue}
+              onChange={(event) => updateUnit(event.target.value)}
+              placeholder="Digite, por exemplo, UN, KG ou MT"
+              aria-describedby="catalog-unit-help"
+            />
+            <datalist id="catalog-unit-options">
+              {units.map((item) => (
+                <option key={item.id} value={item.code} label={item.name} />
+              ))}
+            </datalist>
+            <p id="catalog-unit-help" className="text-xs font-normal text-[var(--color-ink-muted)]">
+              {matchedUnit
+                ? `${matchedUnit.name} selecionada.`
+                : units.length
+                  ? 'Digite o código ou o nome de uma unidade cadastrada.'
+                  : 'Nenhuma unidade disponível no momento.'}
+            </p>
+          </>
         </Field>
         {draft.kind === 'simple' ? <Field label="Código de barras"><input className={fieldClass} value={draft.barcode} onChange={(e) => update({ barcode: e.target.value })} /></Field> : null}
         <Field label="Categoria"><select className={fieldClass} value={draft.categoryId} onChange={(e) => update({ categoryId: e.target.value })}><option value="">Sem categoria</option>{categories.filter((x) => x.status === 'active').map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></Field>
