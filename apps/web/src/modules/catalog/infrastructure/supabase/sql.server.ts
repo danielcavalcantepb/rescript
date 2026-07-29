@@ -74,6 +74,15 @@ export async function withCatalogTransaction<T>(
       const message = String((error as { message?: string }).message ?? '')
       ;(error as { message: string }).message = redactSensitive(message)
     }
+    // Keep database diagnostics server-side. The UI receives only the mapped
+    // domain error, while deployment logs retain the PostgreSQL code needed to
+    // fix migrations/constraints without exposing tenant data or credentials.
+    const pg = error as { code?: unknown; message?: unknown; detail?: unknown }
+    console.error('[catalog.persistence.failed]', {
+      code: typeof pg?.code === 'string' ? pg.code : 'unknown',
+      message: redactSensitive(String(pg?.message ?? 'unknown')),
+      detail: redactSensitive(String(pg?.detail ?? '')),
+    })
     mapSupabaseError(error)
   }
 }
