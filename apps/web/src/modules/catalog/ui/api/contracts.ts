@@ -103,6 +103,9 @@ export type UpdateAttributeInput = CatalogOrgScope & {
 export type ArchiveAttributeInput = CatalogOrgScope & {
   command: AttributeIdCommand
 }
+export type DeleteAttributeInput = CatalogOrgScope & {
+  command: AttributeIdCommand
+}
 export type CreateAttributeValueInput = CatalogOrgScope & {
   command: CreateAttributeValueCommand
 }

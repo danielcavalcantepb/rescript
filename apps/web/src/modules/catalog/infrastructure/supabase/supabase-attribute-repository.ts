@@ -178,4 +178,32 @@ export class SupabaseAttributeRepository
       },
     )
   }
+
+  async remove(organizationId: string, definitionId: string): Promise<void> {
+    assertEntityOrganization(organizationId, this.options.organizationId)
+    const orgId = this.options.organizationId
+    await withCatalogTransaction(
+      this.options.databaseUrl,
+      orgId,
+      this.options.actorUserId,
+      async ({ sql }) => {
+        await sql`
+          delete from public.attribute_option option
+          using public.attribute_definition definition
+          where option.definition_id = definition.id
+            and definition.id = ${definitionId}::uuid
+            and definition.organization_id = ${orgId}::uuid
+        `
+        const deleted = await sql<{ id: string }[]>`
+          delete from public.attribute_definition
+          where id = ${definitionId}::uuid
+            and organization_id = ${orgId}::uuid
+          returning id
+        `
+        if (deleted.length === 0) {
+          throw new Error('attribute_not_found')
+        }
+      },
+    )
+  }
 }

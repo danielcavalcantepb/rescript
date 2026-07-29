@@ -55,6 +55,7 @@ export type AttributeDefinitionRepository = {
   ): Promise<AttributeDefinition | null>
   listByOrganization(organizationId: string): Promise<AttributeDefinition[]>
   save(definition: AttributeDefinition): Promise<void>
+  remove(organizationId: string, definitionId: string): Promise<void>
 }
 
 /** Platform defaults (org null) + org-scoped UOMs available for product create. */

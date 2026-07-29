@@ -47,6 +47,7 @@ import type {
   CreateAttributeInput,
   UpdateAttributeInput,
   ArchiveAttributeInput,
+  DeleteAttributeInput,
   CreateAttributeValueInput,
   UpdateAttributeValueInput,
   ArchiveAttributeValueInput,
@@ -266,6 +267,14 @@ export const catalogArchiveAttribute = createServerFn({ method: 'POST' })
   .handler(async ({ data }) =>
     runCatalogRpc(data.organizationId, (app) =>
       app.archiveAttribute(data.command),
+    ),
+  )
+
+export const catalogDeleteAttribute = createServerFn({ method: 'POST' })
+  .validator((input: DeleteAttributeInput) => input)
+  .handler(async ({ data }) =>
+    runCatalogRpc(data.organizationId, (app) =>
+      app.deleteAttribute(data.command),
     ),
   )
 

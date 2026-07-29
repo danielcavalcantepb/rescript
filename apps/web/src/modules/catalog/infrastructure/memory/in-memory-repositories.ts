@@ -169,6 +169,12 @@ export function createInMemoryAttributeRepository(
     async save(definition: AttributeDefinition) {
       store.attributes.set(definition.id, structuredClone(definition))
     },
+    async remove(organizationId, definitionId) {
+      const definition = store.attributes.get(definitionId)
+      if (definition?.organizationId === organizationId) {
+        store.attributes.delete(definitionId)
+      }
+    },
   }
 }
 

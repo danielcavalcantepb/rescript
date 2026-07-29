@@ -159,6 +159,20 @@ export async function archiveAttribute(
   return toAttributeResponse(next)
 }
 
+export async function deleteAttribute(
+  deps: CatalogAppDeps,
+  command: AttributeIdCommand,
+): Promise<void> {
+  if (!requireAttributeWrite(deps.can)) throw new CatalogPermissionError()
+  const attribute = await deps.attributes.getById(
+    deps.organizationId,
+    command.attributeId,
+  )
+  if (!attribute) throw new CatalogNotFoundError('attribute_not_found')
+  await assertNotUsed(deps, attribute.id)
+  await deps.attributes.remove(deps.organizationId, attribute.id)
+}
+
 export async function createAttributeValue(
   deps: CatalogAppDeps,
   command: CreateAttributeValueCommand,

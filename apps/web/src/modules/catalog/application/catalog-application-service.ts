@@ -106,6 +106,8 @@ export function createCatalogApplicationService(deps: CatalogAppDeps) {
       attribute.updateAttribute(deps, cmd),
     archiveAttribute: (cmd: Parameters<typeof attribute.archiveAttribute>[1]) =>
       attribute.archiveAttribute(deps, cmd),
+    deleteAttribute: (cmd: Parameters<typeof attribute.deleteAttribute>[1]) =>
+      attribute.deleteAttribute(deps, cmd),
     createAttributeValue: (
       cmd: Parameters<typeof attribute.createAttributeValue>[1],
     ) => attribute.createAttributeValue(deps, cmd),

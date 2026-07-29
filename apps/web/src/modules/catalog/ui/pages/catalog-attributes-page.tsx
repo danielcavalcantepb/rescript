@@ -26,6 +26,8 @@ export function CatalogAttributesPage() {
   const [search, setSearch] = useState('')
   const [name, setName] = useState('')
   const [values, setValues] = useState('')
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [editingName, setEditingName] = useState('')
   const attributes = useMemo(() => {
     const term = search.trim().toLocaleLowerCase('pt-BR')
     return (query.data ?? []).filter(
@@ -64,20 +66,37 @@ export function CatalogAttributesPage() {
     }
   }
 
-  async function archiveAttribute(attributeId: string, name: string) {
+  async function deleteAttribute(attributeId: string, name: string) {
     const confirmed = await dialogs.confirm({
-      title: `Arquivar ${name}?`,
+      title: `Excluir ${name} definitivamente?`,
       description:
-        'O atributo deixa de estar disponível para novos produtos, mas permanece preservado no histórico.',
-      confirmLabel: 'Arquivar',
+        'Esta ação apaga o atributo e seus valores. A exclusão só é permitida se ele ainda não estiver vinculado a produtos ou variantes.',
+      confirmLabel: 'Excluir definitivamente',
       tone: 'danger',
     })
     if (!confirmed.confirmed) return
     try {
-      await actions.archive.mutateAsync(attributeId)
-      notificationService.success('Atributo arquivado')
+      await actions.remove.mutateAsync(attributeId)
+      notificationService.success('Atributo excluído')
     } catch {
-      notificationService.error('Não foi possível arquivar o atributo.')
+      notificationService.error(
+        'Não foi possível excluir o atributo. Ele pode já estar vinculado a um produto ou variante.',
+      )
+    }
+  }
+
+  async function saveAttribute(attributeId: string) {
+    if (!editingName.trim()) return
+    try {
+      await actions.update.mutateAsync({
+        attributeId,
+        name: editingName.trim(),
+      })
+      setEditingId(null)
+      setEditingName('')
+      notificationService.success('Atributo atualizado')
+    } catch {
+      notificationService.error('Não foi possível atualizar o atributo.')
     }
   }
 
@@ -145,26 +164,76 @@ export function CatalogAttributesPage() {
               className="rounded-[var(--radius-lg)] border border-[var(--color-border-soft)] bg-[var(--color-surface)] p-4"
             >
               <div className="flex items-center justify-between gap-3">
-                <p className="font-medium text-[var(--color-ink)]">
-                  {attribute.name}
-                </p>
+                {editingId === attribute.id ? (
+                  <Input
+                    aria-label={`Editar ${attribute.name}`}
+                    value={editingName}
+                    onChange={(event) => setEditingName(event.target.value)}
+                    className="max-w-64"
+                  />
+                ) : (
+                  <p className="font-medium text-[var(--color-ink)]">
+                    {attribute.name}
+                  </p>
+                )}
                 <div className="flex items-center gap-3">
                   <span className="text-xs text-[var(--color-text-secondary)]">
                     {attribute.status === 'active' ? 'Ativo' : 'Arquivado'}
                   </span>
                   {can('catalog.attributes.write') &&
                   attribute.status === 'active' ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      disabled={actions.archive.isPending}
-                      onClick={() =>
-                        void archiveAttribute(attribute.id, attribute.name)
-                      }
-                    >
-                      Arquivar
-                    </Button>
+                    <>
+                      {editingId === attribute.id ? (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            disabled={
+                              !editingName.trim() || actions.update.isPending
+                            }
+                            onClick={() => void saveAttribute(attribute.id)}
+                          >
+                            Salvar
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setEditingId(null)
+                              setEditingName('')
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setEditingId(attribute.id)
+                              setEditingName(attribute.name)
+                            }}
+                          >
+                            Editar
+                          </Button>
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="danger"
+                            disabled={actions.remove.isPending}
+                            onClick={() =>
+                              void deleteAttribute(attribute.id, attribute.name)
+                            }
+                          >
+                            Excluir
+                          </Button>
+                        </>
+                      )}
+                    </>
                   ) : null}
                 </div>
               </div>
