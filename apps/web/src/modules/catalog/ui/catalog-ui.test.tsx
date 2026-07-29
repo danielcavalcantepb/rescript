@@ -161,6 +161,7 @@ describe('Catalog UI foundation', () => {
           },
         ]}
         onChange={onChange}
+        onClear={vi.fn()}
       />,
     )
 
@@ -182,6 +183,26 @@ describe('Catalog UI foundation', () => {
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({ categoryId: 'c1', page: 1 }),
     )
+  })
+
+  it('offers a single action to clear an active catalog filter set', () => {
+    const onClear = vi.fn()
+    render(
+      <CatalogFilters
+        filters={{
+          ...defaultCatalogProductFilters(),
+          text: 'camiseta',
+          brandId: 'b1',
+        }}
+        brands={[]}
+        categories={[]}
+        onChange={vi.fn()}
+        onClear={onClear}
+      />,
+    )
+
+    fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }))
+    expect(onClear).toHaveBeenCalledTimes(1)
   })
 
   it('paginates with accessible controls', () => {

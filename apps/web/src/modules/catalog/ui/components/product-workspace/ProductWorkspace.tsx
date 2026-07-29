@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react'
-import { Link, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import type {
   CatalogProductDetailResponse,
   ProductLifecycleResponse,
@@ -23,23 +23,15 @@ type WorkspaceTab =
   | 'general'
   | 'inventory'
   | 'prices'
-  | 'purchases'
-  | 'sales'
   | 'variants'
-  | 'images'
   | 'history'
-  | 'fiscal'
 
 const TABS: Array<{ id: WorkspaceTab; label: string }> = [
   { id: 'general', label: 'Geral' },
   { id: 'inventory', label: 'Estoque' },
   { id: 'prices', label: 'Preços' },
-  { id: 'purchases', label: 'Compras' },
-  { id: 'sales', label: 'Vendas' },
   { id: 'variants', label: 'Variantes' },
-  { id: 'images', label: 'Imagens' },
   { id: 'history', label: 'Histórico' },
-  { id: 'fiscal', label: 'Fiscal' },
 ]
 
 export function ProductWorkspace({
@@ -174,8 +166,6 @@ export function ProductWorkspace({
             variantId={defaultVariant?.id}
           />
         ) : null}
-        {activeTab === 'purchases' ? <PurchasesPanel /> : null}
-        {activeTab === 'sales' ? <SalesPanel /> : null}
         {activeTab === 'variants' ? (
           <ProductVariantsSection
             organizationId={organizationId}
@@ -183,7 +173,6 @@ export function ProductWorkspace({
             productStatus={product.status}
           />
         ) : null}
-        {activeTab === 'images' ? <ImagesPanel /> : null}
         {activeTab === 'history' ? (
           <HistoryPanel
             organizationId={organizationId}
@@ -192,7 +181,6 @@ export function ProductWorkspace({
             loading={lifecycleLoading}
           />
         ) : null}
-        {activeTab === 'fiscal' ? <FiscalPanel /> : null}
       </div>
     </div>
   )
@@ -227,9 +215,7 @@ function GeneralPanel({
         <Field label="Código de barras" value={product.primaryBarcode ?? '—'} mono />
         <Field label="Tipo" value={topologyLabel(product.topology)} />
         <Field label="Categoria" value={product.categoryName ?? '—'} />
-        <Field label="Subcategoria" value="—" />
         <Field label="Marca" value={product.brandName ?? '—'} />
-        <Field label="Fabricante" value="—" />
         <Field
           label="Unidade"
           value={
@@ -242,7 +228,6 @@ function GeneralPanel({
           label="Status"
           value={<CatalogStatusBadge status={product.status} />}
         />
-        <Field label="Descrição curta" value="—" className="sm:col-span-2" />
         <Field
           label="Descrição completa"
           value={product.description ?? '—'}
@@ -274,20 +259,6 @@ function InventoryPanel({
           variantId={variantId}
         />
       </WorkspaceSection>
-      <WorkspaceSection
-        title="Parâmetros logísticos"
-        description="Campos preparados para políticas futuras de reposição e rastreabilidade."
-      >
-        <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="Estoque mínimo" value="—" />
-          <Field label="Estoque máximo" value="—" />
-          <Field label="Peso" value="—" />
-          <Field label="Volume" value="—" />
-          <Field label="Dimensões" value="—" />
-          <Field label="Controle por lote" value="Não configurado" />
-          <Field label="Controle por serial" value="Não configurado" />
-        </dl>
-      </WorkspaceSection>
     </div>
   )
 }
@@ -310,84 +281,7 @@ function PricesPanel({
       >
         <VariantPriceSummary organizationId={organizationId} variantId={variantId} />
       </WorkspaceSection>
-      <WorkspaceSection title="Indicadores comerciais">
-        <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <Field label="Preço de custo" value="—" />
-          <Field label="Preço de venda" value="Conforme tabela vigente" />
-          <Field label="Margem" value="—" />
-          <Field label="Markup" value="—" />
-        </dl>
-      </WorkspaceSection>
     </div>
-  )
-}
-
-function PurchasesPanel() {
-  return (
-    <WorkspaceSection
-      title="Compras"
-      description="Relacionamento de suprimentos sem duplicar dados de Supplier e Procurement."
-      action={
-        <FeatureGate permission="suppliers.read">
-          <Button asChild type="button" size="sm" variant="secondary">
-            <Link to="/procurement/suppliers">Abrir fornecedores</Link>
-          </Button>
-        </FeatureGate>
-      }
-    >
-      <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Field label="Fornecedor principal" value="—" />
-        <Field label="Fornecedores alternativos" value="—" />
-        <Field label="Código do fornecedor" value="—" />
-        <Field label="Última compra" value="—" />
-        <Field label="Último custo" value="—" />
-        <Field label="Lead time" value="—" />
-      </dl>
-    </WorkspaceSection>
-  )
-}
-
-function SalesPanel() {
-  return (
-    <WorkspaceSection
-      title="Vendas"
-      description="Área preparada para integração com o módulo Sales."
-    >
-      <dl className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <Field label="Produto vendável" value="Não configurado" />
-        <Field label="Comissão" value="—" />
-        <Field label="Cross sell" value="—" />
-        <Field label="Upsell" value="—" />
-        <Field label="Produtos relacionados" value="—" />
-      </dl>
-    </WorkspaceSection>
-  )
-}
-
-function ImagesPanel() {
-  return (
-    <WorkspaceSection
-      title="Imagens"
-      description="Estrutura visual preparada para o serviço de mídia futuro."
-    >
-      <div className="grid gap-4 md:grid-cols-[240px_1fr]">
-        <div className="flex aspect-square items-center justify-center rounded-[var(--radius-lg)] border border-dashed border-[var(--color-border)] bg-[var(--color-surface-muted)] text-center text-[13px] text-[var(--color-text-secondary)]">
-          Imagem principal
-          <br />
-          não cadastrada
-        </div>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {[1, 2, 3].map((slot) => (
-            <div
-              key={slot}
-              className="flex aspect-square items-center justify-center rounded-[var(--radius-md)] border border-dashed border-[var(--color-border-soft)] text-[12px] text-[var(--color-text-secondary)]"
-            >
-              Galeria {slot}
-            </div>
-          ))}
-        </div>
-      </div>
-    </WorkspaceSection>
   )
 }
 
@@ -441,17 +335,6 @@ function HistoryPanel({
         )}
       </WorkspaceSection>
     </div>
-  )
-}
-
-function FiscalPanel() {
-  return (
-    <WorkspaceSection
-      title="Fiscal"
-      description="Espaço reservado para classificação tributária e integrações fiscais."
-    >
-      <WorkspaceEmpty title="Configuração fiscal ainda não disponível" />
-    </WorkspaceSection>
   )
 }
 

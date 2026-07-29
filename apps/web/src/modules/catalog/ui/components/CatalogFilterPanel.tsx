@@ -7,19 +7,28 @@ export function CatalogFilterPanel({
   brands,
   categories,
   onChange,
+  onClear,
 }: {
   filters: CatalogProductFilters
   brands: BrandResponse[]
   categories: CategoryResponse[]
   onChange: (next: Partial<CatalogProductFilters>) => void
+  onClear: () => void
 }) {
+  const hasFilters =
+    Boolean(filters.text) ||
+    Boolean(filters.brandId) ||
+    Boolean(filters.categoryId) ||
+    filters.status !== 'active' ||
+    filters.sort !== 'name_asc'
+
   return (
     <div
       className="flex flex-col gap-3"
       role="group"
       aria-label="Filtros do catálogo"
     >
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         {(
           [
             ['active', 'Ativos'],
@@ -35,6 +44,15 @@ export function CatalogFilterPanel({
             onSelect={() => onChange({ status: value, page: 1 })}
           />
         ))}
+        {hasFilters ? (
+          <button
+            type="button"
+            className="ml-auto text-[12px] font-medium text-[var(--color-text-secondary)] underline-offset-4 hover:text-[var(--color-ink)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"
+            onClick={onClear}
+          >
+            Limpar filtros
+          </button>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">

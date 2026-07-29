@@ -8,11 +8,13 @@ export function CatalogFilters({
   brands,
   categories,
   onChange,
+  onClear,
 }: {
   filters: CatalogProductFilters
   brands: BrandResponse[]
   categories: CategoryResponse[]
   onChange: (next: Partial<CatalogProductFilters>) => void
+  onClear: () => void
 }) {
   return (
     <div className="mb-4 space-y-3">
@@ -25,6 +27,7 @@ export function CatalogFilters({
         brands={brands}
         categories={categories}
         onChange={onChange}
+        onClear={onClear}
       />
     </div>
   )

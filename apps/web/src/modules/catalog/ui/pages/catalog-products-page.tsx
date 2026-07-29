@@ -12,6 +12,7 @@ import { CatalogToolbar } from '#/modules/catalog/ui/components/CatalogToolbar'
 import { ProductQuickCreate } from '#/modules/catalog/ui/components/product-registration/ProductQuickCreate'
 import { CatalogEmptyState } from '#/modules/catalog/ui/empty-states/CatalogEmptyState'
 import {
+  defaultCatalogProductFilters,
   toListCatalogProductsQuery,
   type CatalogProductFilters,
 } from '#/modules/catalog/ui/filters/catalog-filter-state'
@@ -103,6 +104,17 @@ export function CatalogProductsPage({
     })
   }
 
+  const onClearFilters = () => {
+    const defaults = defaultCatalogProductFilters()
+    setText(defaults.text)
+    setDebouncedText(defaults.text)
+    void navigate({
+      to: '/catalog/products',
+      search: filtersToSearch(defaults),
+      replace: true,
+    })
+  }
+
   if (orgLoading || !organizationId) {
     return <PageLoading label="Carregando organização…" />
   }
@@ -148,6 +160,7 @@ export function CatalogProductsPage({
         brands={brandsQuery.data ?? []}
         categories={categoriesQuery.data ?? []}
         onChange={onFilterChange}
+        onClear={onClearFilters}
       />
 
       {productsQuery.isError ? (
