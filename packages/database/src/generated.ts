@@ -7433,6 +7433,14 @@ export type Database = {
         }
         Returns: string
       }
+      create_product_with_initial_setup: {
+        Args: {
+          p_idempotency_key: string
+          p_organization_id: string
+          p_payload: Json
+        }
+        Returns: Json
+      }
     }
     Enums: {
       [_ in never]: never

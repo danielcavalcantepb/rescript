@@ -79,6 +79,8 @@ export type UpdateVariantCommand = {
   productId: string
   variantId: string
   sku?: string
+  /** Primary EAN/barcode identifier. It remains owned by ProductVariant. */
+  barcode?: { type: string; value: string } | null
   unitOfMeasureId?: string
   tracksInventory?: boolean
 }

@@ -6,6 +6,8 @@ import type {
   CatalogOrgScope,
   CatalogRpcResult,
   CreateProductInput,
+  CreateProductWithInitialSetupInput,
+  ProductCreationResult,
   CreateProductResponse,
   GetLifecycleInput,
   GetLifecycleResponse,
@@ -171,6 +173,28 @@ export const catalogListProducts = createServerFn({ method: 'POST' })
   .handler(async ({ data }): Promise<CatalogRpcResult<ListCatalogProductsResponse>> =>
     runCatalogRpc(data.organizationId, (app) => app.listProducts(data.query)),
   )
+
+/**
+ * ProductCreationOrchestrator entry point. PostgreSQL owns the transaction so
+ * no product, price, ledger entry or valuation can commit partially.
+ */
+export const catalogCreateProductWithInitialSetup = createServerFn({ method: 'POST' })
+  .validator((input: CreateProductWithInitialSetupInput) => input)
+  .handler(async ({ data }): Promise<CatalogRpcResult<ProductCreationResult>> => {
+    try {
+      const { createServerSupabaseClient } = await import('#/lib/supabase/server.server')
+      const client = createServerSupabaseClient()
+      const { data: result, error } = await client.rpc('create_product_with_initial_setup', {
+        p_organization_id: data.organizationId,
+        p_payload: data.command,
+        p_idempotency_key: data.idempotencyKey,
+      })
+      if (error) throw new Error(error.message)
+      return { ok: true, data: result as unknown as ProductCreationResult }
+    } catch (error) {
+      return { ok: false, error: toCatalogRpcError(error) }
+    }
+  })
 
 export const catalogListBrands = createServerFn({ method: 'POST' })
   .validator((input: CatalogOrgScope) => input)

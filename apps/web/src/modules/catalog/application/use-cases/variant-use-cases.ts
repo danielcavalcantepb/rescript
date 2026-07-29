@@ -176,6 +176,7 @@ export async function updateVariant(
   }
 
   let sku = current.sku
+  let barcodes = current.barcodes
   const events: CatalogDomainEvent[] = []
   if (command.sku !== undefined) {
     sku = throwIfDomainError(createSku(command.sku))
@@ -191,9 +192,35 @@ export async function updateVariant(
     })
   }
 
+  if (command.barcode !== undefined) {
+    if (command.barcode === null) {
+      barcodes = current.barcodes.filter((barcode) => !barcode.isPrimary)
+    } else {
+      const parsed = throwIfDomainError(
+        createBarcode(
+          command.barcode.type as BarcodeType,
+          command.barcode.value,
+        ),
+      )
+      const existing = new Set(await deps.products.listBarcodes(deps.organizationId))
+      for (const barcode of current.barcodes) existing.delete(barcode.barcode.value)
+      throwIfDomainError(IdentifierPolicy.assertBarcodeUnique(parsed, existing))
+      const previousPrimary = current.barcodes.find((barcode) => barcode.isPrimary)
+      barcodes = [
+        ...current.barcodes.filter((barcode) => !barcode.isPrimary),
+        {
+          id: previousPrimary?.id ?? deps.ids.next(),
+          barcode: parsed,
+          isPrimary: true,
+        },
+      ]
+    }
+  }
+
   const updated: ProductVariant = {
     ...current,
     sku,
+    barcodes,
     unitOfMeasureId:
       command.unitOfMeasureId !== undefined
         ? command.unitOfMeasureId

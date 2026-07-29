@@ -37,6 +37,7 @@ import type {
   MoveCategoryCommand,
   UpdateProductCommand,
   UpdateVariantCommand,
+  ProductCreationCommand,
   VariantCombinationsPreviewResponse,
   VariantIdCommand,
   VariantPriceSummaryResponse,
@@ -121,6 +122,22 @@ export type CreateProductInput = CatalogOrgScope & {
 }
 
 export type CreateProductResponse = ProductResponse
+
+export type CreateProductWithInitialSetupInput = CatalogOrgScope & {
+  command: ProductCreationCommand
+  idempotencyKey: string
+}
+
+export type ProductCreationResult = {
+  productId: string
+  branchId: string
+  priceListId: string
+  variants: Array<{
+    variantId: string
+    priceEntryId: string
+    ledgerEntryId: string | null
+  }>
+}
 
 export type GetProductInput = CatalogOrgScope & {
   productId: string

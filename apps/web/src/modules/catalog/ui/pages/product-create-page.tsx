@@ -1,10 +1,11 @@
 import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { PageLoading } from '#/platform/loading'
 import { useOrganization } from '#/platform/organization/organization-context'
 import { FeatureGate, RequirePermission } from '#/platform/permissions'
 import { notificationService } from '#/platform/services'
-import type { CreateProductCommand } from '#/modules/catalog/application'
+import type { ProductCreationCommand } from '#/modules/catalog/application/product-creation-contract'
 import { ProductWizard } from '#/modules/catalog/ui/components/product-registration/ProductWizard'
 import { CatalogToolbar } from '#/modules/catalog/ui/components/CatalogToolbar'
 import { getCatalogRpcError } from '#/modules/catalog/ui/errors/unwrap-catalog-rpc'
@@ -13,9 +14,14 @@ import type { CatalogProductsSearch } from '#/modules/catalog/ui/filters/catalog
 import { useBrands } from '#/modules/catalog/ui/hooks/use-catalog-brands'
 import { useCategories } from '#/modules/catalog/ui/hooks/use-catalog-categories'
 import { useCatalogAttributes } from '#/modules/catalog/ui/hooks/use-catalog-attributes'
-import { useCreateProduct } from '#/modules/catalog/ui/hooks/use-create-catalog-product'
 import { useUnits } from '#/modules/catalog/ui/hooks/use-catalog-units'
+import { useCatalogPriceLists } from '#/modules/catalog/ui/hooks/use-catalog-price-lists'
 import { CatalogShell } from '#/modules/catalog/ui/layouts/CatalogShell'
+import { catalogCreateProductWithInitialSetup } from '#/modules/catalog/ui/catalog-api'
+import { unwrapCatalogRpc } from '#/modules/catalog/ui/errors/unwrap-catalog-rpc'
+import { listSalesBranches } from '#/modules/sales/ui/sales-api'
+import { useLocations } from '#/modules/inventory/ui/hooks/use-inventory-foundation'
+import { useSession } from '#/providers/app-session'
 
 export function ProductCreatePage({
   listSearch,
@@ -40,6 +46,7 @@ function ProductCreateContent({
   listSearch?: CatalogProductsSearch
 }) {
   const navigate = useNavigate()
+  const { authUser } = useSession()
   const { currentOrganization, isLoading: orgLoading } = useOrganization()
   const organizationId = currentOrganization?.id
   const orgActive = currentOrganization?.status === 'active'
@@ -54,7 +61,18 @@ function ProductCreateContent({
     organizationId,
     Boolean(organizationId) && orgActive,
   )
-  const createMutation = useCreateProduct(organizationId)
+  const priceListsQuery = useCatalogPriceLists(organizationId, Boolean(organizationId) && orgActive)
+  const locationsQuery = useLocations(organizationId, Boolean(organizationId) && orgActive)
+  const branchesQuery = useQuery({
+    queryKey: ['catalog-product-creation-branches', organizationId],
+    enabled: Boolean(organizationId) && orgActive,
+    queryFn: async () => {
+      const result = await listSalesBranches({ data: { organizationId: organizationId! } })
+      if (!result.ok) throw new Error(result.error.code)
+      return result.data
+    },
+  })
+  const [submitting, setSubmitting] = useState(false)
 
   const [formError, setFormError] = useState<string | null>(null)
   const unitsError = unitsQuery.isError
@@ -66,22 +84,31 @@ function ProductCreateContent({
       })()
     : null
 
-  if (orgLoading || !organizationId) {
+  if (orgLoading || !organizationId || !authUser) {
     return <PageLoading label="Carregando organização…" />
   }
 
-  async function handleSubmit(command: CreateProductCommand) {
+  const scopedOrganizationId = organizationId
+
+  async function handleSubmit(command: ProductCreationCommand, idempotencyKey: string) {
     setFormError(null)
+    setSubmitting(true)
     try {
-      const product = await createMutation.mutateAsync(command)
+      const product = unwrapCatalogRpc(
+        await catalogCreateProductWithInitialSetup({
+          data: { organizationId: scopedOrganizationId, command, idempotencyKey },
+        }),
+      )
       notificationService.success('Produto criado')
       await navigate({
         to: '/catalog/products/$productId',
-        params: { productId: product.id },
+        params: { productId: product.productId },
       })
     } catch (error) {
       const rpc = getCatalogRpcError(error)
       setFormError(rpc ? catalogErrorMessage(rpc) : 'Não foi possível criar o produto.')
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -111,12 +138,16 @@ function ProductCreateContent({
       />
       <ProductWizard
         organizationId={organizationId}
+        actorId={authUser.id}
         brands={brandsQuery.data ?? []}
         categories={categoriesQuery.data ?? []}
         attributes={attributesQuery.data ?? []}
         units={unitsQuery.data ?? []}
+        priceLists={priceListsQuery.data ?? []}
+        branches={branchesQuery.data ?? []}
+        locations={locationsQuery.data ?? []}
         unitsError={unitsError}
-        submitting={createMutation.isPending}
+        submitting={submitting}
         error={formError}
         onSubmit={handleSubmit}
         onCancel={() =>
