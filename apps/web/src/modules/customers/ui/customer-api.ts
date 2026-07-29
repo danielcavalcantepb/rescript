@@ -87,6 +87,19 @@ async function runCustomerRpc<T>(
     const app = await createServerCustomerApp(organizationId)
     return { ok: true, data: await run(app) }
   } catch (error) {
+    // Keep production diagnostics free of customer payloads. The code/message
+    // are enough to correlate a failed command in Vercel without logging PII.
+    const details =
+      error instanceof Error
+        ? {
+            code:
+              typeof (error as Error & { code?: unknown }).code === 'string'
+                ? (error as Error & { code: string }).code
+                : 'unknown',
+            message: error.message,
+          }
+        : { code: 'unknown', message: 'non_error_throwable' }
+    console.error('[customers.rpc.failed]', details)
     return { ok: false, error: toCustomerRpcError(error) }
   }
 }
