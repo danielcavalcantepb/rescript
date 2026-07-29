@@ -6,6 +6,7 @@ import { CustomerForm } from '#/modules/customers/ui/customer-form'
 import {
   toFormError,
   useCreateCustomer,
+  useCreateCustomerAddress,
 } from '#/modules/customers/ui/use-customer-queries'
 import { RequirePermission } from '#/platform/permissions'
 import { notificationService } from '#/platform/services'
@@ -17,6 +18,7 @@ export const Route = createFileRoute('/_app/crm/customers/new')({
 function NewCustomerPage() {
   const navigate = useNavigate()
   const create = useCreateCustomer()
+  const createAddress = useCreateCustomerAddress()
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({})
   const [formError, setFormError] = useState<string | null>(null)
 
@@ -43,11 +45,25 @@ function NewCustomerPage() {
             formError={formError}
             submitLabel="Criar cliente"
             onCancel={() => void navigate({ to: '/crm/customers' })}
-            onSubmit={async (values) => {
+            onSubmit={async (values, address) => {
               setFieldErrors({})
               setFormError(null)
               try {
                 const customer = await create.mutateAsync(values)
+                if (address) {
+                  await createAddress.mutateAsync({
+                    customerId: customer.id,
+                    kind: 'shipping',
+                    postalCode: address.postalCode,
+                    street: address.street,
+                    number: address.number || null,
+                    complement: address.complement || null,
+                    district: address.district || null,
+                    city: address.city,
+                    state: address.state,
+                    isPrimary: true,
+                  })
+                }
                 notificationService.success('Cliente criado.')
                 void navigate({
                   to: '/crm/customers/$customerId',

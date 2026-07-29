@@ -324,6 +324,24 @@ export function useCreateAddress(customerId: string) {
   })
 }
 
+/** Reuses the canonical address command after a customer is created in the same UI flow. */
+export function useCreateCustomerAddress() {
+  const organizationId = useOrgId()
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ customerId, ...input }: CreateAddressInput) => {
+      if (!organizationId) throw new Error('missing_org')
+      return unwrapCustomerRpc(
+        await customerCreateAddress({ data: { organizationId, input: { customerId, ...input } } }),
+      )
+    },
+    onSuccess: (_, variables) => {
+      if (!organizationId) return
+      void queryClient.invalidateQueries({ queryKey: queryKeys.customers.detail(organizationId, variables.customerId) })
+    },
+  })
+}
+
 export function useUpdateAddress(customerId: string) {
   const organizationId = useOrgId()
   const queryClient = useQueryClient()
