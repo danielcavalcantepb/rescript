@@ -41,6 +41,25 @@ function numeric(value: Json | undefined) {
   return typeof value === 'number' ? value : typeof value === 'string' ? Number(value) || 0 : 0
 }
 
+function numericOrNull(value: Json | undefined) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value
+  if (typeof value === 'string') {
+    const parsed = Number(value)
+    return Number.isFinite(parsed) ? parsed : null
+  }
+  return null
+}
+
+function moneyValue(value: Json | undefined) {
+  const amount = numericOrNull(value)
+  return amount === null ? 'Indisponível' : money.format(amount)
+}
+
+function numberValue(value: Json | undefined) {
+  const amount = numericOrNull(value)
+  return amount === null ? 'Indisponível' : number.format(amount)
+}
+
 function text(value: Json | undefined, fallback = '—') {
   return typeof value === 'string' && value.length ? value : fallback
 }
@@ -75,8 +94,8 @@ function ExecutiveDashboard() {
   if (failed) return <DashboardError onRetry={refresh} />
 
   const cards: Array<{ label: string; value: string; detail: string; icon: typeof ReceiptText; href: string; tone?: 'default' | 'warning' }> = [
-    { label: 'Receita comercial', value: money.format(numeric(data.revenue)), detail: `${number.format(numeric(data.orders))} pedidos confirmados`, icon: ReceiptText, href: '/app/sales/orders' },
-    { label: 'Saldo de caixa', value: money.format(numeric(data.cashBalance)), detail: `${money.format(numeric(data.cashInflows))} em entradas`, icon: Wallet, href: '/app/finance/cash' },
+    { label: 'Receita comercial', value: moneyValue(data.revenue), detail: `${numberValue(data.orders)} pedidos confirmados`, icon: ReceiptText, href: '/app/sales/orders' },
+    { label: 'Saldo de caixa', value: moneyValue(data.cashBalance), detail: `${moneyValue(data.cashInflows)} em entradas`, icon: Wallet, href: '/app/finance/cash' },
     { label: 'A receber', value: money.format(numeric(data.openReceivables)), detail: `${overdue.length} título(s) vencido(s)`, icon: ArrowDownRight, href: '/app/finance/receivables', tone: overdue.length ? 'warning' : 'default' },
     { label: 'A pagar', value: money.format(numeric(data.openPayables)), detail: `${money.format(numeric(data.cashOutflows))} em saídas no período`, icon: ArrowUpRight, href: '/app/finance/accounts-payable' },
     { label: 'Ticket médio', value: data.averageTicket === null ? 'Sem base' : money.format(numeric(data.averageTicket)), detail: 'somente pedidos confirmados', icon: CircleDollarSign, href: '/app/analytics' },

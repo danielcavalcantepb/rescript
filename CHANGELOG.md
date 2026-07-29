@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Real data readiness
+
+- Removed the legacy runtime mock dataset and the unused insight/pulse components that depended on fictional customers, products, sales, receivables and operational insights.
+- Analytics now discards incomplete persisted records instead of assigning artificial epoch dates, and the Command Center no longer formats absent primary KPI values as zero.
+- The local Supabase database was rebuilt successfully and all migrations were applied; schema lint findings in legacy SQL routines remain tracked separately.
+
 ### Customer Workspace
 
 - Expanded customer persistence with Company/Branch scope, abbreviated name, additional contact and registration fields.

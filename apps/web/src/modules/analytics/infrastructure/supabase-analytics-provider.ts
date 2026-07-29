@@ -69,10 +69,13 @@ async function safeRead(
 }
 
 function mapSales(row: Row): AnalyticsRecord | null {
+  const id = toString(row.sales_order_id)
+  const date = toString(row.confirmed_at)
+  if (!id || !date) return null
   return {
-    id: String(row.sales_order_id),
+    id,
     source: 'sales',
-    date: toString(row.confirmed_at) ?? new Date(0).toISOString(),
+    date,
     amount: toNumber(row.revenue),
     status: 'confirmed',
     customerName: toString(row.customer_name),
@@ -83,11 +86,14 @@ function mapSales(row: Row): AnalyticsRecord | null {
   }
 }
 
-function mapReceivable(row: Row): AnalyticsRecord {
+function mapReceivable(row: Row): AnalyticsRecord | null {
+  const id = toString(row.receivable_id)
+  const date = toString(row.due_date)
+  if (!id || !date) return null
   return {
-    id: String(row.receivable_id),
+    id,
     source: 'receivables',
-    date: toString(row.due_date) ?? new Date(0).toISOString(),
+    date,
     amount: toNumber(row.open_amount),
     status: toString(row.status),
     customerId: toString(row.customer_id),
@@ -95,11 +101,14 @@ function mapReceivable(row: Row): AnalyticsRecord {
   }
 }
 
-function mapPayable(row: Row): AnalyticsRecord {
+function mapPayable(row: Row): AnalyticsRecord | null {
+  const id = toString(row.payable_id)
+  const date = toString(row.due_date)
+  if (!id || !date) return null
   return {
-    id: String(row.payable_id),
+    id,
     source: 'payables',
-    date: toString(row.due_date) ?? new Date(0).toISOString(),
+    date,
     amount: toNumber(row.open_amount),
     status: toString(row.status),
     supplierId: toString(row.supplier_id),
@@ -119,11 +128,14 @@ function mapInventory(row: Row, generatedAt: string): AnalyticsRecord {
   }
 }
 
-function mapCustomer(row: Row): AnalyticsRecord {
+function mapCustomer(row: Row): AnalyticsRecord | null {
+  const id = toString(row.customer_id)
+  const date = toString(row.created_at)
+  if (!id || !date) return null
   return {
-    id: String(row.customer_id),
+    id,
     source: 'customers',
-    date: toString(row.created_at) ?? new Date(0).toISOString(),
+    date,
     status: toString(row.status),
     customerId: toString(row.customer_id),
     customerName: toString(row.name),
@@ -190,10 +202,10 @@ export function createSupabaseAnalyticsProvider({
         generatedAt,
         records: [
           ...sales.map(mapSales).filter((record): record is AnalyticsRecord => Boolean(record)),
-          ...receivables.map(mapReceivable),
-          ...payables.map(mapPayable),
+          ...receivables.map(mapReceivable).filter((record): record is AnalyticsRecord => Boolean(record)),
+          ...payables.map(mapPayable).filter((record): record is AnalyticsRecord => Boolean(record)),
           ...inventory.map((row) => mapInventory(row, generatedAt)),
-          ...customers.map(mapCustomer),
+          ...customers.map(mapCustomer).filter((record): record is AnalyticsRecord => Boolean(record)),
         ],
         sourceIssues,
       }

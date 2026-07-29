@@ -172,6 +172,10 @@ Este plano executa, mas não redefine, o [Documento Mestre](./MASTER_PRODUCT_DOC
 |---|---|---|---|---|
 | outbox, deliveries, credentials metadata | integration services/workers/repos | secret access and tenant policies | admin/status somente após contrato | duplicate/failure/security; Integration, Observability, Module Status |
 
+## Real Data Readiness
+
+**Progresso:** código concluído em 2026-07-28. O runtime não importa mais o dataset legado de demonstração. Leituras analíticas incompletas são descartadas ou exibidas como indisponíveis, sem datas, pontos ou KPIs inventados. As migrations foram aplicadas com sucesso em banco Supabase local reconstruído. Achados de lint em funções SQL legadas devem ser tratados em sprint própria antes da operação comercial.
+
 ## Gates e rollback comuns
 
 - Antes do merge: `typecheck`, `lint`, testes relevantes e completos, build client/SSR e migrations em banco limpo quando houver schema.

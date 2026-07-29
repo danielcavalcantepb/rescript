@@ -379,6 +379,12 @@ Emissão fiscal/XML/SEFAZ; bancos, OFX e conciliação; juros, multas, descontos
 
 Atualize este backlog quando o Documento Mestre mudar prioridade, uma dependência for resolvida ou o Module Status mudar. Ele não declara implementação concluída: essa declaração pertence ao Module Status e à documentação canônica do módulo.
 
+## Real Data Readiness
+
+| Feature | Prioridade | Status | Valor entregue | Dependência restante |
+|---|---|---|---|---|
+| Runtime sem dados fictícios | Must | Código concluído | Dataset legado e superfícies não utilizadas removidos; Analytics preserva ausência e falha como estados reais. | Corrigir achados preexistentes do lint de funções SQL em sprint própria. |
+
 ## Fundação concluída — contratos estruturais
 
 | Feature | Prioridade | Status | Valor entregue | Dependência removida |
