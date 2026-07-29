@@ -6,6 +6,7 @@ import { Input } from '#/components/ui/input'
 import { Textarea } from '#/components/ui/textarea'
 import { ButtonLoading } from '#/platform/loading'
 import { dialogs } from '#/platform/dialogs'
+import { validateCreateCustomer } from '#/modules/customers/domain/validation'
 import { cn } from '#/lib/utils'
 
 export type CustomerFormValues = CreateCustomerInput
@@ -96,9 +97,18 @@ export function CustomerForm({
   const [address, setAddress] = useState<CustomerAddressDraft>(() => ({ ...emptyAddress, city: initial?.city ?? '' }))
   const [step, setStep] = useState<1 | 2>(1)
   const [postalCodeFeedback, setPostalCodeFeedback] = useState<string | null>(null)
+  const [localFieldErrors, setLocalFieldErrors] = useState<Record<string, string>>({})
+  const visibleFieldErrors = { ...fieldErrors, ...localFieldErrors }
   const isDirty = JSON.stringify(values) !== JSON.stringify(baselineRef.current) || JSON.stringify(address) !== JSON.stringify(emptyAddress)
   const postalCodeDigits = onlyDigits(address.postalCode)
-  const set = <K extends keyof CustomerFormValues>(key: K, value: CustomerFormValues[K]) => setValues((previous) => ({ ...previous, [key]: value }))
+  const set = <K extends keyof CustomerFormValues>(key: K, value: CustomerFormValues[K]) => {
+    setValues((previous) => ({ ...previous, [key]: value }))
+    setLocalFieldErrors((previous) => {
+      if (!(key in previous)) return previous
+      const { [key]: _cleared, ...remaining } = previous
+      return remaining
+    })
+  }
   const setAddressValue = <K extends keyof CustomerAddressDraft>(key: K, value: CustomerAddressDraft[K]) => {
     setAddress((previous) => ({ ...previous, [key]: value }))
     if (key === 'city') set('city', value as CustomerFormValues['city'])
@@ -141,6 +151,14 @@ export function CustomerForm({
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     if (submitting || readOnly) return
+    const customerErrors = validateCreateCustomer(values)
+    if (Object.keys(customerErrors).length > 0) {
+      setLocalFieldErrors(customerErrors)
+      const documentIsInvalid = Boolean(customerErrors.document)
+      setStep(documentIsInvalid ? 2 : 1)
+      return
+    }
+    setLocalFieldErrors({})
     const addressStarted = address.postalCode || address.street || address.city || address.state
     const addressComplete = address.postalCode && address.street && address.city && address.state
     if (addressStarted && !addressComplete) {
@@ -166,13 +184,13 @@ export function CustomerForm({
 
     {step === 1 ? <section className="space-y-4" aria-label="Informações gerais">
       <div className="flex gap-2" role="group" aria-label="Tipo de pessoa">{(['PJ', 'PF'] as const).map((type) => <button key={type} type="button" disabled={readOnly || submitting || lockPersonType} onClick={() => set('personType', type)} className={cn('rounded-[var(--radius-md)] border px-3 py-1.5 text-xs font-medium transition-colors', values.personType === type ? 'border-[var(--color-primary)] bg-[var(--color-primary-soft)] text-[var(--color-primary)]' : 'border-[var(--color-border)] text-[var(--color-text-secondary)]')}>{type}</button>)}</div>
-      <div className="grid gap-3 sm:grid-cols-2"><FormField label={personIsIndividual ? 'Celular *' : 'Telefone *'} error={fieldErrors?.phone}><Input value={values.phone ?? ''} disabled={readOnly || submitting} onChange={(event) => set('phone', formatPhone(event.target.value))} inputMode="tel" placeholder="(00) 00000-0000" /></FormField><FormField label={personIsIndividual ? 'Nome completo *' : 'Razão social *'} error={fieldErrors?.legalName}><Input value={values.legalName} disabled={readOnly || submitting} onChange={(event) => set('legalName', event.target.value)} /></FormField></div>
-      <FormField label={personIsIndividual ? 'Nome abreviado *' : 'Nome fantasia *'} error={fieldErrors?.shortName}><Input value={values.shortName ?? values.tradeName ?? ''} disabled={readOnly || submitting} onChange={(event) => { set('shortName', event.target.value); if (!personIsIndividual) set('tradeName', event.target.value) }} /></FormField>
+      <div className="grid gap-3 sm:grid-cols-2"><FormField label={personIsIndividual ? 'Celular *' : 'Telefone *'} error={visibleFieldErrors.phone}><Input value={values.phone ?? ''} disabled={readOnly || submitting} onChange={(event) => set('phone', formatPhone(event.target.value))} inputMode="tel" placeholder="(00) 00000-0000" /></FormField><FormField label={personIsIndividual ? 'Nome completo *' : 'Razão social *'} error={visibleFieldErrors.legalName}><Input value={values.legalName} disabled={readOnly || submitting} onChange={(event) => set('legalName', event.target.value)} /></FormField></div>
+      <FormField label={personIsIndividual ? 'Nome abreviado *' : 'Nome fantasia *'} error={visibleFieldErrors.shortName}><Input value={values.shortName ?? values.tradeName ?? ''} disabled={readOnly || submitting} onChange={(event) => { set('shortName', event.target.value); if (!personIsIndividual) set('tradeName', event.target.value) }} /></FormField>
       {personIsIndividual ? <><div className="grid gap-3 sm:grid-cols-2"><FormField label="Como nos conheceu"><Input value={values.acquisitionSourceOther ?? ''} disabled={readOnly || submitting} onChange={(event) => set('acquisitionSourceOther', event.target.value)} placeholder="Ex.: indicação, Instagram" /></FormField><FormField label="Sexo"><select aria-label="Sexo" value={values.gender ?? ''} disabled={readOnly || submitting} onChange={(event) => set('gender', event.target.value || null)} className="h-9 w-full rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-ink)] outline-none transition-colors focus-visible:border-[var(--color-primary)] focus-visible:ring-2 focus-visible:ring-[var(--color-focus)]"><option value="">Selecione</option>{genderOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}</select></FormField></div><div className="grid gap-3 sm:grid-cols-2"><FormField label="Dia do aniversário"><Input type="number" min="1" max="31" value={values.birthDay ?? ''} disabled={readOnly || submitting} onChange={(event) => set('birthDay', event.target.value ? Number(event.target.value) : null)} /></FormField><FormField label="Mês do aniversário"><Input type="number" min="1" max="12" value={values.birthMonth ?? ''} disabled={readOnly || submitting} onChange={(event) => set('birthMonth', event.target.value ? Number(event.target.value) : null)} /></FormField></div></> : null}
-      <div className="grid gap-3 sm:grid-cols-2"><FormField label="E-mail" error={fieldErrors?.email}><Input type="email" value={values.email ?? ''} disabled={readOnly || submitting} onChange={(event) => set('email', event.target.value)} /></FormField><FormField label="Instagram"><Input value={formatInstagram(values.instagram ?? '')} disabled={readOnly || submitting} onChange={(event) => set('instagram', event.target.value.replace(/^@+/, ''))} placeholder="@usuario" /></FormField></div>
-      <FormField label="Observações" error={fieldErrors?.notes}><Textarea value={values.notes ?? ''} disabled={readOnly || submitting} onChange={(event) => set('notes', event.target.value)} rows={3} /></FormField>
+      <div className="grid gap-3 sm:grid-cols-2"><FormField label="E-mail" error={visibleFieldErrors.email}><Input type="email" value={values.email ?? ''} disabled={readOnly || submitting} onChange={(event) => set('email', event.target.value)} /></FormField><FormField label="Instagram"><Input value={formatInstagram(values.instagram ?? '')} disabled={readOnly || submitting} onChange={(event) => set('instagram', event.target.value.replace(/^@+/, ''))} placeholder="@usuario" /></FormField></div>
+      <FormField label="Observações" error={visibleFieldErrors.notes}><Textarea value={values.notes ?? ''} disabled={readOnly || submitting} onChange={(event) => set('notes', event.target.value)} rows={3} /></FormField>
     </section> : <section className="space-y-4" aria-label="Documentação e endereço">
-      <div className="grid gap-3 sm:grid-cols-2"><FormField label={personIsIndividual ? 'CPF' : 'CNPJ'} error={fieldErrors?.document}><Input value={personIsIndividual ? formatCpf(values.document ?? '') : formatCnpj(values.document ?? '')} disabled={readOnly || submitting} onChange={(event) => set('document', personIsIndividual ? formatCpf(event.target.value) : formatCnpj(event.target.value))} inputMode="numeric" placeholder={personIsIndividual ? '000.000.000-00' : '00.000.000/0000-00'} /></FormField>{personIsIndividual ? <FormField label="RG"><Input value={values.rg ?? ''} disabled={readOnly || submitting} onChange={(event) => set('rg', event.target.value)} /></FormField> : <FormField label="Inscrição estadual"><Input value={values.stateRegistration ?? ''} disabled={readOnly || submitting} onChange={(event) => set('stateRegistration', event.target.value)} /></FormField>}</div>
+      <div className="grid gap-3 sm:grid-cols-2"><FormField label={personIsIndividual ? 'CPF' : 'CNPJ'} error={visibleFieldErrors.document}><Input value={personIsIndividual ? formatCpf(values.document ?? '') : formatCnpj(values.document ?? '')} disabled={readOnly || submitting} onChange={(event) => set('document', personIsIndividual ? formatCpf(event.target.value) : formatCnpj(event.target.value))} inputMode="numeric" placeholder={personIsIndividual ? '000.000.000-00' : '00.000.000/0000-00'} /></FormField>{personIsIndividual ? <FormField label="RG"><Input value={values.rg ?? ''} disabled={readOnly || submitting} onChange={(event) => set('rg', event.target.value)} /></FormField> : <FormField label="Inscrição estadual"><Input value={values.stateRegistration ?? ''} disabled={readOnly || submitting} onChange={(event) => set('stateRegistration', event.target.value)} /></FormField>}</div>
       {!personIsIndividual ? <FormField label="Inscrição municipal"><Input value={values.municipalRegistration ?? ''} disabled={readOnly || submitting} onChange={(event) => set('municipalRegistration', event.target.value)} /></FormField> : null}
       <div className="border-t border-[var(--color-border)] pt-4"><h2 className="text-sm font-semibold">Endereço principal</h2><p className="mt-1 text-xs text-[var(--color-text-secondary)]">Consulte o CEP ou preencha manualmente os dados de entrega e cobrança.</p></div>
       <div className="grid gap-3 sm:grid-cols-3"><FormField label="CEP"><Input value={address.postalCode} disabled={readOnly || submitting} onChange={(event) => setAddressValue('postalCode', formatPostalCode(event.target.value))} inputMode="numeric" placeholder="00000-000" /></FormField><FormField label="Logradouro"><Input value={address.street} disabled={readOnly || submitting} onChange={(event) => setAddressValue('street', event.target.value)} /></FormField><FormField label="Número"><Input value={address.number} disabled={readOnly || submitting} onChange={(event) => setAddressValue('number', event.target.value)} /></FormField></div>
