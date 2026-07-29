@@ -118,7 +118,7 @@ function CustomersListContent() {
           }
         />
       ) : (
-        <EntityTable headers={['Cliente', 'Documento', 'Status']}>
+        <EntityTable headers={['Cliente', 'Celular', 'Cidade', 'Documento', 'Status']}>
           {items.map((item) => (
             <EntityRow
               key={item.id}
@@ -142,6 +142,12 @@ function CustomersListContent() {
                     {item.tradeName}
                   </div>
                 ) : null}
+              </EntityCell>
+              <EntityCell className="text-sm text-[var(--color-text-secondary)]">
+                {item.phone ?? '—'}
+              </EntityCell>
+              <EntityCell className="text-sm text-[var(--color-text-secondary)]">
+                {item.city ?? '—'}
               </EntityCell>
               <EntityCell className="text-sm text-[var(--color-text-secondary)]">
                 {item.document ?? '—'}

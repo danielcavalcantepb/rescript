@@ -119,6 +119,11 @@ function CustomerDetailContent({ customerId }: { customerId: string }) {
                 <Link to="/crm/customers/$customerId/edit" params={{ customerId }}>Editar</Link>
               </Button>
             ) : null}
+            {customer.status === 'active' ? (
+              <Button asChild>
+                <Link to="/sales/orders/new" search={{ customerId: customer.id } as never}>Iniciar venda</Link>
+              </Button>
+            ) : null}
             {customer.status === 'draft' || customer.status === 'inactive' ? (
               <FeatureGate permission="customers.edit">
                 <Button
@@ -202,6 +207,18 @@ function CustomerDetailContent({ customerId }: { customerId: string }) {
         <div>
           <div className="text-[var(--color-text-secondary)]">Telefone</div>
           <div>{customer.phone ?? '—'}</div>
+        </div>
+        <div>
+          <div className="text-[var(--color-text-secondary)]">Nome abreviado</div>
+          <div>{customer.shortName ?? '—'}</div>
+        </div>
+        <div>
+          <div className="text-[var(--color-text-secondary)]">Instagram</div>
+          <div>{customer.instagram ? `@${customer.instagram}` : '—'}</div>
+        </div>
+        <div>
+          <div className="text-[var(--color-text-secondary)]">Telefone secundário</div>
+          <div>{customer.secondaryPhone ?? '—'}</div>
         </div>
       </section>
 

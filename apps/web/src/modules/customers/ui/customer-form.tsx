@@ -12,6 +12,7 @@ export type CustomerFormValues = CreateCustomerInput
 
 const empty: CustomerFormValues = {
   legalName: '',
+  shortName: '',
   tradeName: '',
   personType: 'PJ',
   document: '',
@@ -113,6 +114,10 @@ export function CustomerForm({
         />
       </FormField>
 
+      <FormField label="Nome abreviado *" error={fieldErrors?.shortName}>
+        <Input value={values.shortName ?? ''} disabled={readOnly || submitting} onChange={(e) => set('shortName', e.target.value)} />
+      </FormField>
+
       {values.personType === 'PJ' ? (
         <FormField label="Nome fantasia" error={fieldErrors?.tradeName}>
           <Input
@@ -153,6 +158,29 @@ export function CustomerForm({
           />
         </FormField>
       </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <FormField label="Telefone secundário">
+          <Input value={values.secondaryPhone ?? ''} disabled={readOnly || submitting} onChange={(e) => set('secondaryPhone', e.target.value)} />
+        </FormField>
+        <FormField label="Instagram">
+          <Input value={values.instagram ?? ''} disabled={readOnly || submitting} onChange={(e) => set('instagram', e.target.value)} placeholder="@usuario" />
+        </FormField>
+      </div>
+
+      <div className="grid gap-3 sm:grid-cols-2">
+        <FormField label="Dia de aniversário"><Input type="number" min="1" max="31" value={values.birthDay ?? ''} disabled={readOnly || submitting} onChange={(e) => set('birthDay', e.target.value ? Number(e.target.value) : null)} /></FormField>
+        <FormField label="Mês de aniversário"><Input type="number" min="1" max="12" value={values.birthMonth ?? ''} disabled={readOnly || submitting} onChange={(e) => set('birthMonth', e.target.value ? Number(e.target.value) : null)} /></FormField>
+      </div>
+
+      {values.personType === 'PF' ? (
+        <FormField label="RG"><Input value={values.rg ?? ''} disabled={readOnly || submitting} onChange={(e) => set('rg', e.target.value)} /></FormField>
+      ) : (
+        <div className="grid gap-3 sm:grid-cols-2">
+          <FormField label="Inscrição estadual"><Input value={values.stateRegistration ?? ''} disabled={readOnly || submitting} onChange={(e) => set('stateRegistration', e.target.value)} /></FormField>
+          <FormField label="Responsável"><Input value={values.legalRepresentative ?? ''} disabled={readOnly || submitting} onChange={(e) => set('legalRepresentative', e.target.value)} /></FormField>
+        </div>
+      )}
 
       <FormField label="Cidade" error={fieldErrors?.city}>
         <Input

@@ -1107,58 +1107,103 @@ export type Database = {
       }
       customer: {
         Row: {
+          acquisition_source_id: string | null
+          acquisition_source_other: string | null
           archived_at: string | null
           archived_by: string | null
+          birth_day: number | null
+          birth_month: number | null
+          branch_id: string
           city: string | null
+          commercial_phone: string | null
+          company_id: string
           created_at: string
           created_by: string
           document: string | null
           email: string | null
+          gender: string | null
           id: string
+          instagram: string | null
+          legal_representative: string | null
+          municipal_registration: string | null
           name: string
           notes: string | null
           organization_id: string
           person_type: string
           phone: string | null
+          rg: string | null
+          secondary_phone: string | null
+          short_name: string
           status: string
+          state_registration: string | null
           trade_name: string | null
           updated_at: string
           updated_by: string
         }
         Insert: {
+          acquisition_source_id?: string | null
+          acquisition_source_other?: string | null
           archived_at?: string | null
           archived_by?: string | null
+          birth_day?: number | null
+          birth_month?: number | null
+          branch_id: string
           city?: string | null
+          commercial_phone?: string | null
+          company_id: string
           created_at?: string
           created_by: string
           document?: string | null
           email?: string | null
+          gender?: string | null
           id?: string
+          instagram?: string | null
+          legal_representative?: string | null
+          municipal_registration?: string | null
           name: string
           notes?: string | null
           organization_id: string
           person_type: string
           phone?: string | null
+          rg?: string | null
+          secondary_phone?: string | null
+          short_name: string
           status?: string
+          state_registration?: string | null
           trade_name?: string | null
           updated_at?: string
           updated_by: string
         }
         Update: {
+          acquisition_source_id?: string | null
+          acquisition_source_other?: string | null
           archived_at?: string | null
           archived_by?: string | null
+          birth_day?: number | null
+          birth_month?: number | null
+          branch_id?: string
           city?: string | null
+          commercial_phone?: string | null
+          company_id?: string
           created_at?: string
           created_by?: string
           document?: string | null
           email?: string | null
+          gender?: string | null
           id?: string
+          instagram?: string | null
+          legal_representative?: string | null
+          municipal_registration?: string | null
           name?: string
           notes?: string | null
           organization_id?: string
           person_type?: string
           phone?: string | null
+          rg?: string | null
+          secondary_phone?: string | null
+          short_name?: string
           status?: string
+          state_registration?: string | null
           trade_name?: string | null
           updated_at?: string
           updated_by?: string
@@ -3680,6 +3725,12 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      branch: {
+        Row: { archived_at: string | null; archived_by: string | null; code: string; created_at: string; created_by: string; id: string; is_default: boolean; name: string; organization_id: string; status: string; updated_at: string; updated_by: string }
+        Insert: { archived_at?: string | null; archived_by?: string | null; code: string; created_at?: string; created_by: string; id?: string; is_default?: boolean; name: string; organization_id: string; status?: string; updated_at?: string; updated_by: string }
+        Update: { archived_at?: string | null; archived_by?: string | null; code?: string; created_at?: string; created_by?: string; id?: string; is_default?: boolean; name?: string; organization_id?: string; status?: string; updated_at?: string; updated_by?: string }
+        Relationships: [{ foreignKeyName: "branch_organization_id_fkey"; columns: ["organization_id"]; isOneToOne: false; referencedRelation: "organization"; referencedColumns: ["id"] }]
       }
       organization: {
         Row: {

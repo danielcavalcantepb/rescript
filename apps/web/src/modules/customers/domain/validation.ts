@@ -21,6 +21,7 @@ export const CUSTOMER_LIMITS = {
   phone: 40,
   city: 120,
   notes: 2000,
+  shortName: 200,
   roleTitle: 120,
   postalCode: 16,
   street: 200,
@@ -53,9 +54,16 @@ function validateOptionalLengths(
     phone?: string | null
     city?: string | null
     notes?: string | null
+    shortName?: string | null
   },
   errors: FieldErrors,
 ) {
+  if (
+    input.shortName !== undefined &&
+    (!input.shortName?.trim() || input.shortName.trim().length > CUSTOMER_LIMITS.shortName)
+  ) {
+    errors.shortName = `Nome abreviado deve ter entre 1 e ${CUSTOMER_LIMITS.shortName} caracteres.`
+  }
   if (
     input.legalName !== undefined &&
     input.legalName.trim().length > CUSTOMER_LIMITS.legalName
@@ -126,6 +134,11 @@ export function validateCreateCustomer(input: CreateCustomerInput): FieldErrors 
   if (email && !isValidEmail(email)) errors.email = 'E-mail inválido.'
 
   validateOptionalLengths(input, errors)
+  if (input.phone?.trim() && normalizePhoneDigits(input.phone).length < 10) {
+    errors.phone = 'Informe um celular brasileiro com DDD.'
+  }
+  if (input.birthDay !== undefined && input.birthDay !== null && (input.birthDay < 1 || input.birthDay > 31)) errors.birthDay = 'Dia de aniversário inválido.'
+  if (input.birthMonth !== undefined && input.birthMonth !== null && (input.birthMonth < 1 || input.birthMonth > 12)) errors.birthMonth = 'Mês de aniversário inválido.'
   return errors
 }
 
@@ -156,7 +169,12 @@ export function validateUpdateCustomer(
   }
 
   validateOptionalLengths(input, errors)
+  if (input.phone !== undefined && input.phone?.trim() && normalizePhoneDigits(input.phone).length < 10) errors.phone = 'Informe um celular brasileiro com DDD.'
   return errors
+}
+
+function normalizePhoneDigits(value: string): string {
+  return value.replace(/\D/g, '')
 }
 
 export function validateCreateContact(input: CreateContactInput): FieldErrors {

@@ -166,14 +166,32 @@ Prioridade **Must** · Complexidade **M** · Estimativa **3** · Status **Em des
 #### Épico CRM-01 — Customer Workspace
 **Descrição:** tornar cliente contexto de relacionamento. **Objetivo:** reunir histórico e pendências. **Impacto:** atendimento mais rápido.
 
-**Feature CRM-01.1 — Timeline e relacionamentos** — Valor entregue: contexto do cliente em um local.
+**Feature CRM-01.1 — Customer Aggregate expandido** — Valor entregue: cadastro consistente e seguro antes do Workspace.
+
+Como **operador autorizado**
+Quero **manter identidade, documentos, endereço principal, origem e dependentes do cliente no agregado canônico**
+Para **usar o mesmo cadastro em vendas, financeiro e relacionamento sem duplicidade**.
+
+Aceite: ownership obrigatório por Organization/Company/Branch; lifecycle draft/active/inactive/archived; pessoa individual/company; validação e alerta de duplicidade; acquisition source; endereço principal; dependentes; RLS/RBAC/auditoria; migração incremental e testes cross-tenant.
+Prioridade **Must** · Complexidade **L** · Estimativa **5** · Status **Planejado**.
+
+**Feature CRM-01.2 — Workspace, timeline e relacionamentos** — Valor entregue: contexto do cliente em um local.
 
 Como **atendente comercial**  
 Quero **ver pedidos, títulos e contatos do cliente em um Workspace**  
 Para **responder sem navegar por vários módulos**.
 
-Aceite: dados autorizados; timeline append-only; links para origem; paginação; sem N+1; testes tenant.  
-Prioridade **Should** · Complexidade **L** · Estimativa **5** · Status **Planejado**.
+Aceite: dados autorizados; timeline append-only; vendas e recebíveis por read model; links para origem; paginação; sem N+1; preservação da criação contextual no pedido; testes tenant.
+Prioridade **Must** · Complexidade **L** · Estimativa **5** · Status **Planejado**.
+
+**Feature CRM-01.3 — Pesquisa, filtros e exportação autorizada** — Valor entregue: base de clientes acionável sem carregar todo o cadastro.
+
+Como **gestor comercial**
+Quero **pesquisar e filtrar clientes por identidade, origem, localização, status e situação comercial autorizada**
+Para **agir sobre a carteira com contexto**.
+
+Aceite: busca server-side normalizada; filtros paginados; exportação CSV respeitando filtros e permissões; dados financeiros ocultos sem `customers.view_financial`; acessibilidade, responsividade e auditoria.
+Prioridade **Should** · Complexidade **M** · Estimativa **3** · Status **Planejado**.
 
 ### Compras, fornecedores e recebimentos
 

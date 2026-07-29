@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+### Customer Workspace
+
+- Expanded customer persistence with Company/Branch scope, abbreviated name, additional contact and registration fields.
+- Added tenant-aware acquisition sources and dependents, plus additive search indexing for abbreviated name and Instagram.
+
+### Documentation
+
+- Formalizado o Customer Domain: ownership obrigatório por Organization, Company e Branch; lifecycle `draft/active/inactive/archived`; dados principais, pessoa/documentos, address principal, AcquisitionSource e Child/Dependent.
+- Esclarecido o lifecycle: `draft` representa cadastro iniciado com informações incompletas e não é elegível para operações; somente `active` é operacional.
+- Definidos eventos, permissões, auditoria, integrações com Sales/Finance/Analytics e indicadores derivados de Customer. Esta alteração não inclui código, migrations ou telas.
+
 ### Analytics
 
 - Added read-only projections and server-side KPIs, rankings, and time-series APIs derived from operational facts.

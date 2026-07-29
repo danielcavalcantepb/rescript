@@ -23,7 +23,7 @@ Esta auditoria reconcilia o [Documento Mestre](./MASTER_PRODUCT_DOCUMENT.md), [M
 | Produtos | Produto simples/variável, Variant, categoria, marca, atributo/valor e assignment; Variant é unidade identificável. | Tenant, `catalog.*`, lifecycle/history e projeção estruturada. | Preço, saldo e custo não pertencem ao Product; faltam filtro avançado consolidado, imagem, contexto fiscal e cutover. Índices compostos para tenant+status+categoria/marca/atributo devem ser validados no plano de query. | Pricing, Inventory, Sales, Purchasing, Fiscal. |
 | Categorias | Category com parent, slug, status e ordenação. | Tenant, permissões, auditoria e prevenção de ciclos no contrato vigente. | Confirmar limite de profundidade e índice tenant+parent+status; evento de reordenação somente se ordenação virar fato operacional. | Produtos e busca. |
 | Marcas | Brand ligada ao Product. | Tenant, permissões e auditoria canônicos. | Falta agregação comercial/estoque; índice tenant+slug e tenant+status para consulta. | Produtos, Analytics. |
-| Clientes | Customer, contatos, endereços, history e search. | RLS, permissões e auditoria via domínio. | Falta Workspace comercial/financeiro, timeline cross-domain, definição de cliente ativo e inadimplência. Índices de busca normalizada por tenant/documento/email/telefone. | Sales, Receivable, CRM. |
+| Clientes | Customer formalizado com Organization, Company e Branch obrigatórias; dados principais, pessoa/documentos, address principal, acquisition source e Child/Dependent. | Lifecycle `draft/active/inactive/archived`, RLS/RBAC/auditoria e eventos estão definidos no Core; a implementação permanece pendente. | Falta implementar o Customer Workspace, projeções comerciais/financeiras, catálogo persistente de origem, dependentes e índices de busca normalizada por organização/documento/email/telefone. Cliente ativo, recorrência, última compra, ticket e saldo aberto agora possuem contrato de leitura derivada. | Sales, Finance/Receivable, Analytics, CRM. |
 | Fornecedores | Supplier, contatos, endereços, history e search. | RLS, permissões e auditoria via domínio. | Falta contexto de compras/financeiro, custos e devoluções. Índices normalizados equivalentes a Customer. | Purchasing, Receiving, Payable. |
 | Compras | Purchase Order, itens, snapshots, número, lifecycle e busca. | Lifecycle, `purchasing.orders.*`, RLS e history append-only. | Falta picker canônico, contrato de custo, aprovação/cotação e consulta de pendência agregada. Índices tenant+status+data e itens por variant devem sustentar listas. | Supplier, Catalog, Pricing, Receiving. |
 | Vendas | Quotation/Sales Order, itens e snapshots de cliente/produto/preço, history e search. | Lifecycle, Sales permissions, audit e validação monetária no servidor. | Faltam contratos de vendedor, canal, filial, entrega, condição/pagamento e efeito confirmado em estoque/financeiro. Eventos de SaleConfirmed/Cancelled devem ser definidos junto aos efeitos. Índices tenant+status+data/customer e item+variant. | Customer, Pricing, Inventory, Receivable. |
@@ -64,7 +64,10 @@ Esta auditoria reconcilia o [Documento Mestre](./MASTER_PRODUCT_DOCUMENT.md), [M
 | Faturamento hoje/período | Receita confirmada no intervalo | Sales Order, itens | Parcial | Não | confirmação comercial e projeção reconciliada pendentes |
 | Vendas/Pedidos | Contagem de pedidos confirmados | Sales Order | Parcial | Não | lifecycle de confirmação/efeitos ainda não aprovado |
 | Ticket médio | Receita / pedidos confirmados | Sales Order | Bloqueado | Não | depende de Receita confirmada |
-| Clientes | Contagem por tenant e status | Customer | Parcial | Sim, para total | “ativo” exige regra explícita |
+| Clientes | Contagem por tenant, company, branch e status | Customer | Contrato definido | Sim, para total e ativos após implementação | cliente ativo é status `active`; projeção/read query ainda precisa ser implementada |
+| Clientes recorrentes | Clientes com duas ou mais vendas confirmadas no período | Customer, Sales Order | Contrato definido | Não | depende da projeção de Sales confirmada por cliente |
+| Última compra / ticket por cliente | Última venda confirmada; receita confirmada / pedidos confirmados do cliente | Customer, Sales Order | Contrato definido | Não | depende de Analytics comercial por cliente |
+| Saldo aberto por cliente | Soma de recebíveis abertos autorizados | Customer, Receivable | Contrato definido | Não | depende da projeção Finance/Receivable por cliente |
 | Produtos/variantes | Contagem por tenant/status | Product, Variant | Atual | Sim | filtros avançados não impedem total |
 | Contas a receber | Soma de parcelas abertas por vencimento | Receivable, Installment | Planejado | Não | aggregate não operacional |
 | Contas a pagar | Soma de parcelas abertas por vencimento | Payable, Installment | Atual | Sim, no escopo AP | settlement ainda ausente |
@@ -89,6 +92,10 @@ Esta auditoria reconcilia o [Documento Mestre](./MASTER_PRODUCT_DOCUMENT.md), [M
 ## Atualização — contratos fundamentais
 
 Branch, PaymentTerm e InventoryPolicy foram implementados como aggregates organizacionais. Permanecem fora de escopo nesta fundação os efeitos consumidores: atribuição de filial a documentos legados, geração de receivable por Sales e alteração de disponibilidade por política. Esses efeitos pertencem à sprint de confirmação de Sales Order.
+
+## Atualização — expansão oficial de Customer
+
+O contrato de Customer foi expandido sem implementação técnica nesta fase. Ownership obrigatório por Organization, Company e Branch; lifecycle `draft/active/inactive/archived`; dados pessoais/jurídicos, address principal, dependentes e AcquisitionSource passam a ser requisitos canônicos. `draft` é cadastro iniciado, com informações ainda incompletas e sem elegibilidade operacional; somente `active` pode participar de novas operações. Customer não passa a ser autoridade de Sales ou Finance: vendas, títulos, caixa e suas projeções continuam pertencendo aos respectivos domínios. A próxima sprint deve materializar este contrato incrementalmente, com RLS, RBAC, auditoria, migrações aditivas e read models autorizados.
 
 ## Políticas transversais
 

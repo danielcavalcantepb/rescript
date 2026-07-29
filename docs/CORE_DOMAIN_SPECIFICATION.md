@@ -47,7 +47,7 @@ Esta é a constituição do Core Domain. Mudanças de entidade, estado, ownershi
 | Product | identidade comercial simples/variável; não possui saldo/preço | `catalog.products.write` cria/altera/arquiva | ativo/arquivado; lifecycle/history | Category, Brand, Variant; simples possui variante padrão | produtos/status |
 | ProductVariant | unidade vendável e identificável | comando do Product cria/altera/arquiva; leitura autorizada | ativa/arquivada; assignment events | Product, AttributeValue, Pricing, Inventory; SKU/barcode únicos | variantes, disponibilidade e ranking por projeção |
 | PriceList/Item | autoridade única de preço vigente | `prices.*` cria/altera/arquiva | tabela/item ativo/arquivado; eventos de preço | Variant, Money, vigência; conflito é inválido | preço resolvido; nunca receita/custo |
-| Customer | identidade, contatos e endereços | comandos Customer criam/altera/arquivam | ativo/arquivado; create/update/archive/history | Sales, Receivable futuro | total de clientes; “ativo” requer regra |
+| Customer | identidade, contatos, documentos, endereço principal e dependentes | comandos Customer criam/altera/transicionam/arquivam | draft/active/inactive/archived; eventos e history append-only | Organization, Company, Branch, Sales, Finance, Analytics e CRM | total, ativos, recorrentes, última compra, ticket, origem e saldo aberto |
 | Supplier | identidade, contatos e endereços do fornecedor | comandos Supplier criam/altera/arquivam | ativo/arquivado; create/update/archive/history | Purchase, Payable futuro | contexto de compras |
 | PurchaseOrder/Item | intenção de compra e snapshots | `purchasing.orders.*` cria/altera/transiciona | Draft→Sent→Confirmed→Closed ou Cancelled; Purchase events/history | Supplier, Variant, Pricing, Receiving; não altera saldo | pedidos e pendência de recebimento |
 | GoodsReceiving/Item | recebimento físico de Purchase confirmada | Receiving cria/inicia/conclui/cancela | Draft→Receiving→Completed ou Cancelled; Receiving events/history | Purchase, Inventory Ledger; não excede pendente; conclusão idempotente | entradas e pendências |
@@ -62,6 +62,72 @@ Esta é a constituição do Core Domain. Mudanças de entidade, estado, ownershi
 | Payment/PaymentAllocation | fato financeiro efetivo e sua alocação exclusiva em título | Finance posta ou reverte integralmente; não atualiza destrutivamente | posted/reversed; PaymentPosted, PaymentAllocated, PaymentReversed | CashAccount, Receivable ou Payable, Branch; alocação não supera payment nem título | realizado e saldo |
 | CashAccount/CashLedger/FinancialTransfer | manter dinheiro e fatos imutáveis de caixa | Finance cria conta; Ledger é criado por commands; nunca editado/removido | conta ativa/inativa/arquivada; ledger credit/debit/reversal; transferência é par atômico debit/credit | Organization, Company, Branch, Payment; saldo sempre derivado do ledger | saldo, realizado e projeção |
 | FiscalProfile/Operation/Rule/Document | contratos fiscais alvo, ainda não operacionais | escrita proibida até escopo aprovado | eventos/lifecycle dependem do Tax Engine/Builder | Variant e FiscalSource | consulta fiscal futura |
+
+## Customer Domain — contrato oficial expandido
+
+### Aggregate, ownership e responsabilidade
+
+`Customer` é o agregado que representa a contraparte comercial da empresa. É a única autoridade para identidade cadastral, contatos, documentos, endereço principal, fonte de aquisição e dependentes. Todo Customer pertence obrigatoriamente a uma `Organization`, `Company` e `Branch`; esses três identificadores integram seu escopo de autorização e não aceitam referência cruzada. Empresa de unidade única usa a Branch padrão, nunca `NULL`.
+
+| Elemento | Contrato canônico |
+|---|---|
+| Identidade | `id`, `organizationId`, `companyId`, `branchId`, `createdAt`, `createdBy`, `updatedAt`, `updatedBy`, `archivedAt`, `archivedBy` e metadados de auditoria. |
+| Dados principais | `fullName`, `shortName`, `phone`, `secondaryPhone`, `email`, `instagram`, `acquisitionSource` e `notes`. Nome completo, nome abreviado, telefone e fonte de aquisição são obrigatórios para ativação. |
+| Pessoa e documentos | `personType` é `individual` ou `company`. Individual pode conter CPF e RG; company pode conter CNPJ, razão social, nome fantasia, inscrições estadual e municipal. Documento é validado, normalizado, único no escopo aplicável e auditado quando alterado. |
+| Address principal | Endereço principal pertence ao Customer, com CEP, logradouro, número, complemento, bairro, cidade, UF, país Brasil por padrão e referência opcional. A composição permite múltiplos endereços no futuro, mas esta fase reconhece somente o principal. |
+| Child/Dependent | Entidade interna do agregado, identificada pelo Customer e mesmo escopo organizacional. Não cria um segundo Customer e não recebe ownership independente. |
+| AcquisitionSource | Catálogo organizacional de origem. Valores iniciais aprovados: Instagram, Indicação, Google, WhatsApp, Loja física, Evento, Campanha e Outro; `Outro` exige descrição contextual. |
+
+Customer não possui receita, saldo financeiro, pedido, pagamento ou métrica calculada como estado autoritativo. Sales mantém pedidos e Finance mantém títulos, liquidações e caixa. Customer apenas referencia tais fatos para leitura autorizada.
+
+### Lifecycle, invariantes e transições
+
+| Estado | Significado | Transições permitidas |
+|---|---|---|
+| `draft` | cadastro iniciado com informações ainda incompletas; não é cliente operacional conforme as regras de negócio vigentes | `active`, `archived` |
+| `active` | cadastro válido e elegível para seleção em operações autorizadas | `inactive`, `archived` |
+| `inactive` | cadastro preservado, mas indisponível para novas operações | `active`, `archived` |
+| `archived` | cadastro retirado de uso corrente, com histórico preservado | `active` ou `inactive` somente por reativação explícita |
+
+Invariantes: Customer não é excluído fisicamente quando possui histórico; `draft` não pode ser selecionado em fluxos operacionais; somente `active` é elegível para novas operações; `Organization`, `Company` e `Branch` são obrigatórios; email é válido quando informado; telefone é normalizado e validado para DDD brasileiro; Instagram é normalizado sem exigir URL; CPF/CNPJ não podem duplicar no escopo da Organization; nomes iguais nunca bloqueiam por si só, mas podem ser sinalizados como possível duplicidade. Todo dependent, address e acquisition source deve pertencer ao mesmo escopo do Customer.
+
+### Permissões, RLS e auditoria
+
+| Permissão | Capacidade |
+|---|---|
+| `customers.read` | consultar Customer e dados não sensíveis autorizados |
+| `customers.create` | iniciar e ativar novo Customer segundo as validações |
+| `customers.update` | alterar dados principais, cadastrais e endereço conforme escopo |
+| `customers.archive` | arquivar, reativar ou inativar Customer |
+| `customers.view_sales` | consultar relações e métricas comerciais derivadas |
+| `customers.view_financial` | consultar recebíveis e valores financeiros derivados |
+| `customers.manage_dependents` | criar, editar e remover dependentes no agregado |
+| `customers.export` | exportar resultados autorizados e filtrados |
+
+RLS aplica Organization, Company e Branch antes de qualquer leitura ou mutação. A autorização do servidor não depende de ocultar ações na interface. A auditoria registra criação, atualização, transição de lifecycle, alteração documental, alteração de endereço, manutenção de dependent, potencial duplicidade e acesso financeiro sensível quando o mecanismo de auditoria suportar essa categoria.
+
+### Eventos e consumidores
+
+| Evento | Quem dispara / quando | Consumidores e efeito permitido |
+|---|---|---|
+| `CustomerCreated` | command cria Customer em `draft` ou `active` permitido | history/audit, busca e Analytics de cadastro |
+| `CustomerUpdated` | command altera dados principais ou cadastrais | history/audit e projeções de busca |
+| `CustomerActivated` | transição explícita para `active` | Sales eligibility, history/audit e dimensão Analytics |
+| `CustomerInactivated` | transição de `active` para `inactive` | eligibility de novas operações e history/audit |
+| `CustomerArchived` | command arquiva o agregado | busca, history/audit e proteção contra novas seleções |
+| `CustomerDependentAdded` | command mantém dependent válido | history/audit do Customer |
+| `CustomerAddressUpdated` | command cria ou altera address principal | history/audit e leitura autorizada |
+
+Os eventos não escrevem Sales, Finance ou CRM diretamente. Eles atualizam somente history, auditoria, projeções de Customer e dimensões analíticas autorizadas.
+
+### Relações e indicadores derivados
+
+| Relação / indicador | Fonte e regra |
+|---|---|
+| Sales | SalesOrder mantém o snapshot do Customer. Customer Workspace apenas navega para pedidos autorizados; iniciar venda propaga `customerId`, `companyId` e `branchId` sem duplicar cadastro. |
+| Finance | Finance continua autoridade de Receivable, liquidação e caixa. Customer expõe saldo aberto, títulos vencidos, recebido e pendente exclusivamente por leitura autorizada. |
+| Analytics | Cliente ativo = Customer em `active` na data de referência; recorrente = cliente com duas ou mais vendas confirmadas no período filtrado; última compra = venda confirmada mais recente; ticket médio = receita confirmada / pedidos confirmados do cliente; origem = dimensão `AcquisitionSource`; saldo aberto = soma dos recebíveis abertos autorizados. |
+| CRM | CRM pode consumir Customer e eventos para relacionamento futuro, mas não pode alterar ownership, documento, lifecycle ou dados cadastrais sem commands Customer. |
 
 ## Fluxos e invariantes
 

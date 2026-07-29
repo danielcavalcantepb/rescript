@@ -135,16 +135,16 @@ Este plano executa, mas não redefine, o [Documento Mestre](./MASTER_PRODUCT_DOC
 
 ### 7. CRM / Customer Workspace
 
-**Objetivo:** reunir relacionamento, documentos e pendências do cliente.  
-**Pré-requisitos/dependências:** Sales confirmado, Receivable/Finance e Search.  
-**Entregas:** timeline, relacionamentos e links de origem.  
-**Aceite/DoD:** dados financeiros somente autorizados; paginação; sem N+1; cliente contextual preserva estado de Sales.  
-**Riscos/testes/rollback:** exposição indevida e timeline incompleta; RLS/cross-tenant/empty state; rollout por abas.  
+**Objetivo:** materializar o agregado Customer oficialmente expandido e reunir relacionamento, documentos e pendências em um único contexto.
+**Pré-requisitos/dependências:** contrato Customer congelado, Organization/Company/Branch, Sales confirmado, Receivable/Finance, Analytics e Search.
+**Entregas:** dados principais e cadastrais por tipo de pessoa, address principal, AcquisitionSource, dependentes, busca/filtros, Workspace, timeline, relacionamentos e links de origem.
+**Aceite/DoD:** ownership obrigatório por Organization/Company/Branch; lifecycle draft/active/inactive/archived; duplicidade de telefone/documento tratada; dados financeiros somente autorizados; paginação; sem N+1; cliente contextual preserva estado de Sales.
+**Riscos/testes/rollback:** exposição indevida, duplicidade e timeline incompleta; RLS/RBAC/cross-tenant/empty state; migrations somente aditivas e rollout por abas, sem excluir cadastro existente.
 **Impacto:** produtividade comercial e suporte.
 
 | Tabelas/migrations | Services/repos | Policies | Hooks/componentes/páginas | Testes/documentação |
 |---|---|---|---|---|
-| projection de relações somente se necessária | Customer read service | Customers/Finance visibility | Customer Workspace/timeline | tenant/perf/UI; Customers, Sales, Finance |
+| extensão incremental de Customer, endereço principal, acquisition source, dependentes e projeções de relação quando necessárias | Customer command/read services e normalização de busca | customers + Finance/Sales visibility | lista, cadastro, detalhe, criação contextual, Workspace/timeline | tenant/RBAC/duplicidade/perf/UI; Customers, Sales, Finance, Analytics |
 
 ### 8. Fiscal Foundation
 

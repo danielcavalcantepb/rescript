@@ -102,13 +102,21 @@ O posicionamento é **profundidade enterprise com produtividade de software mode
 
 ### 4.2 CRM, clientes e relacionamento
 
-**Objetivo.** Fazer do cliente uma entidade operacional: identificação, contato, endereço, histórico, documentos comerciais, pendências e próximos passos.
+**Objetivo.** Fazer do cliente uma entidade operacional completa: identificação, contato, endereço principal, documentos, dependentes, histórico, documentos comerciais, pendências e próximos passos.
 
-**Telas.** Lista e busca, Customer Workspace, criação/edição em página, criação contextual em drawer dentro de vendas quando autorizada.
+**Ownership.** Todo Customer pertence obrigatoriamente a uma `Organization`, `Company` e `Branch`. A ausência de filial não é representada por `NULL`: a empresa de uma única unidade utiliza sua Branch padrão. Nenhuma referência, documento, endereço, dependente ou consulta pode cruzar esse escopo.
 
-**Fluxos.** Pesquisar por nome, documento, email ou telefone; criar pelo domínio oficial; detectar potencial duplicidade; selecionar o cliente recém-criado sem reiniciar o documento de venda.
+**Dados oficiais.** O agregado mantém `fullName`, `shortName`, `phone`, `secondaryPhone`, `email`, `instagram`, `acquisitionSource` e `notes`. `personType` é `individual` ou `company`. Pessoa física pode possuir CPF e RG; pessoa jurídica pode possuir CNPJ, razão social, nome fantasia, inscrições estadual e municipal. Documentos e contatos sensíveis são auditados e validados no servidor. O endereço principal pertence ao Customer e a modelagem permanece preparada para múltiplos endereços futuros. Child/Dependent é uma entidade dependente do Customer, nunca um Customer paralelo.
 
-**Permissões e auditoria.** Leitura e mutação são validadas no servidor; criação, atualização e mudanças de lifecycle entram no histórico/auditoria central.
+**Fonte de aquisição.** `AcquisitionSource` é catálogo organizacional, selecionado pelo Customer e disponível como dimensão analítica. O catálogo inclui as opções iniciais aprovadas e a opção `Outro` com descrição; não é substituído por texto livre sem classificação.
+
+**Lifecycle.** `draft → active`, `draft → archived`, `active → inactive|archived`, `inactive → active|archived`; `draft` significa cadastro iniciado com informações ainda incompletas e cliente não operacional conforme as regras vigentes. Somente `active` é elegível para novas operações. Um Customer arquivado só retorna por reativação explícita para `active` ou `inactive`. Arquivamento preserva histórico e relacionamentos; exclusão física de Customer com histórico é proibida.
+
+**Telas e fluxos aprovados.** Lista e busca, Customer Workspace, criação/edição em página e criação contextual em drawer dentro de vendas quando autorizada. A busca cobre nome, nome abreviado, documento, email, telefone e Instagram; a criação detecta potencial duplicidade sem descartar o trabalho em andamento. O cliente recém-criado pode ser selecionado no Sales Workspace sem reiniciar itens, descontos ou observações.
+
+**Permissões e auditoria.** As permissões canônicas são `customers.read`, `customers.create`, `customers.update`, `customers.archive`, `customers.view_sales`, `customers.view_financial`, `customers.manage_dependents` e `customers.export`. Leitura e mutação são validadas no servidor; criação, atualização, ativação, inativação, arquivamento, alteração de endereço/documentos e manutenção de dependentes entram no histórico/auditoria central.
+
+**Analytics e integrações.** Sales e Finance permanecem autoridades de seus próprios fatos. Customer expõe dimensões e relações para cliente ativo, cliente recorrente, última compra, ticket médio, origem e saldo em aberto. A tela consulta projeções oficiais: não recalcula vendas nem recebíveis no navegador. CRM futuro consome o Customer, mas não altera sua ownership.
 
 **CRM futuro.** Leads, pipeline, negócios, agenda, tarefas, email, WhatsApp e automações são V2/V3. Não serão simulados como funcionalidades atuais; precisam de fontes de comunicação, consentimento, ownership e timeline próprios.
 

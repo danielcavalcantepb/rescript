@@ -11,13 +11,28 @@ export type AddressStatus = 'active' | 'inactive' | 'archived'
 export type Customer = {
   id: string
   organizationId: string
+  companyId?: string
+  branchId?: string
   personType: CustomerPersonType
   legalName: string
+  shortName?: string
   tradeName: string | null
   document: string | null
   email: string | null
   phone: string | null
-  city: string | null
+  secondaryPhone?: string | null
+  commercialPhone?: string | null
+  instagram?: string | null
+  acquisitionSourceId?: string | null
+  acquisitionSourceOther?: string | null
+  gender?: string | null
+  birthDay?: number | null
+  birthMonth?: number | null
+  rg?: string | null
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  legalRepresentative?: string | null
+  city?: string | null
   notes: string | null
   status: CustomerStatus
   archivedAt: string | null
@@ -35,6 +50,7 @@ export type CustomerListItem = {
   document: string | null
   email: string | null
   phone: string | null
+  city?: string | null
   status: CustomerStatus
   updatedAt: string
 }
@@ -99,10 +115,23 @@ export type CustomerSnapshot = {
 export type CreateCustomerInput = {
   personType: CustomerPersonType
   legalName: string
+  shortName?: string | null
   tradeName?: string | null
   document?: string | null
   email?: string | null
   phone?: string | null
+  secondaryPhone?: string | null
+  commercialPhone?: string | null
+  instagram?: string | null
+  acquisitionSourceId?: string | null
+  acquisitionSourceOther?: string | null
+  gender?: string | null
+  birthDay?: number | null
+  birthMonth?: number | null
+  rg?: string | null
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  legalRepresentative?: string | null
   city?: string | null
   notes?: string | null
   /** When true and document valid → create as active; else draft. */
@@ -111,10 +140,23 @@ export type CreateCustomerInput = {
 
 export type UpdateCustomerInput = {
   legalName?: string
+  shortName?: string | null
   tradeName?: string | null
   document?: string | null
   email?: string | null
   phone?: string | null
+  secondaryPhone?: string | null
+  commercialPhone?: string | null
+  instagram?: string | null
+  acquisitionSourceId?: string | null
+  acquisitionSourceOther?: string | null
+  gender?: string | null
+  birthDay?: number | null
+  birthMonth?: number | null
+  rg?: string | null
+  stateRegistration?: string | null
+  municipalRegistration?: string | null
+  legalRepresentative?: string | null
   city?: string | null
   notes?: string | null
 }

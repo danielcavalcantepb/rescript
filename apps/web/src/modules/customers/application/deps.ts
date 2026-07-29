@@ -35,7 +35,7 @@ export function canCreateCustomers(can: CustomerAppDeps['can']): boolean {
 }
 
 export function canEditCustomers(can: CustomerAppDeps['can']): boolean {
-  return can('customers.edit') || can('customers.write')
+  return can('customers.update') || can('customers.edit') || can('customers.write')
 }
 
 export function canArchiveCustomers(can: CustomerAppDeps['can']): boolean {
