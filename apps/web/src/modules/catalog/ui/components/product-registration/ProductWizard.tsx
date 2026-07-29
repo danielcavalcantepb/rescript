@@ -247,7 +247,7 @@ export function ProductWizard({
 
         <div className="min-h-[440px] p-5 sm:p-7">
           {step === 1 ? (
-          <BasicStep draft={draft} units={units} categories={categories} brands={brands} update={update} />
+          <BasicStep draft={draft} units={units} update={update} />
           ) : null}
           {step === 2 ? (
             <ClassificationStep
@@ -313,11 +313,9 @@ export function ProductWizard({
   )
 }
 
-function BasicStep({ draft, units, categories, brands, update }: {
+function BasicStep({ draft, units, update }: {
   draft: Draft
   units: UnitOfMeasureResponse[]
-  categories: CategoryResponse[]
-  brands: BrandResponse[]
   update: (next: Partial<Draft>) => void
 }) {
   const matchedUnit = units.find((item) => item.id === draft.unitId)
@@ -369,8 +367,6 @@ function BasicStep({ draft, units, categories, brands, update }: {
           </>
         </Field>
         {draft.kind === 'simple' ? <Field label="Código de barras"><input className={fieldClass} value={draft.barcode} onChange={(e) => update({ barcode: e.target.value })} /></Field> : null}
-        <Field label="Categoria"><select className={fieldClass} value={draft.categoryId} onChange={(e) => update({ categoryId: e.target.value })}><option value="">Sem categoria</option>{categories.filter((x) => x.status === 'active').map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></Field>
-        <Field label="Marca"><select className={fieldClass} value={draft.brandId} onChange={(e) => update({ brandId: e.target.value })}><option value="">Sem marca</option>{brands.filter((x) => x.status === 'active').map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}</select></Field>
       </div>
       <Field label="Descrição"><textarea className={`${fieldClass} min-h-28 py-3`} value={draft.description} onChange={(e) => update({ description: e.target.value })} /></Field>
     </div>
@@ -418,11 +414,31 @@ function VariantsStep({ draft, attributes, combinations, update }: {
   if (draft.kind === 'simple') return <div className="space-y-4"><StepHeading title="Variante padrão" description="Produtos simples recebem automaticamente uma variante padrão pelo domínio." /><div className="rounded-[var(--radius-md)] border border-[var(--color-border)] p-5"><strong>{draft.name || 'Produto'}</strong><p className="mt-1 text-sm text-[var(--color-ink-muted)]">SKU {draft.sku || 'não informado'}</p></div></div>
   return (
     <div className="space-y-6">
-      <StepHeading title="Variantes" description="Escolha valores dos eixos e revise as combinações antes de salvar." />
+      <StepHeading title="Grades e variantes" description="Defina os valores de cada grade e confira todas as combinações que serão criadas." />
       {attributes.filter((item) => item.isVariantAxis && item.status === 'active').map((attribute) => (
         <div key={attribute.id}><p className="mb-2 text-sm font-semibold">{attribute.name}</p><div className="flex flex-wrap gap-2">{attribute.values.filter((value) => value.status === 'active').map((value) => { const checked = draft.selections[attribute.id]?.includes(value.id) ?? false; return <label key={value.id} className="flex items-center gap-2 rounded-full border px-3 py-2 text-sm"><input type="checkbox" checked={checked} onChange={() => update({ selections: { ...draft.selections, [attribute.id]: checked ? (draft.selections[attribute.id] ?? []).filter((id) => id !== value.id) : [...(draft.selections[attribute.id] ?? []), value.id] } })} />{value.label}</label> })}</div></div>
       ))}
-      <div><h3 className="text-sm font-semibold">{combinations.length} combinações</h3><div className="mt-3 grid gap-2 sm:grid-cols-2">{combinations.map((item) => <div key={item} className="rounded-[var(--radius-md)] bg-[var(--color-surface-subtle)] px-3 py-2 text-sm">{item}</div>)}</div></div>
+      <div className="rounded-[var(--radius-md)] border border-[var(--color-border-soft)]">
+        <div className="flex items-center justify-between gap-3 border-b border-[var(--color-border-soft)] px-4 py-3">
+          <div>
+            <h3 className="text-sm font-semibold">Variantes que serão criadas</h3>
+            <p className="mt-1 text-xs text-[var(--color-ink-muted)]">Cada linha representa uma combinação única de grades.</p>
+          </div>
+          <span className="rounded-full bg-[var(--color-surface-subtle)] px-2.5 py-1 text-xs font-semibold text-[var(--color-accent)]">{combinations.length}</span>
+        </div>
+        {combinations.length ? (
+          <ul className="divide-y divide-[var(--color-border-soft)]">
+            {combinations.map((item, index) => (
+              <li key={item} className="flex items-center gap-3 px-4 py-3 text-sm">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-subtle)] text-xs text-[var(--color-ink-muted)]">{index + 1}</span>
+                <span className="font-medium">{item}</span>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="px-4 py-5 text-sm text-[var(--color-ink-muted)]">Selecione valores em pelo menos uma grade para gerar variantes.</p>
+        )}
+      </div>
     </div>
   )
 }
