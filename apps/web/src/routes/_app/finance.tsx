@@ -13,6 +13,7 @@ const areas = [
   { to: '/finance/accounts-payable', label: 'Contas a pagar', permissions: ['payable.read'] },
   { to: '/finance/payments', label: 'Pagamentos', permissions: ['payments.read'] },
   { to: '/finance/cash', label: 'Caixa e fluxo', permissions: ['finance.cash_flow.read'] },
+  { to: '/finance/payment-settings', label: 'Formas e condições', permissions: ['payment_methods.manage', 'payment_terms.manage'] },
 ] as const
 
 function FinancialWorkspace() {

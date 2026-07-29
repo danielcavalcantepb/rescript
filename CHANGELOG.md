@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Commercial configuration
+
+- Added seller registration with branch and user linkage, commission, monthly salary, bonus and goal percentage.
+- Added payment method and payment-term configuration in Finance, with active methods and terms available to Sales Orders.
+- Sales Orders now persist seller and payment-method snapshots alongside the existing payment condition.
+- Kept contextual customer creation available in the Sales Order picker even when customer search is temporarily unavailable.
+
 ### Real data readiness
 
 - Removed the legacy runtime mock dataset and the unused insight/pulse components that depended on fictional customers, products, sales, receivables and operational insights.

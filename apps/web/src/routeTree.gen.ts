@@ -47,11 +47,13 @@ import { Route as AppEstoqueIndexRouteImport } from './routes/_app/estoque/index
 import { Route as AppEstoqueMovimentacoesRouteImport } from './routes/_app/estoque/movimentacoes'
 import { Route as AppEstoqueReservasRouteImport } from './routes/_app/estoque/reservas'
 import { Route as AppFinanceIndexRouteImport } from './routes/_app/finance/index'
+import { Route as AppFinancePaymentSettingsRouteImport } from './routes/_app/finance/payment-settings'
 import { Route as AppFiscalIndexRouteImport } from './routes/_app/fiscal/index'
 import { Route as AppProcurementIndexRouteImport } from './routes/_app/procurement/index'
 import { Route as AppProdutosIndexRouteImport } from './routes/_app/produtos/index'
 import { Route as AppProdutosProductIdRouteImport } from './routes/_app/produtos/$productId'
 import { Route as AppSalesIndexRouteImport } from './routes/_app/sales/index'
+import { Route as AppSalesSellersRouteImport } from './routes/_app/sales/sellers'
 import { Route as AppVendasIndexRouteImport } from './routes/_app/vendas/index'
 import { Route as AppVendasSaleIdRouteImport } from './routes/_app/vendas/$saleId'
 import { Route as AppCatalogInventoryIndexRouteImport } from './routes/_app/catalog/inventory/index'
@@ -305,6 +307,12 @@ const AppFinanceIndexRoute = AppFinanceIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppFinanceRoute,
 } as any)
+const AppFinancePaymentSettingsRoute =
+  AppFinancePaymentSettingsRouteImport.update({
+    id: '/payment-settings',
+    path: '/payment-settings',
+    getParentRoute: () => AppFinanceRoute,
+  } as any)
 const AppFiscalIndexRoute = AppFiscalIndexRouteImport.update({
   id: '/fiscal/',
   path: '/fiscal/',
@@ -328,6 +336,11 @@ const AppProdutosProductIdRoute = AppProdutosProductIdRouteImport.update({
 const AppSalesIndexRoute = AppSalesIndexRouteImport.update({
   id: '/sales/',
   path: '/sales/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSalesSellersRoute = AppSalesSellersRouteImport.update({
+  id: '/sales/sellers',
+  path: '/sales/sellers',
   getParentRoute: () => AppRoute,
 } as any)
 const AppVendasIndexRoute = AppVendasIndexRouteImport.update({
@@ -727,7 +740,9 @@ export interface FileRoutesByFullPath {
   '/clientes/$customerId': typeof AppClientesCustomerIdRoute
   '/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/estoque/reservas': typeof AppEstoqueReservasRoute
+  '/finance/payment-settings': typeof AppFinancePaymentSettingsRoute
   '/produtos/$productId': typeof AppProdutosProductIdRoute
+  '/sales/sellers': typeof AppSalesSellersRoute
   '/vendas/$saleId': typeof AppVendasSaleIdRoute
   '/catalog/': typeof AppCatalogIndexRoute
   '/clientes/': typeof AppClientesIndexRoute
@@ -832,7 +847,9 @@ export interface FileRoutesByTo {
   '/clientes/$customerId': typeof AppClientesCustomerIdRoute
   '/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/estoque/reservas': typeof AppEstoqueReservasRoute
+  '/finance/payment-settings': typeof AppFinancePaymentSettingsRoute
   '/produtos/$productId': typeof AppProdutosProductIdRoute
+  '/sales/sellers': typeof AppSalesSellersRoute
   '/vendas/$saleId': typeof AppVendasSaleIdRoute
   '/catalog': typeof AppCatalogIndexRoute
   '/clientes': typeof AppClientesIndexRoute
@@ -941,7 +958,9 @@ export interface FileRoutesById {
   '/_app/clientes/$customerId': typeof AppClientesCustomerIdRoute
   '/_app/estoque/movimentacoes': typeof AppEstoqueMovimentacoesRoute
   '/_app/estoque/reservas': typeof AppEstoqueReservasRoute
+  '/_app/finance/payment-settings': typeof AppFinancePaymentSettingsRoute
   '/_app/produtos/$productId': typeof AppProdutosProductIdRoute
+  '/_app/sales/sellers': typeof AppSalesSellersRoute
   '/_app/vendas/$saleId': typeof AppVendasSaleIdRoute
   '/_app/catalog/': typeof AppCatalogIndexRoute
   '/_app/clientes/': typeof AppClientesIndexRoute
@@ -1050,7 +1069,9 @@ export interface FileRouteTypes {
     | '/clientes/$customerId'
     | '/estoque/movimentacoes'
     | '/estoque/reservas'
+    | '/finance/payment-settings'
     | '/produtos/$productId'
+    | '/sales/sellers'
     | '/vendas/$saleId'
     | '/catalog/'
     | '/clientes/'
@@ -1155,7 +1176,9 @@ export interface FileRouteTypes {
     | '/clientes/$customerId'
     | '/estoque/movimentacoes'
     | '/estoque/reservas'
+    | '/finance/payment-settings'
     | '/produtos/$productId'
+    | '/sales/sellers'
     | '/vendas/$saleId'
     | '/catalog'
     | '/clientes'
@@ -1263,7 +1286,9 @@ export interface FileRouteTypes {
     | '/_app/clientes/$customerId'
     | '/_app/estoque/movimentacoes'
     | '/_app/estoque/reservas'
+    | '/_app/finance/payment-settings'
     | '/_app/produtos/$productId'
+    | '/_app/sales/sellers'
     | '/_app/vendas/$saleId'
     | '/_app/catalog/'
     | '/_app/clientes/'
@@ -1624,6 +1649,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppFinanceIndexRouteImport
       parentRoute: typeof AppFinanceRoute
     }
+    '/_app/finance/payment-settings': {
+      id: '/_app/finance/payment-settings'
+      path: '/payment-settings'
+      fullPath: '/finance/payment-settings'
+      preLoaderRoute: typeof AppFinancePaymentSettingsRouteImport
+      parentRoute: typeof AppFinanceRoute
+    }
     '/_app/fiscal/': {
       id: '/_app/fiscal/'
       path: '/fiscal'
@@ -1657,6 +1689,13 @@ declare module '@tanstack/react-router' {
       path: '/sales'
       fullPath: '/sales/'
       preLoaderRoute: typeof AppSalesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/sales/sellers': {
+      id: '/_app/sales/sellers'
+      path: '/sales/sellers'
+      fullPath: '/sales/sellers'
+      preLoaderRoute: typeof AppSalesSellersRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/vendas/': {
@@ -2182,6 +2221,7 @@ const AppCatalogRouteWithChildren = AppCatalogRoute._addFileChildren(
 )
 
 interface AppFinanceRouteChildren {
+  AppFinancePaymentSettingsRoute: typeof AppFinancePaymentSettingsRoute
   AppFinanceIndexRoute: typeof AppFinanceIndexRoute
   AppFinanceAccountsPayablePayableIdRoute: typeof AppFinanceAccountsPayablePayableIdRoute
   AppFinanceAccountsPayableNewRoute: typeof AppFinanceAccountsPayableNewRoute
@@ -2196,6 +2236,7 @@ interface AppFinanceRouteChildren {
 }
 
 const AppFinanceRouteChildren: AppFinanceRouteChildren = {
+  AppFinancePaymentSettingsRoute: AppFinancePaymentSettingsRoute,
   AppFinanceIndexRoute: AppFinanceIndexRoute,
   AppFinanceAccountsPayablePayableIdRoute:
     AppFinanceAccountsPayablePayableIdRoute,
@@ -2288,6 +2329,7 @@ interface AppRouteChildren {
   AppEstoqueMovimentacoesRoute: typeof AppEstoqueMovimentacoesRoute
   AppEstoqueReservasRoute: typeof AppEstoqueReservasRoute
   AppProdutosProductIdRoute: typeof AppProdutosProductIdRoute
+  AppSalesSellersRoute: typeof AppSalesSellersRoute
   AppVendasSaleIdRoute: typeof AppVendasSaleIdRoute
   AppClientesIndexRoute: typeof AppClientesIndexRoute
   AppCrmIndexRoute: typeof AppCrmIndexRoute
@@ -2338,6 +2380,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppEstoqueMovimentacoesRoute: AppEstoqueMovimentacoesRoute,
   AppEstoqueReservasRoute: AppEstoqueReservasRoute,
   AppProdutosProductIdRoute: AppProdutosProductIdRoute,
+  AppSalesSellersRoute: AppSalesSellersRoute,
   AppVendasSaleIdRoute: AppVendasSaleIdRoute,
   AppClientesIndexRoute: AppClientesIndexRoute,
   AppCrmIndexRoute: AppCrmIndexRoute,

@@ -16,6 +16,7 @@ const links = [
   { to: '/catalog/pricing', label: 'Preços', icon: icons.finance },
   { to: '/finance', label: 'Financeiro', icon: icons.finance },
   { to: '/sales/orders', label: 'Vendas', icon: icons.sale },
+  { to: '/sales/sellers', label: 'Vendedores', icon: icons.customer },
 ] as const
 
 const soon = [
@@ -71,8 +72,8 @@ export function Sidebar({
         aria-label="Navegação principal"
       >
         {links.filter((item) =>
-          item.to !== '/finance' ||
-          canAny(['receivables.read', 'payable.read', 'payments.read']),
+          (item.to !== '/finance' || canAny(['receivables.read', 'payable.read', 'payments.read'])) &&
+          (item.to !== '/sales/sellers' || canAny(['sellers.manage'])),
         ).map((item) => {
           const active =
             item.to === '/app'

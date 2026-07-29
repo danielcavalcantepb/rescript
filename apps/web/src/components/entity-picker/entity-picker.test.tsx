@@ -160,7 +160,8 @@ describe('EntityPicker', () => {
     expect(onLoadMore).toHaveBeenCalledOnce()
   })
 
-  it('announces search errors without offering a false empty state', () => {
+  it('keeps contextual creation available when search fails', () => {
+    const onCreate = vi.fn()
     render(
       <EntityPicker
         provider={provider}
@@ -171,7 +172,7 @@ describe('EntityPicker', () => {
         canCreate
         onSearch={vi.fn()}
         onSelect={vi.fn()}
-        onCreate={vi.fn()}
+        onCreate={onCreate}
       />,
     )
 
@@ -182,6 +183,7 @@ describe('EntityPicker', () => {
     expect(screen.getByRole('alert').textContent).toContain(
       'Falha ao consultar clientes.',
     )
-    expect(screen.queryByText(/Nenhum cliente encontrado/)).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name: 'Criar cliente' }))
+    expect(onCreate).toHaveBeenCalledWith('Cliente')
   })
 })

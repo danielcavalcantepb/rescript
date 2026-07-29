@@ -207,7 +207,7 @@ export function EntityPicker<TEntity>({
             </Button>
           ) : null}
 
-          {showEmpty && !isError ? (
+          {showEmpty ? (
             <div className="space-y-2 px-3 py-3">
               <p className="text-sm text-[var(--color-muted)]">
                 Nenhum {provider.singularLabel} encontrado para “{query.trim()}”.

@@ -72,13 +72,16 @@ export function EntityCell({
   children,
   className,
   mono,
+  colSpan,
 }: {
   children: ReactNode
   className?: string
   mono?: boolean
+  colSpan?: number
 }) {
   return (
     <td
+      colSpan={colSpan}
       className={cn(
         'px-3.5 py-2.5 text-[var(--color-ink)]',
         mono && 'font-mono tabular-nums',
