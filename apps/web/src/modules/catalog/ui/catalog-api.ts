@@ -184,7 +184,13 @@ export const catalogCreateProductWithInitialSetup = createServerFn({ method: 'PO
     try {
       const { createServerSupabaseClient } = await import('#/lib/supabase/server.server')
       const client = createServerSupabaseClient()
-      const { data: result, error } = await client.rpc('create_product_with_initial_setup', {
+      // Database types are regenerated with the migration; keep this boundary
+      // explicit until generated types are refreshed in CI.
+      const rpc = client.rpc as unknown as (
+        name: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: { message: string } | null }>
+      const { data: result, error } = await rpc('create_product_with_retail_fiscal_setup', {
         p_organization_id: data.organizationId,
         p_payload: data.command,
         p_idempotency_key: data.idempotencyKey,

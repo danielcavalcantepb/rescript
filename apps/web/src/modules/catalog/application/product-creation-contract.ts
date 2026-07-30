@@ -24,6 +24,9 @@ export type InitialVariantSetup = {
 export type ProductCreationCommand = {
   name: string
   description?: string | null
+  /** Handed to Fiscal; it is never stored on Product or ProductVariant. */
+  ncm?: string | null
+  ncmDescription?: string | null
   unitOfMeasureId: string
   branchId?: string | null
   priceListId?: string | null

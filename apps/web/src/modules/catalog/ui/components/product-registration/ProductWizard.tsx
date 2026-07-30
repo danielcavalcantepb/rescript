@@ -29,6 +29,8 @@ type VariantDraft = {
 type Draft = {
   name: string
   description: string
+  ncm: string
+  ncmDescription: string
   unitId: string
   unitCode: string
   kind: ProductKind
@@ -69,6 +71,8 @@ function emptyDraft(): Draft {
   return {
     name: '',
     description: '',
+    ncm: '61091000',
+    ncmDescription: 'Camisetas, de malha, de algodão',
     unitId: '',
     unitCode: '',
     kind: 'simple',
@@ -89,13 +93,28 @@ function readDraft(key: string): StoredDraft | null {
       | StoredDraft
       | null
     if (!value?.draft || value.step < 1 || value.step > 4) return null
-    if (value.version === 3) return value
+    if (value.version === 3) {
+      return {
+        ...value,
+        draft: {
+          ...value.draft,
+          ncm: value.draft.ncm ?? '61091000',
+          ncmDescription:
+            value.draft.ncmDescription ?? 'Camisetas, de malha, de algodão',
+        },
+      }
+    }
     // Attribute preselection was part of the previous UI only. Existing
     // operational variant data remains valid when restoring older drafts.
     return {
       version: 3,
       step: value.step,
-      draft: value.draft,
+      draft: {
+        ...value.draft,
+        ncm: value.draft.ncm ?? '61091000',
+        ncmDescription:
+          value.draft.ncmDescription ?? 'Camisetas, de malha, de algodão',
+      },
     }
   } catch {
     window.localStorage.removeItem(key)
@@ -329,7 +348,6 @@ export function ProductWizard({
   const canSave = Boolean(
     draft.name.trim() &&
       draft.unitId &&
-      draft.priceListId &&
       draft.branchId &&
       variants.length &&
       attributesValid &&
@@ -383,6 +401,8 @@ export function ProductWizard({
     const command: ProductCreationCommand = {
       name: draft.name.trim(),
       description: draft.description.trim() || null,
+      ncm: draft.ncm.replace(/\D/g, '') || null,
+      ncmDescription: draft.ncmDescription.trim() || null,
       unitOfMeasureId: draft.unitId,
       brandId: draft.brandId || null,
       categoryId: draft.categoryId || null,
@@ -426,6 +446,9 @@ export function ProductWizard({
         </header>
         <div className="min-h-[470px] p-5 sm:p-7">
           {step === 1 && <BasicStep draft={draft} units={units} update={update} changeKind={changeKind} />}
+          {step === 2 && (
+            <NcmFields draft={draft} update={update} />
+          )}
           {step === 2 && (
             <ClassificationStep
               draft={draft}
@@ -494,6 +517,10 @@ function BasicStep({ draft, units, update, changeKind }: { draft: Draft; units: 
     update({ unitCode: value, unitId: match?.id ?? '' })
   }
   return <div className="space-y-6"><Heading title="Dados básicos" description="Identifique o produto e defina a sua unidade operacional." /><div className="grid gap-4 sm:grid-cols-2"><Field label="Nome do produto" required><input autoFocus className={fieldClass} value={draft.name} onChange={(event) => update({ name: event.target.value })} /></Field><Field label="Tipo"><select className={fieldClass} value={draft.kind} onChange={(event) => changeKind(event.target.value as ProductKind)}><option value="simple">Produto simples</option><option value="variable">Produto variável</option></select></Field><Field label="Unidade" required><input className={fieldClass} list="catalog-units" value={draft.unitCode || matched?.code || ''} onChange={(event) => updateUnit(event.target.value)} placeholder="UN, KG, MT, CX…" /><datalist id="catalog-units">{units.map((unit) => <option key={unit.id} value={unit.code} label={unit.name} />)}</datalist><p className="text-xs font-normal text-[var(--color-ink-muted)]">{matched ? `${matched.name} selecionada.` : 'Digite uma unidade cadastrada.'}</p></Field></div><Field label="Descrição"><textarea className={`${fieldClass} min-h-28 py-3`} value={draft.description} onChange={(event) => update({ description: event.target.value })} /></Field></div>
+}
+
+function NcmFields({ draft, update }: { draft: Draft; update: (next: Partial<Draft>) => void }) {
+  return <div className="mb-5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4"><div className="grid gap-3 sm:grid-cols-2"><Field label="Código NCM"><div className="flex gap-2"><input className={fieldClass} value={draft.ncm} maxLength={8} inputMode="numeric" onChange={(event) => update({ ncm: event.target.value.replace(/\D/g, '') })} /><Button type="button" size="sm" variant="secondary" onClick={() => update({ ncm: '61091000', ncmDescription: 'Camisetas, de malha, de algodão' })}>Gerar padrão</Button></div></Field><Field label="Descrição NCM"><div className="flex gap-2"><input className={fieldClass} value={draft.ncmDescription} onChange={(event) => update({ ncmDescription: event.target.value })} placeholder="Descrição da classificação" /><a className="inline-flex h-10 shrink-0 items-center rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 text-sm font-medium hover:bg-[var(--color-surface)]" href="https://portalunico.siscomex.gov.br/classif/#/nomenclatura/avancada?perfil=publico" target="_blank" rel="noreferrer">Pesquisar NCM</a></div></Field></div><p className="mt-2 text-xs text-[var(--color-ink-muted)]">O código padrão é 61091000. Você pode alterá-lo; a pesquisa abre a tabela oficial vigente.</p></div>
 }
 
 function ClassificationStep({ draft, categories, brands, priceLists, branches, locations, update }: { draft: Draft; categories: CategoryResponse[]; brands: BrandResponse[]; priceLists: PriceListResponse[]; branches: Branch[]; locations: Location[]; update: (next: Partial<Draft>) => void }) {
