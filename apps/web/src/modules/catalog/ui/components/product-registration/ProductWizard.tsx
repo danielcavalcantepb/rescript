@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { isValidElement, useEffect, useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
 import type {
@@ -128,6 +128,25 @@ function formatMoney(value: string): string {
     : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(number)
 }
 
+/** Creates the checksum digit for a 12-digit EAN-13 base. */
+export function buildEan13(base: string): string {
+  const digits = base.replace(/\D/g, '').slice(0, 12)
+  if (digits.length !== 12) throw new Error('EAN-13 requires 12 base digits.')
+  const sum = [...digits].reduce(
+    (total, digit, index) => total + Number(digit) * (index % 2 === 0 ? 1 : 3),
+    0,
+  )
+  return `${digits}${(10 - (sum % 10)) % 10}`
+}
+
+function generateEan13(): string {
+  const random = new Uint32Array(1)
+  globalThis.crypto.getRandomValues(random)
+  // Prefix 2 identifies an internal, non-GS1 assignment. The check digit is
+  // calculated so manual scanners and EAN validators can read the value.
+  return buildEan13(`2${String(random[0]).padStart(11, '0').slice(-11)}`)
+}
+
 /** Legacy pure helper retained for existing combination-preview coverage. */
 export function buildVariantCombinationLabels(axes: Array<{ labels: string[] }>): string[] {
   if (axes.length === 0) return []
@@ -221,9 +240,17 @@ export function ProductWizard({
     })
   }, [branches])
   useEffect(() => {
-    if (!draft.priceListId && priceLists[0]) {
-      update({ priceListId: priceLists.find((list) => list.isDefault)?.id ?? priceLists[0].id })
-    }
+    const activePriceLists = priceLists.filter((list) => list.status === 'active')
+    if (!activePriceLists.length) return
+    setDraft((current) => {
+      if (activePriceLists.some((list) => list.id === current.priceListId)) return current
+      setDirty(true)
+      return {
+        ...current,
+        priceListId:
+          activePriceLists.find((list) => list.isDefault)?.id ?? activePriceLists[0].id,
+      }
+    })
   }, [priceLists])
   useEffect(() => {
     const activeLocations = locations.filter((location) => location.status === 'active')
@@ -488,7 +515,10 @@ function VariantCard({ index, variant, attributes, branches, locations, defaultB
   return <article className="rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4"><div className="flex flex-wrap items-center justify-between gap-3"><div><h3 className="font-semibold">Variante {index + 1}</h3><p className="text-xs text-[var(--color-ink-muted)]">{variantLabel(variant, attributes)}</p></div><div className="flex gap-2"><Button type="button" size="sm" variant="secondary" onClick={onDuplicate}>Duplicar</Button>{canRemove && <Button type="button" size="sm" variant="secondary" onClick={onRemove}>{removing ? 'Confirmar remoção' : 'Remover'}</Button>}</div></div>{availableAttributes.length > 0 && <div className="mt-4 grid gap-3 md:grid-cols-2"><Field label="Adicionar atributo"><select className={fieldClass} value="" onChange={(event) => { const attribute = availableAttributes.find((item) => item.id === event.target.value); const option = attribute?.values.find((value) => value.status === 'active'); if (attribute && option) setAssignment(attribute.id, option.id) }}><option value="">Selecione um atributo</option>{availableAttributes.filter((attribute) => !assigned.has(attribute.id)).map((attribute) => <option key={attribute.id} value={attribute.id}>{attribute.name}</option>)}</select></Field>{variant.assignments.map((assignment) => { const attribute = attributes.find((item) => item.id === assignment.attributeDefinitionId); if (!attribute) return null; return <Field key={attribute.id} label={attribute.name}><select className={fieldClass} value={assignment.optionId} onChange={(event) => setAssignment(attribute.id, event.target.value)}><option value="">Selecione um valor</option>{attribute.values.filter((value) => value.status === 'active').map((value) => <option key={value.id} value={value.id}>{value.label}</option>)}</select></Field> })}</div>}<div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3"><Field label="SKU" required><input className={fieldClass} value={variant.sku} onChange={(event) => update(variant.id, { sku: event.target.value.toUpperCase().replace(/\s+/g, '-') })} placeholder="PREFIXO-G-PRETO" /></Field><Field label="EAN"><input className={fieldClass} value={variant.ean} onChange={(event) => update(variant.id, { ean: event.target.value.replace(/\D/g, '') })} inputMode="numeric" /></Field><Field label="Preço de venda" required><input className={fieldClass} value={variant.salePrice} onChange={(event) => update(variant.id, { salePrice: event.target.value })} inputMode="decimal" placeholder="0,00" /></Field><Field label="Custo unitário"><input className={fieldClass} value={variant.unitCost} onChange={(event) => update(variant.id, { unitCost: event.target.value })} inputMode="decimal" placeholder="0,00" /></Field><Field label="Margem"><output className={`${fieldClass} flex items-center bg-[var(--color-surface-subtle)] text-[var(--color-ink-muted)]`}>{derivedMargin(variant.salePrice, variant.unitCost) == null ? (variant.salePrice ? 'Sem custo' : 'Sem base') : `${derivedMargin(variant.salePrice, variant.unitCost)?.toLocaleString('pt-BR')}%`}</output></Field><Field label="Quantidade inicial"><input className={fieldClass} value={variant.quantity} onChange={(event) => update(variant.id, { quantity: event.target.value.replace(/[^0-9]/g, '') })} inputMode="numeric" /></Field><Field label="Filial"><select className={fieldClass} value={variant.branchId || defaultBranch} onChange={(event) => update(variant.id, { branchId: event.target.value })}><option value="">Selecione</option>{branches.map((branch) => <option key={branch.id} value={branch.id}>{branch.name}</option>)}</select></Field><Field label="Localização"><select className={fieldClass} value={variant.locationId || defaultLocation} onChange={(event) => update(variant.id, { locationId: event.target.value })}><option value="">Sem estoque inicial</option>{locations.filter((location) => location.status !== 'archived').map((location) => <option key={location.id} value={location.id}>{location.name}</option>)}</select></Field><Field label="Status"><select className={fieldClass} value={variant.status} onChange={(event) => update(variant.id, { status: event.target.value as 'active' | 'inactive' })}><option value="active">Ativa</option><option value="inactive">Inativa</option></select></Field></div>{error && <p role="alert" className="mt-3 text-sm text-[var(--color-danger)]">{error.slice(error.indexOf(':') + 1)}</p>}</article>
 }
 
-function ReviewStep({ draft, variants, attributes, categories, brands, priceLists, errors, onStep }: { draft: Draft; variants: VariantDraft[]; attributes: AttributeResponse[]; categories: CategoryResponse[]; brands: BrandResponse[]; priceLists: PriceListResponse[]; errors: string[]; onStep: (step: number) => void }) { return <div className="space-y-6"><Heading title="Revisão final" description="Revise todos os dados antes de iniciar a transação de criação." /><div className="grid gap-3 sm:grid-cols-2"><Review label="Produto" value={draft.name} onEdit={() => onStep(1)} /><Review label="Classificação" value={`${categories.find((item) => item.id === draft.categoryId)?.name ?? 'Sem categoria'} · ${brands.find((item) => item.id === draft.brandId)?.name ?? 'Sem marca'}`} onEdit={() => onStep(2)} /><Review label="Lista de preço" value={priceLists.find((item) => item.id === draft.priceListId)?.name ?? 'Não selecionada'} onEdit={() => onStep(2)} /><Review label="Variantes" value={`${variants.length} cadastrada(s)`} onEdit={() => onStep(3)} /></div><div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--color-border-soft)]"><table className="min-w-full text-left text-sm"><thead className="border-b border-[var(--color-border-soft)] text-xs text-[var(--color-ink-muted)]"><tr><th className="p-3">Combinação</th><th className="p-3">SKU</th><th className="p-3">Custo</th><th className="p-3">Venda</th><th className="p-3">Margem</th><th className="p-3">Qtd.</th></tr></thead><tbody>{variants.map((variant) => <tr key={variant.id} className="border-b border-[var(--color-border-soft)] last:border-0"><td className="p-3">{variantLabel(variant, attributes)}</td><td className="p-3">{variant.sku || '—'}</td><td className="p-3">{formatMoney(variant.unitCost)}</td><td className="p-3">{formatMoney(variant.salePrice)}</td><td className="p-3">{derivedMargin(variant.salePrice, variant.unitCost) == null ? 'Sem base' : `${derivedMargin(variant.salePrice, variant.unitCost)}%`}</td><td className="p-3">{variant.quantity || '0'}</td></tr>)}</tbody></table></div>{errors.length > 0 && <div role="alert" className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/30 p-4 text-sm text-[var(--color-danger)]"><strong>Corrija antes de criar:</strong><ul className="mt-2 list-disc pl-5">{errors.map((item) => <li key={item}>{item.slice(item.indexOf(':') + 1)}</li>)}</ul></div>}</div> }
+function ReviewStep({ draft, variants, attributes, categories, brands, priceLists, errors, onStep }: { draft: Draft; variants: VariantDraft[]; attributes: AttributeResponse[]; categories: CategoryResponse[]; brands: BrandResponse[]; priceLists: PriceListResponse[]; errors: string[]; onStep: (step: number) => void }) {
+  const selectedPriceList = priceLists.find((item) => item.id === draft.priceListId)
+  return <div className="space-y-6"><Heading title="Revisão final" description="Revise todos os dados antes de iniciar a transação de criação." /><div className="grid gap-3 sm:grid-cols-2"><Review label="Produto" value={draft.name} onEdit={() => onStep(1)} /><Review label="Classificação" value={`${categories.find((item) => item.id === draft.categoryId)?.name ?? 'Sem categoria'} · ${brands.find((item) => item.id === draft.brandId)?.name ?? 'Sem marca'}`} onEdit={() => onStep(2)} /><Review label="Lista de preço" value={selectedPriceList?.name ?? 'Não selecionada'} onEdit={() => onStep(2)} /><Review label="Variantes" value={`${variants.length} cadastrada(s)`} onEdit={() => onStep(3)} /></div>{!selectedPriceList && <div role="alert" className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/30 p-4 text-sm text-[var(--color-danger)]">Uma lista de preço ativa é obrigatória para criar o produto. <button type="button" className="font-semibold underline" onClick={() => onStep(2)}>Selecionar lista de preço</button> ou <Link className="font-semibold underline" to="/catalog/pricing">criar uma lista</Link>.</div>}<div className="overflow-x-auto rounded-[var(--radius-md)] border border-[var(--color-border-soft)]"><table className="min-w-full text-left text-sm"><thead className="border-b border-[var(--color-border-soft)] text-xs text-[var(--color-ink-muted)]"><tr><th className="p-3">Combinação</th><th className="p-3">SKU</th><th className="p-3">EAN</th><th className="p-3">Custo</th><th className="p-3">Venda</th><th className="p-3">Margem</th><th className="p-3">Qtd.</th></tr></thead><tbody>{variants.map((variant) => <tr key={variant.id} className="border-b border-[var(--color-border-soft)] last:border-0"><td className="p-3">{variantLabel(variant, attributes)}</td><td className="p-3">{variant.sku || '—'}</td><td className="p-3 font-mono">{variant.ean || '—'}</td><td className="p-3">{formatMoney(variant.unitCost)}</td><td className="p-3">{formatMoney(variant.salePrice)}</td><td className="p-3">{derivedMargin(variant.salePrice, variant.unitCost) == null ? 'Sem base' : `${derivedMargin(variant.salePrice, variant.unitCost)}%`}</td><td className="p-3">{variant.quantity || '0'}</td></tr>)}</tbody></table></div>{errors.length > 0 && <div role="alert" className="rounded-[var(--radius-md)] border border-[var(--color-danger)]/30 p-4 text-sm text-[var(--color-danger)]"><strong>Corrija antes de criar:</strong><ul className="mt-2 list-disc pl-5">{errors.map((item) => <li key={item}>{item.slice(item.indexOf(':') + 1)}</li>)}</ul></div>}</div>
+}
 
 function SummaryAside({ draft, variants, categories, brands }: { draft: Draft; variants: VariantDraft[]; categories: CategoryResponse[]; brands: BrandResponse[] }) { const selectedAttributes = new Set(variants.flatMap((variant) => variant.assignments.map((assignment) => assignment.attributeDefinitionId))).size; return <aside className="h-fit rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-5 xl:sticky xl:top-5"><p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-accent)]">Resumo</p><h2 className="mt-3 text-lg font-semibold">{draft.name || 'Novo produto'}</h2><dl className="mt-5 space-y-3 text-sm"><Row label="Tipo" value={draft.kind === 'simple' ? 'Simples' : 'Variável'} /><Row label="Categoria" value={categories.find((item) => item.id === draft.categoryId)?.name ?? 'Não definida'} /><Row label="Marca" value={brands.find((item) => item.id === draft.brandId)?.name ?? 'Não definida'} /><Row label="Atributos em uso" value={String(selectedAttributes)} /><Row label="Variantes cadastradas" value={String(variants.length)} /><Row label="Status" value={stepStatus(draft)} /></dl><p className="mt-5 text-xs text-[var(--color-ink-muted)]">Cada variante concentra sua combinação, preço, custo e quantidade inicial.</p></aside> }
 
@@ -496,7 +526,40 @@ function stepStatus(draft: Draft) { return draft.name.trim() && draft.unitId ? '
 function validateVariant(variant: VariantDraft, kind: ProductKind, duplicate: boolean, defaultBranchId: string, defaultLocationId: string): string[] { const errors: string[] = []; const quantity = numberValue(variant.quantity) ?? 0; if (!variant.sku.trim()) errors.push('SKU é obrigatório.'); if (numberValue(variant.salePrice) == null || (numberValue(variant.salePrice) ?? -1) < 0) errors.push('Informe um preço de venda válido.'); if (numberValue(variant.unitCost) != null && (numberValue(variant.unitCost) ?? 0) < 0) errors.push('Custo unitário não pode ser negativo.'); if (!Number.isInteger(quantity) || quantity < 0) errors.push('Quantidade deve ser um inteiro não negativo.'); if (quantity > 0 && (!(variant.locationId || defaultLocationId) || !(variant.branchId || defaultBranchId))) errors.push('Selecione filial e localização para o saldo inicial.'); if (kind === 'variable' && variant.assignments.length === 0) errors.push('Selecione pelo menos um atributo.'); if (duplicate) errors.push('Combinação de atributos repetida.'); return errors.map((message) => `${variant.id}:${message}`) }
 function friendlyError(error: string) { const map: Record<string, string> = { variant_sku_required: 'Informe o SKU de cada variante.', initial_price_required: 'Informe um preço de venda válido.', active_price_list_required: 'Selecione uma lista de preço ativa.', valid_branch_required: 'Selecione uma filial válida.', valid_stock_location_required: 'Selecione uma localização válida para o estoque inicial.', initial_quantity_invalid: 'A quantidade inicial é inválida.', initial_unit_cost_invalid: 'O custo inicial é inválido.', category_not_found: 'A categoria informada não é válida.', brand_not_found: 'A marca informada não é válida.', idempotency_key_payload_mismatch: 'Esta tentativa já foi enviada com dados diferentes. Atualize a página para iniciar uma nova tentativa.' }; return Object.entries(map).find(([key]) => error.includes(key))?.[1] ?? error }
 function Heading({ title, description }: { title: string; description: string }) { return <div><h2 className="text-xl font-semibold">{title}</h2><p className="mt-1 text-sm text-[var(--color-ink-muted)]">{description}</p></div> }
-function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) { return <label className="block space-y-1.5 text-sm font-medium">{label}{required ? <span aria-hidden="true"> *</span> : null}{children}</label> }
+function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  const eanInput =
+    label === 'EAN' && isValidElement<{ onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void }>(children)
+      ? children
+      : null
+
+  return (
+    <label className="block space-y-1.5 text-sm font-medium">
+      {label}
+      {required ? <span aria-hidden="true"> *</span> : null}
+      {eanInput ? (
+        <div className="flex gap-2">
+          {children}
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            title="Gerar código EAN-13 válido"
+            onClick={() =>
+              eanInput.props.onChange?.({
+                target: { value: generateEan13() },
+              } as React.ChangeEvent<HTMLInputElement>)
+            }
+          >
+            Gerar EAN
+          </Button>
+        </div>
+      ) : (
+        children
+      )}
+      {eanInput ? <p className="text-xs font-normal text-[var(--color-ink-muted)]">Digite manualmente ou gere um EAN-13.</p> : null}
+    </label>
+  )
+}
 function Row({ label, value }: { label: string; value: string }) { return <div className="flex justify-between gap-3"><dt className="text-[var(--color-ink-muted)]">{label}</dt><dd className="text-right font-medium">{value}</dd></div> }
 function Review({ label, value, onEdit }: { label: string; value: string; onEdit: () => void }) { return <div className="rounded-[var(--radius-md)] border border-[var(--color-border-soft)] p-3"><dt className="text-xs text-[var(--color-ink-muted)]">{label}</dt><dd className="mt-1 flex items-start justify-between gap-2 font-medium"><span>{value}</span><button type="button" className="text-xs text-[var(--color-accent)] hover:underline" onClick={onEdit}>Editar</button></dd></div> }
 function SelectField({ label, required, value, onChange, items, emptyText, configTo }: { label: string; required?: boolean; value: string; onChange: (value: string) => void; items: Array<{ id: string; label: string }>; emptyText: string; configTo?: string }) { return <Field label={label} required={required}>{items.length ? <select className={fieldClass} value={value} onChange={(event) => onChange(event.target.value)}><option value="">Selecione</option>{items.map((item) => <option key={item.id} value={item.id}>{item.label}</option>)}</select> : <div className="rounded-[var(--radius-md)] border border-dashed border-[var(--color-border)] p-3 text-sm text-[var(--color-ink-muted)]">{emptyText}{configTo && <> · <Link className="text-[var(--color-accent)] hover:underline" to={configTo as never}>Configurar</Link></>}</div>}</Field> }
