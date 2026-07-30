@@ -10,9 +10,10 @@ import { Input } from '#/components/ui/input'
 import { Textarea } from '#/components/ui/textarea'
 import { formatBRL } from '#/lib/format'
 import { useResolvedPrice } from '#/modules/catalog/ui/hooks/use-catalog-pricing'
+import type { CatalogSearchHitResponse } from '#/modules/catalog/application/dto'
 import { CustomerEntityPicker } from '#/modules/customers/ui/components/customer-entity-picker'
 import type { CustomerListItem } from '#/modules/customers/domain/types'
-import type { SalesDocumentType, SalesItemInput } from '#/modules/sales'
+import type { SalesDocumentType } from '#/modules/sales'
 import { PageError } from '#/platform/errors'
 import { PageLoading } from '#/platform/loading'
 import { useOrganization } from '#/platform/organization/organization-context'
@@ -35,29 +36,18 @@ import {
   WorkspaceSection,
 } from '../components/sales-order-workspace-components'
 import { SalesProductPicker } from '../components/sales-product-picker'
+import { BarcodeScannerInput } from '../components/barcode-scanner-input'
+import {
+  addScannedVariantToLines,
+  emptyScannableLine,
+  type SalesScannerLine,
+} from '../components/sales-scanner-lines'
 import { UnsavedChangesGuard } from '../components/unsaved-changes-guard'
 import { listSalesBranches, listSalesPaymentTerms } from '../sales-api'
 import { listCommercialPaymentMethods, listCommercialSellers } from '../commercial-configuration-api'
 
-type Line = SalesItemInput & {
-  productId: string
-  productName?: string
-  variantSku?: string | null
-  priceSourceLabel?: string
-}
-
-const emptyLine = (): Line => ({
-  productId: '',
-  productName: '',
-  variantId: '',
-  variantSku: '',
-  quantity: '1',
-  unitPrice: '0',
-  discount: '0',
-  description: '',
-  priceListId: null,
-  priceSourceLabel: 'Manual',
-})
+type Line = SalesScannerLine
+const emptyLine = emptyScannableLine
 
 export function SalesFormPage({ type, id }: { type: SalesDocumentType; id?: string }) {
   return (
@@ -212,6 +202,12 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
     }
   }
 
+  function addScannedVariant(selected: CatalogSearchHitResponse) {
+    setError(null)
+    setDirty(true)
+    setLines((current) => addScannedVariantToLines(current, selected))
+  }
+
   if (!isQuotation) {
     const updateLines = (updater: (current: Line[]) => Line[]) => {
       setDirty(true)
@@ -304,6 +300,11 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
               title="Itens do pedido"
               description="Busque por SKU, código de barras, produto ou variante. O Pricing resolve o valor vigente no servidor."
             >
+              <BarcodeScannerInput
+                organizationId={organizationId}
+                disabled={submitting}
+                onVariantFound={addScannedVariant}
+              />
               <div className="mb-4 flex justify-end">
                 <Button variant="secondary" onClick={() => updateLines((current) => [...current, emptyLine()])}>
                   Adicionar item

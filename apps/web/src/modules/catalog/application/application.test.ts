@@ -558,6 +558,24 @@ describe('Catalog application — search', () => {
     const bySku = await app.searchVariants({ text: 'CAM-1' })
     expect(bySku).toHaveLength(1)
   })
+
+  it('prioritizes an exact EAN before an equally matching SKU', async () => {
+    const { app } = createCatalogTestApp()
+    await app.createProduct({
+      name: 'Produto por SKU',
+      sku: '5901234123457',
+      unitOfMeasureId: 'uom',
+    })
+    await app.createProduct({
+      name: 'Produto por EAN',
+      sku: 'OUTRO-SKU',
+      barcode: { type: 'EAN_13', value: '5901234123457' },
+      unitOfMeasureId: 'uom',
+    })
+
+    const results = await app.searchVariants({ text: '5901234123457' })
+    expect(results[0]?.productName).toBe('Produto por EAN')
+  })
 })
 
 describe('Catalog application — mappers & memory repos', () => {
