@@ -198,7 +198,15 @@ export const catalogCreateProductWithInitialSetup = createServerFn({ method: 'PO
       if (error) throw new Error(error.message)
       return { ok: true, data: result as unknown as ProductCreationResult }
     } catch (error) {
-      return { ok: false, error: toCatalogRpcError(error) }
+      const rawMessage = error instanceof Error ? error.message : 'unknown'
+      const mapped = toCatalogRpcError(error)
+      console.error('[catalog.product-creation.failed]', {
+        code: mapped.code,
+        message: rawMessage
+          .replace(/postgres(?:ql)?:\/\/[^\s]+/gi, 'postgresql://***')
+          .replace(/password=[^&\s]+/gi, 'password=***'),
+      })
+      return { ok: false, error: mapped }
     }
   })
 
@@ -211,8 +219,54 @@ type SearchNcmInput = {
   query: string
 }
 
+type OfficialNcmEntry = {
+  code: string
+  description: string
+}
+
 let ncmCatalogCache: NcmSearchResult[] | null = null
 let ncmCatalogCacheExpiresAt = 0
+
+function cleanOfficialNcmDescription(value: string) {
+  return value
+    .replace(/<[^>]+>/g, '')
+    .replace(/^[-–—]+\s*/, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+/**
+ * The official Siscomex export splits an NCM label across hierarchy levels.
+ * For example, 61.09 names the article and 6109.10.00 only says
+ * "- De algodão". Returning the terminal label alone makes the selector
+ * ambiguous, so reconstruct the nearest complete commercial description.
+ */
+function buildFullNcmDescription(
+  code: string,
+  entries: OfficialNcmEntry[],
+  terminalDescription: string,
+) {
+  const hierarchy = entries
+    .filter((entry) => code.startsWith(entry.code) && entry.code.length >= 4)
+    .sort((left, right) => left.code.length - right.code.length)
+
+  const parent = hierarchy.find(
+    (entry) => !entry.description.trim().startsWith('-'),
+  )
+  const suffixes = hierarchy
+    .filter((entry) => entry.code.length > (parent?.code.length ?? 0))
+    .map((entry) => cleanOfficialNcmDescription(entry.description))
+    .filter(Boolean)
+
+  const parts = [
+    parent ? cleanOfficialNcmDescription(parent.description) : '',
+    ...suffixes,
+  ].filter(Boolean)
+
+  return parts.length
+    ? parts.join(' ')
+    : cleanOfficialNcmDescription(terminalDescription)
+}
 
 async function loadOfficialNcmCatalog(): Promise<NcmSearchResult[]> {
   if (ncmCatalogCache && Date.now() < ncmCatalogCacheExpiresAt) {
@@ -228,12 +282,19 @@ async function loadOfficialNcmCatalog(): Promise<NcmSearchResult[]> {
   const payload = (await response.json()) as {
     Nomenclaturas?: Array<{ Codigo?: string; Descricao?: string }>
   }
-  ncmCatalogCache = (payload.Nomenclaturas ?? [])
+  const entries = (payload.Nomenclaturas ?? [])
     .map((item) => ({
       code: (item.Codigo ?? '').replace(/\D/g, ''),
       description: (item.Descricao ?? '').trim(),
     }))
-    .filter((item) => item.code.length === 8 && item.description.length > 0)
+    .filter((item) => item.code.length > 0 && item.description.length > 0)
+
+  ncmCatalogCache = entries
+    .filter((item) => item.code.length === 8)
+    .map((item) => ({
+      code: item.code,
+      description: buildFullNcmDescription(item.code, entries, item.description),
+    }))
   ncmCatalogCacheExpiresAt = Date.now() + 60 * 60 * 1000
   return ncmCatalogCache
 }

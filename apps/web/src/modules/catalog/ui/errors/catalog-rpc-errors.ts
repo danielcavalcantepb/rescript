@@ -93,6 +93,40 @@ export function toCatalogRpcError(error: unknown): CatalogRpcError {
       fieldErrors: { unitOfMeasureId: 'Unidade de medida inválida.' },
     }
   }
+  if (message === 'product_name_and_unit_required') {
+    return {
+      code: 'validation',
+      message: 'Informe o nome e a unidade do produto.',
+      fieldErrors: { name: 'Informe o nome.', unitOfMeasureId: 'Selecione uma unidade válida.' },
+    }
+  }
+  if (message === 'at_least_one_variant_required') {
+    return { code: 'validation', message: 'Adicione ao menos uma variante.' }
+  }
+  if (message === 'variant_sku_required') {
+    return { code: 'validation', message: 'Informe o SKU de cada variante.' }
+  }
+  if (message === 'initial_price_required') {
+    return { code: 'validation', message: 'Informe um preço de venda válido para cada variante.' }
+  }
+  if (message === 'valid_branch_required') {
+    return { code: 'validation', message: 'Selecione uma filial ativa para o estoque inicial.' }
+  }
+  if (message === 'valid_stock_location_required') {
+    return { code: 'validation', message: 'Selecione um local de estoque ativo para o saldo inicial.' }
+  }
+  if (message === 'initial_quantity_invalid') {
+    return { code: 'validation', message: 'A quantidade inicial não pode ser negativa.' }
+  }
+  if (message === 'initial_unit_cost_invalid') {
+    return { code: 'validation', message: 'Informe um custo inicial válido.' }
+  }
+  if (message === 'invalid_variant_attribute_assignment') {
+    return { code: 'validation', message: 'Revise os atributos informados em cada variante.' }
+  }
+  if (message === 'invalid_ncm') {
+    return { code: 'validation', message: 'O NCM deve possuir oito dígitos.' }
+  }
   if (message === 'brand_not_found') {
     return {
       code: 'validation',

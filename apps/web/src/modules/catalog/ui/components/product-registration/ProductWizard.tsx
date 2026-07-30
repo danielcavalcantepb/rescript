@@ -217,7 +217,7 @@ export function ProductWizard({
   unitsError?: string | null
   submitting: boolean
   error: string | null
-  onSubmit: (command: ProductCreationCommand, idempotencyKey: string) => Promise<void>
+  onSubmit: (command: ProductCreationCommand, idempotencyKey: string) => Promise<boolean>
   onCancel: () => void
 }) {
   const storageKey = `catalog-product-wizard:v3:${organizationId}:${actorId}`
@@ -424,7 +424,8 @@ export function ProductWizard({
         tracksInventory: true,
       })),
     }
-    await onSubmit(command, draft.idempotencyKey)
+    const completed = await onSubmit(command, draft.idempotencyKey)
+    if (!completed) return
     window.localStorage.removeItem(storageKey)
     setDirty(false)
   }

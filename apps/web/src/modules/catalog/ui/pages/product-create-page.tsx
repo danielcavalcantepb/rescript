@@ -104,9 +104,11 @@ function ProductCreateContent({
         to: '/catalog/products/$productId',
         params: { productId: product.productId },
       })
+      return true
     } catch (error) {
       const rpc = getCatalogRpcError(error)
       setFormError(rpc ? catalogErrorMessage(rpc) : 'Não foi possível criar o produto.')
+      return false
     } finally {
       setSubmitting(false)
     }
