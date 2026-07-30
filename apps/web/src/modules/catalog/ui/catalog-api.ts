@@ -202,6 +202,59 @@ export const catalogCreateProductWithInitialSetup = createServerFn({ method: 'PO
     }
   })
 
+export type NcmSearchResult = {
+  code: string
+  description: string
+}
+
+type SearchNcmInput = {
+  query: string
+}
+
+let ncmCatalogCache: NcmSearchResult[] | null = null
+let ncmCatalogCacheExpiresAt = 0
+
+async function loadOfficialNcmCatalog(): Promise<NcmSearchResult[]> {
+  if (ncmCatalogCache && Date.now() < ncmCatalogCacheExpiresAt) {
+    return ncmCatalogCache
+  }
+
+  const response = await fetch(
+    'https://portalunico.siscomex.gov.br/classif/api/publico/nomenclatura/download/json',
+    { signal: AbortSignal.timeout(12_000) },
+  )
+  if (!response.ok) throw new Error('ncm_catalog_unavailable')
+
+  const payload = (await response.json()) as {
+    Nomenclaturas?: Array<{ Codigo?: string; Descricao?: string }>
+  }
+  ncmCatalogCache = (payload.Nomenclaturas ?? [])
+    .map((item) => ({
+      code: (item.Codigo ?? '').replace(/\D/g, ''),
+      description: (item.Descricao ?? '').trim(),
+    }))
+    .filter((item) => item.code.length === 8 && item.description.length > 0)
+  ncmCatalogCacheExpiresAt = Date.now() + 60 * 60 * 1000
+  return ncmCatalogCache
+}
+
+/** Search the current official NCM catalog without persisting a copy in Catalog. */
+export const catalogSearchOfficialNcm = createServerFn({ method: 'POST' })
+  .validator((input: SearchNcmInput) => input)
+  .handler(async ({ data }): Promise<NcmSearchResult[]> => {
+    const query = data.query.trim().toLocaleLowerCase('pt-BR')
+    if (query.length < 2) return []
+    const catalog = await loadOfficialNcmCatalog()
+    const numericQuery = query.replace(/\D/g, '')
+    return catalog
+      .filter((item) =>
+        numericQuery
+          ? item.code.startsWith(numericQuery)
+          : item.description.toLocaleLowerCase('pt-BR').includes(query),
+      )
+      .slice(0, 50)
+  })
+
 export const catalogListBrands = createServerFn({ method: 'POST' })
   .validator((input: CatalogOrgScope) => input)
   .handler(async ({ data }) =>

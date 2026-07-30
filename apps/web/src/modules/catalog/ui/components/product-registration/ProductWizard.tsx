@@ -1,6 +1,8 @@
 import { isValidElement, useEffect, useMemo, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { Button } from '#/components/ui/button'
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from '#/components/ui/dialog'
+import { catalogSearchOfficialNcm, type NcmSearchResult } from '#/modules/catalog/ui/catalog-api'
 import type {
   AttributeResponse,
   BrandResponse,
@@ -71,8 +73,8 @@ function emptyDraft(): Draft {
   return {
     name: '',
     description: '',
-    ncm: '61091000',
-    ncmDescription: 'Camisetas, de malha, de algodão',
+    ncm: '',
+    ncmDescription: '',
     unitId: '',
     unitCode: '',
     kind: 'simple',
@@ -98,9 +100,8 @@ function readDraft(key: string): StoredDraft | null {
         ...value,
         draft: {
           ...value.draft,
-          ncm: value.draft.ncm ?? '61091000',
-          ncmDescription:
-            value.draft.ncmDescription ?? 'Camisetas, de malha, de algodão',
+          ncm: value.draft.ncm ?? '',
+          ncmDescription: value.draft.ncmDescription ?? '',
         },
       }
     }
@@ -111,9 +112,8 @@ function readDraft(key: string): StoredDraft | null {
       step: value.step,
       draft: {
         ...value.draft,
-        ncm: value.draft.ncm ?? '61091000',
-        ncmDescription:
-          value.draft.ncmDescription ?? 'Camisetas, de malha, de algodão',
+        ncm: value.draft.ncm ?? '',
+        ncmDescription: value.draft.ncmDescription ?? '',
       },
     }
   } catch {
@@ -520,7 +520,30 @@ function BasicStep({ draft, units, update, changeKind }: { draft: Draft; units: 
 }
 
 function NcmFields({ draft, update }: { draft: Draft; update: (next: Partial<Draft>) => void }) {
-  return <div className="mb-5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4"><div className="grid gap-3 sm:grid-cols-2"><Field label="Código NCM"><div className="flex gap-2"><input className={fieldClass} value={draft.ncm} maxLength={8} inputMode="numeric" onChange={(event) => update({ ncm: event.target.value.replace(/\D/g, '') })} /><Button type="button" size="sm" variant="secondary" onClick={() => update({ ncm: '61091000', ncmDescription: 'Camisetas, de malha, de algodão' })}>Gerar padrão</Button></div></Field><Field label="Descrição NCM"><div className="flex gap-2"><input className={fieldClass} value={draft.ncmDescription} onChange={(event) => update({ ncmDescription: event.target.value })} placeholder="Descrição da classificação" /><a className="inline-flex h-10 shrink-0 items-center rounded-[var(--radius-md)] border border-[var(--color-border)] px-3 text-sm font-medium hover:bg-[var(--color-surface)]" href="https://portalunico.siscomex.gov.br/classif/#/nomenclatura/avancada?perfil=publico" target="_blank" rel="noreferrer">Pesquisar NCM</a></div></Field></div><p className="mt-2 text-xs text-[var(--color-ink-muted)]">O código padrão é 61091000. Você pode alterá-lo; a pesquisa abre a tabela oficial vigente.</p></div>
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<NcmSearchResult[]>([])
+  const [searching, setSearching] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const search = async () => {
+    setSearching(true)
+    setError(null)
+    try {
+      setResults(await catalogSearchOfficialNcm({ data: { query } }))
+    } catch {
+      setError('Não foi possível consultar a tabela NCM agora. Tente novamente.')
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  const select = (item: NcmSearchResult) => {
+    update({ ncm: item.code, ncmDescription: item.description })
+    setOpen(false)
+  }
+
+  return <><div className="mb-5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-4"><div className="grid gap-3 sm:grid-cols-2"><Field label="Código NCM"><div className="flex gap-2"><input className={fieldClass} value={draft.ncm} maxLength={8} inputMode="numeric" onChange={(event) => update({ ncm: event.target.value.replace(/\D/g, '') })} /><Button type="button" size="sm" variant="secondary" onClick={() => update({ ncm: '61091000', ncmDescription: 'Camisetas, de malha, de algodão' })}>Gerar padrão</Button></div></Field><Field label="Descrição NCM"><div className="flex gap-2"><input className={fieldClass} value={draft.ncmDescription} onChange={(event) => update({ ncmDescription: event.target.value })} placeholder="Descrição da classificação" /><Button type="button" size="sm" variant="secondary" onClick={() => setOpen(true)}>Pesquisar NCM</Button></div></Field></div><p className="mt-2 text-xs text-[var(--color-ink-muted)]">Preencha manualmente, gere o padrão ou consulte a tabela oficial sem sair do cadastro.</p></div><Dialog open={open} onOpenChange={setOpen}><DialogContent size="lg" aria-describedby="ncm-search-description" className="max-h-[85vh] overflow-y-auto"><DialogTitle>Seleção NCM de Produtos e Serviços</DialogTitle><DialogDescription id="ncm-search-description">Pesquise pelo código ou descrição e selecione a classificação correta.</DialogDescription><form className="mt-5 flex flex-col gap-3 sm:flex-row" onSubmit={(event) => { event.preventDefault(); void search() }}><input className={fieldClass} value={query} minLength={2} onChange={(event) => setQuery(event.target.value)} placeholder="Ex.: 6109 ou camiseta" autoFocus /><Button type="submit" disabled={query.trim().length < 2 || searching}>{searching ? 'Pesquisando…' : 'Pesquisar'}</Button></form>{error && <p className="mt-3 text-sm text-[var(--color-danger)]">{error}</p>}<div className="mt-5 overflow-x-auto rounded-[var(--radius-md)] border border-[var(--color-border)]"><table className="w-full min-w-[540px] text-left text-sm"><thead className="bg-[var(--color-surface-subtle)] text-[var(--color-ink-muted)]"><tr><th className="px-3 py-2 font-medium">Código NCM</th><th className="px-3 py-2 font-medium">Descrição</th><th className="w-24 px-3 py-2 font-medium">Ação</th></tr></thead><tbody>{results.map((item) => <tr key={item.code} className="border-t border-[var(--color-border)]"><td className="px-3 py-3 font-mono">{item.code}</td><td className="px-3 py-3">{item.description}</td><td className="px-3 py-3"><Button type="button" size="sm" onClick={() => select(item)}>Usar</Button></td></tr>)}{!searching && !results.length && <tr><td className="px-3 py-8 text-center text-[var(--color-ink-muted)]" colSpan={3}>{query.trim().length < 2 ? 'Digite ao menos dois caracteres para pesquisar.' : 'Nenhuma informação encontrada.'}</td></tr>}</tbody></table></div></DialogContent></Dialog></>
 }
 
 function ClassificationStep({ draft, categories, brands, priceLists, branches, locations, update }: { draft: Draft; categories: CategoryResponse[]; brands: BrandResponse[]; priceLists: PriceListResponse[]; branches: Branch[]; locations: Location[]; update: (next: Partial<Draft>) => void }) {
