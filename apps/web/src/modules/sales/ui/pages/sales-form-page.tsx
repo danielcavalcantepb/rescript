@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { AppBreadcrumb } from '#/components/AppBreadcrumb'
@@ -64,7 +64,8 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const organizationId = currentOrganization?.id
   const isQuotation = type === 'quotation'
   const isEdit = Boolean(id)
-  const detail = useSalesDocument(type, id ?? '')
+  const detail = useSalesDocument(type, id ?? '', { refetchOnWindowFocus: false })
+  const hydratedDocumentId = useRef<string | null>(null)
   const createQuotation = useCreateQuotation()
   const createOrder = useCreateSalesOrder()
   const updateQuotation = useUpdateQuotation(id ?? '')
@@ -87,7 +88,7 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
   const paymentMethods = useQuery({ queryKey: ['sales', 'payment-methods', organizationId], enabled: Boolean(organizationId && !isQuotation), queryFn: async () => { const result = await listCommercialPaymentMethods({ data: { organizationId: organizationId! } }); if (!result.ok) throw new Error(result.error.code); return result.data } })
 
   useEffect(() => {
-    if (!detail.data || !isEdit) return
+    if (!detail.data || !isEdit || !id || hydratedDocumentId.current === id) return
     setCustomer({
       id: detail.data.customerId,
       legalName: detail.data.customerName,
@@ -122,7 +123,9 @@ function SalesFormContent({ type, id }: { type: SalesDocumentType; id?: string }
             : 'Manual',
       })),
     )
-  }, [detail.data, isEdit])
+    hydratedDocumentId.current = id
+    setDirty(false)
+  }, [detail.data, id, isEdit])
 
   useEffect(() => {
     if (!branchId && branches.data?.[0]) setBranchId(branches.data.find((branch) => branch.isDefault)?.id ?? branches.data[0].id)
