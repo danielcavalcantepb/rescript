@@ -12,7 +12,7 @@ import type { ProductCreationCommand } from '#/modules/catalog/application/produ
 
 type ProductKind = 'simple' | 'variable'
 type Branch = { id: string; name: string; code: string; isDefault: boolean }
-type Location = { id: string; name: string; status: string }
+type Location = { id: string; name: string; status: string; isDefault: boolean }
 type Assignment = { attributeDefinitionId: string; optionId: string }
 type VariantDraft = {
   id: string
@@ -198,9 +198,27 @@ export function ProductWizard({
     if (!draft.unitId && units[0]) update({ unitId: units[0].id, unitCode: units[0].code })
   }, [units])
   useEffect(() => {
-    if (!draft.branchId && branches[0]) {
-      update({ branchId: branches.find((branch) => branch.isDefault)?.id ?? branches[0].id })
-    }
+    const defaultBranchId =
+      branches.find((branch) => branch.isDefault)?.id ?? branches[0]?.id
+    if (!defaultBranchId) return
+
+    setDraft((current) => {
+      const branchId = branches.some((branch) => branch.id === current.branchId)
+        ? current.branchId
+        : defaultBranchId
+      const variants = current.variants.map((variant) => ({
+        ...variant,
+        branchId: branches.some((branch) => branch.id === variant.branchId)
+          ? variant.branchId
+          : branchId,
+      }))
+      const changed =
+        branchId !== current.branchId ||
+        variants.some((variant, index) => variant.branchId !== current.variants[index]?.branchId)
+      if (!changed) return current
+      setDirty(true)
+      return { ...current, branchId, variants }
+    })
   }, [branches])
   useEffect(() => {
     if (!draft.priceListId && priceLists[0]) {
@@ -208,7 +226,28 @@ export function ProductWizard({
     }
   }, [priceLists])
   useEffect(() => {
-    if (!draft.locationId && locations[0]) update({ locationId: locations[0].id })
+    const activeLocations = locations.filter((location) => location.status === 'active')
+    const defaultLocationId =
+      activeLocations.find((location) => location.isDefault)?.id ?? activeLocations[0]?.id
+    if (!defaultLocationId) return
+
+    setDraft((current) => {
+      const hasLocation = (locationId: string) =>
+        activeLocations.some((location) => location.id === locationId)
+      const locationId = hasLocation(current.locationId)
+        ? current.locationId
+        : defaultLocationId
+      const variants = current.variants.map((variant) => ({
+        ...variant,
+        locationId: hasLocation(variant.locationId) ? variant.locationId : locationId,
+      }))
+      const changed =
+        locationId !== current.locationId ||
+        variants.some((variant, index) => variant.locationId !== current.variants[index]?.locationId)
+      if (!changed) return current
+      setDirty(true)
+      return { ...current, locationId, variants }
+    })
   }, [locations])
   useEffect(() => {
     if (dirty) {
@@ -237,9 +276,21 @@ export function ProductWizard({
   const variantErrors = useMemo(
     () =>
       variants.flatMap((variant) =>
-        validateVariant(variant, draft.kind, duplicateCombinations.has(variant.id)),
+        validateVariant(
+          variant,
+          draft.kind,
+          duplicateCombinations.has(variant.id),
+          draft.branchId,
+          draft.locationId,
+        ),
       ),
-    [duplicateCombinations, draft.kind, variants],
+    [
+      duplicateCombinations,
+      draft.branchId,
+      draft.kind,
+      draft.locationId,
+      variants,
+    ],
   )
   const attributesValid = true
   const canContinue =
@@ -442,7 +493,7 @@ function ReviewStep({ draft, variants, attributes, categories, brands, priceList
 function SummaryAside({ draft, variants, categories, brands }: { draft: Draft; variants: VariantDraft[]; categories: CategoryResponse[]; brands: BrandResponse[] }) { const selectedAttributes = new Set(variants.flatMap((variant) => variant.assignments.map((assignment) => assignment.attributeDefinitionId))).size; return <aside className="h-fit rounded-[var(--radius-lg)] border border-[var(--color-border)] bg-[var(--color-surface-subtle)] p-5 xl:sticky xl:top-5"><p className="text-xs font-semibold uppercase tracking-wide text-[var(--color-accent)]">Resumo</p><h2 className="mt-3 text-lg font-semibold">{draft.name || 'Novo produto'}</h2><dl className="mt-5 space-y-3 text-sm"><Row label="Tipo" value={draft.kind === 'simple' ? 'Simples' : 'Variável'} /><Row label="Categoria" value={categories.find((item) => item.id === draft.categoryId)?.name ?? 'Não definida'} /><Row label="Marca" value={brands.find((item) => item.id === draft.brandId)?.name ?? 'Não definida'} /><Row label="Atributos em uso" value={String(selectedAttributes)} /><Row label="Variantes cadastradas" value={String(variants.length)} /><Row label="Status" value={stepStatus(draft)} /></dl><p className="mt-5 text-xs text-[var(--color-ink-muted)]">Cada variante concentra sua combinação, preço, custo e quantidade inicial.</p></aside> }
 
 function stepStatus(draft: Draft) { return draft.name.trim() && draft.unitId ? 'Em preenchimento' : 'Dados básicos pendentes' }
-function validateVariant(variant: VariantDraft, kind: ProductKind, duplicate: boolean): string[] { const errors: string[] = []; const quantity = numberValue(variant.quantity) ?? 0; if (!variant.sku.trim()) errors.push('SKU é obrigatório.'); if (numberValue(variant.salePrice) == null || (numberValue(variant.salePrice) ?? -1) < 0) errors.push('Informe um preço de venda válido.'); if (numberValue(variant.unitCost) != null && (numberValue(variant.unitCost) ?? 0) < 0) errors.push('Custo unitário não pode ser negativo.'); if (!Number.isInteger(quantity) || quantity < 0) errors.push('Quantidade deve ser um inteiro não negativo.'); if (quantity > 0 && (!variant.locationId || !variant.branchId)) errors.push('Selecione filial e localização para o saldo inicial.'); if (kind === 'variable' && variant.assignments.length === 0) errors.push('Selecione pelo menos um atributo.'); if (duplicate) errors.push('Combinação de atributos repetida.'); return errors.map((message) => `${variant.id}:${message}`) }
+function validateVariant(variant: VariantDraft, kind: ProductKind, duplicate: boolean, defaultBranchId: string, defaultLocationId: string): string[] { const errors: string[] = []; const quantity = numberValue(variant.quantity) ?? 0; if (!variant.sku.trim()) errors.push('SKU é obrigatório.'); if (numberValue(variant.salePrice) == null || (numberValue(variant.salePrice) ?? -1) < 0) errors.push('Informe um preço de venda válido.'); if (numberValue(variant.unitCost) != null && (numberValue(variant.unitCost) ?? 0) < 0) errors.push('Custo unitário não pode ser negativo.'); if (!Number.isInteger(quantity) || quantity < 0) errors.push('Quantidade deve ser um inteiro não negativo.'); if (quantity > 0 && (!(variant.locationId || defaultLocationId) || !(variant.branchId || defaultBranchId))) errors.push('Selecione filial e localização para o saldo inicial.'); if (kind === 'variable' && variant.assignments.length === 0) errors.push('Selecione pelo menos um atributo.'); if (duplicate) errors.push('Combinação de atributos repetida.'); return errors.map((message) => `${variant.id}:${message}`) }
 function friendlyError(error: string) { const map: Record<string, string> = { variant_sku_required: 'Informe o SKU de cada variante.', initial_price_required: 'Informe um preço de venda válido.', active_price_list_required: 'Selecione uma lista de preço ativa.', valid_branch_required: 'Selecione uma filial válida.', valid_stock_location_required: 'Selecione uma localização válida para o estoque inicial.', initial_quantity_invalid: 'A quantidade inicial é inválida.', initial_unit_cost_invalid: 'O custo inicial é inválido.', category_not_found: 'A categoria informada não é válida.', brand_not_found: 'A marca informada não é válida.', idempotency_key_payload_mismatch: 'Esta tentativa já foi enviada com dados diferentes. Atualize a página para iniciar uma nova tentativa.' }; return Object.entries(map).find(([key]) => error.includes(key))?.[1] ?? error }
 function Heading({ title, description }: { title: string; description: string }) { return <div><h2 className="text-xl font-semibold">{title}</h2><p className="mt-1 text-sm text-[var(--color-ink-muted)]">{description}</p></div> }
 function Field({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) { return <label className="block space-y-1.5 text-sm font-medium">{label}{required ? <span aria-hidden="true"> *</span> : null}{children}</label> }
