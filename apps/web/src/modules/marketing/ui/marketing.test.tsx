@@ -5,16 +5,23 @@ import { describe, expect, it } from 'vitest'
 import { marketingHead } from '../seo'
 import { MarketingFaq, MarketingNavbar, PricingSection } from './marketing-components'
 import { MarketingHomePage } from './marketing-pages'
+import { RescripetMarketingPage } from './rescripet-landing'
 
 describe('Marketing website', () => {
-  it('renders the reconstructed premium Rescript landing', () => {
+  it('renders the public Rescript landing with the two supported entry paths', () => {
     render(<MarketingHomePage />)
     expect(screen.getByRole('heading', { name: /Sob controle/i })).toBeTruthy()
-    expect(screen.getAllByText('Solicitar demonstração').length).toBeGreaterThan(1)
-    expect(screen.getByText('Explorar a plataforma')).toBeTruthy()
-    expect(screen.getByText('Gestão para operações que querem crescer')).toBeTruthy()
-    expect(screen.getByText('Estoque inteligente')).toBeTruthy()
-    expect(screen.getByText('Benefícios da Rescript')).toBeTruthy()
+    const onboardingLinks = screen.getAllByRole('link', { name: 'Quero ser Rescript' })
+    expect(onboardingLinks.length).toBeGreaterThanOrEqual(3)
+    expect(onboardingLinks.every((link) => link.getAttribute('href') === '/onboarding')).toBe(true)
+    expect(
+      screen
+        .getAllByRole('link', { name: 'Entrar' })
+        .every((link) => link.getAttribute('href') === '/login'),
+    ).toBe(true)
+    expect(screen.getByText(/Gest/)).toBeTruthy()
+    expect(screen.getByText(/Estoque inteligente/i)).toBeTruthy()
+    expect(screen.getAllByText(/Benef/).length).toBeGreaterThan(0)
   })
 
   it('keeps the responsive menu keyboard-addressable', () => {
@@ -24,6 +31,14 @@ describe('Marketing website', () => {
     fireEvent.click(button)
     expect(button.getAttribute('aria-expanded')).toBe('true')
     expect(screen.getAllByText('Entrar').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('keeps the same entry paths in the landing mobile drawer', () => {
+    render(<RescripetMarketingPage />)
+    const button = screen.getByRole('button', { name: /abrir menu/i })
+    fireEvent.click(button)
+    expect(screen.getAllByRole('link', { name: 'Entrar' }).some((link) => link.getAttribute('href') === '/login')).toBe(true)
+    expect(screen.getAllByRole('link', { name: 'Quero ser Rescript' }).some((link) => link.getAttribute('href') === '/onboarding')).toBe(true)
   })
 
   it('renders FAQ as native accordion content', () => {
