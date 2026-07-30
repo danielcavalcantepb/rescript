@@ -186,7 +186,7 @@ export const catalogCreateProductWithInitialSetup = createServerFn({ method: 'PO
       const client = createServerSupabaseClient()
       // Database types are regenerated with the migration; keep this boundary
       // explicit until generated types are refreshed in CI.
-      const rpc = client.rpc as unknown as (
+      const rpc = client.rpc.bind(client) as unknown as (
         name: string,
         args: Record<string, unknown>,
       ) => Promise<{ data: unknown; error: { message: string } | null }>
