@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### CAP Refactor 001 — Onboarding Session
+
+- Renamed the public acquisition persistence root to `onboarding_session` and its owned children to `onboarding_consent`, `onboarding_business_profile` and `onboarding_event` through a data-preserving migration.
+- Formalized server-enforced onboarding state transitions while keeping existing public `cap_*` RPC names and onboarding behavior compatible.
+- Reserved `business_identity.onboarding_id` as the only future Business Identity relationship; the operational Customer domain remains independent.
+
+### Product creation orchestration
+
+- Added an atomic PostgreSQL ProductCreationOrchestrator that coordinates Catalog, Pricing, Inventory Ledger and immutable InitialInventoryValuation without moving ownership between domains.
+- Initial cost is recorded only against a real initial Ledger entry; sale price remains in Pricing and margin remains derived at read time.
+- Added global and per-variant deterministic idempotency keys, plus official primary SKU/EAN update support on ProductVariant.
+
 ### Commercial configuration
 
 - Added seller registration with branch and user linkage, commission, monthly salary, bonus and goal percentage.

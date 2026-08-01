@@ -12,6 +12,10 @@ Related-Modules: Checkout, Provisioning, Organization, Sales, Catalog, Inventory
 
 # Onboarding
 
+## Aggregate raiz da jornada pública
+
+O ciclo pré-operacional usa `OnboardingSession`, não `Customer`. A sessão organiza conta, consentimentos, perfil do negócio, identidade empresarial, plano, pagamento e provisionamento antes da criação da operação ERP. `current_step` é somente navegação; `state` é a autoridade de lifecycle. As RPCs públicas continuam sob o prefixo `cap_*` para preservar o contrato do módulo.
+
 Onboarding conduz o owner da empresa criada até o primeiro valor operacional.
 
 ## Workspace inicial

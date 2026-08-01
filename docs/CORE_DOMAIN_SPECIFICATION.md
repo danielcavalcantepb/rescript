@@ -10,6 +10,10 @@ Superseded-By: None
 Related-Modules: Organizations, Catalog, Customers, Suppliers, Purchasing, Receiving, Inventory, Sales, Finance, Fiscal
 ---
 
+## Product Creation Orchestrator and Initial Inventory Valuation
+
+`ProductCreationOrchestrator` is an application service, not an aggregate. It validates scope, creates Product/Variants, assigns variant identifiers, creates the initial Pricing entry, appends any initial Inventory Ledger entry and records an immutable `InitialInventoryValuation`. SKU/EAN remain ProductVariant identifiers; price remains Pricing-owned; quantity remains Ledger-owned. Margin is a derived read metric: `(sellingPrice - unitCost) / sellingPrice * 100` and is unavailable without a positive price and applicable valuation.
+
 # Core Domain Specification
 
 ## Autoridade e congelamento
@@ -204,3 +208,11 @@ Os eventos não escrevem Sales, Finance ou CRM diretamente. Eles atualizam somen
 | InventoryPolicy | Fonte única da política operacional de saldo. Negativo exige confirmação sem saldo habilitada. | InventoryPolicyCreated, InventoryPolicyUpdated. | Organization; `inventory.policy.read/manage`. |
 
 Esses aggregates não criam Sales Order, contas a receber, lançamentos de caixa ou movimentos de estoque. Eles apenas oferecem os contratos necessários para os domínios consumidores.
+
+## Customer Acquisition Platform — Onboarding Session
+
+`OnboardingSession` é o aggregate raiz da jornada pública SaaS e não é um Customer operacional. É criado por `OnboardingStarted`, possui conta, consentimentos, perfil de negócio, UTM e atividade de retomada; seus filhos são `OnboardingConsent`, `OnboardingBusinessProfile` e `OnboardingEvent`.
+
+`state` é a única autoridade do lifecycle; `current_step` serve apenas à navegação da interface. O caminho de sucesso é: `draft → account_created → business_profile_pending → business_profile_completed → company_profile_pending → company_profile_completed → plan_selection_pending → plan_selected → payment_pending → payment_processing → payment_confirmed → provisioning_pending → provisioning_processing → provisioned → operational_onboarding → completed`. Estados de confirmação, falha, abandono e expiração permanecem como caminhos controlados de compatibilidade. Transições inválidas são rejeitadas no PostgreSQL.
+
+Eventos canônicos: `OnboardingStarted`, `AccountCreated`, `BusinessProfileCompleted`, `BusinessIdentityCompleted`, `PlanSelected`, `PaymentConfirmed`, `ProvisioningStarted`, `ProvisioningCompleted`, `OperationalOnboardingStarted` e `OperationalOnboardingCompleted`. O futuro `BusinessIdentity` referencia exclusivamente `OnboardingSession` por `onboarding_id`.

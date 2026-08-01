@@ -142,28 +142,10 @@ export const features = [
 
 export const plans = [
   {
-    code: 'starter',
-    name: 'Starter',
-    audience: 'Para empresas que querem sair do controle espalhado.',
-    highlights: ['Relacionamento e vendas', 'Operação essencial', 'Workspaces principais'],
-  },
-  {
-    code: 'growth',
-    name: 'Growth',
-    audience: 'Para times que já precisam conectar áreas e reduzir retrabalho.',
-    highlights: ['Fluxos integrados', 'Permissões por papel', 'Indicadores operacionais'],
-  },
-  {
-    code: 'business',
-    name: 'Business',
-    audience: 'Para operações com volume, múltiplas áreas e governança.',
-    highlights: ['Automação avançada', 'Auditoria ampliada', 'Escala multiempresa'],
-  },
-  {
-    code: 'enterprise',
-    name: 'Enterprise',
-    audience: 'Para empresas que precisam de arquitetura, controle e acompanhamento.',
-    highlights: ['Arquitetura consultiva', 'Controles corporativos', 'Acompanhamento dedicado'],
+    code: 'rescript',
+    name: 'Rescript',
+    audience: 'Uma plataforma única para centralizar a gestão da sua empresa.',
+    highlights: ['Vendas, estoque e financeiro', 'Indicadores operacionais', 'Gestão integrada'],
   },
 ] as const
 

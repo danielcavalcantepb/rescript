@@ -35,6 +35,12 @@ import { Route as AppFinanceRouteImport } from './routes/_app/finance'
 import { Route as AppPagamentosRouteImport } from './routes/_app/pagamentos'
 import { Route as AppPaymentsRouteImport } from './routes/_app/payments'
 import { Route as AppReceivablesRouteImport } from './routes/_app/receivables'
+import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as OnboardingContaRouteImport } from './routes/onboarding.conta'
+import { Route as OnboardingEmpresaRouteImport } from './routes/onboarding.empresa'
+import { Route as OnboardingPagamentoRouteImport } from './routes/onboarding.pagamento'
+import { Route as OnboardingPerfilRouteImport } from './routes/onboarding.perfil'
+import { Route as OnboardingPlanoRouteImport } from './routes/onboarding.plano'
 import { Route as AppCatalogIndexRouteImport } from './routes/_app/catalog/index'
 import { Route as AppCatalogAttributesRouteImport } from './routes/_app/catalog/attributes'
 import { Route as AppCatalogBrandsRouteImport } from './routes/_app/catalog/brands'
@@ -56,6 +62,7 @@ import { Route as AppSalesIndexRouteImport } from './routes/_app/sales/index'
 import { Route as AppSalesSellersRouteImport } from './routes/_app/sales/sellers'
 import { Route as AppVendasIndexRouteImport } from './routes/_app/vendas/index'
 import { Route as AppVendasSaleIdRouteImport } from './routes/_app/vendas/$saleId'
+import { Route as ApiBillingWebhookRouteImport } from './routes/api/billing/webhook'
 import { Route as AppCatalogInventoryIndexRouteImport } from './routes/_app/catalog/inventory/index'
 import { Route as AppCatalogPriceListsIndexRouteImport } from './routes/_app/catalog/price-lists/index'
 import { Route as AppCatalogPriceListsPriceListIdRouteImport } from './routes/_app/catalog/price-lists/$priceListId'
@@ -247,6 +254,36 @@ const AppReceivablesRoute = AppReceivablesRouteImport.update({
   path: '/receivables',
   getParentRoute: () => AppRoute,
 } as any)
+const AppOnboardingRoute = AppOnboardingRouteImport.update({
+  id: '/app/onboarding',
+  path: '/app/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingContaRoute = OnboardingContaRouteImport.update({
+  id: '/conta',
+  path: '/conta',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const OnboardingEmpresaRoute = OnboardingEmpresaRouteImport.update({
+  id: '/empresa',
+  path: '/empresa',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const OnboardingPagamentoRoute = OnboardingPagamentoRouteImport.update({
+  id: '/pagamento',
+  path: '/pagamento',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const OnboardingPerfilRoute = OnboardingPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => OnboardingRoute,
+} as any)
+const OnboardingPlanoRoute = OnboardingPlanoRouteImport.update({
+  id: '/plano',
+  path: '/plano',
+  getParentRoute: () => OnboardingRoute,
+} as any)
 const AppCatalogIndexRoute = AppCatalogIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -352,6 +389,11 @@ const AppVendasSaleIdRoute = AppVendasSaleIdRouteImport.update({
   id: '/vendas/$saleId',
   path: '/vendas/$saleId',
   getParentRoute: () => AppRoute,
+} as any)
+const ApiBillingWebhookRoute = ApiBillingWebhookRouteImport.update({
+  id: '/api/billing/webhook',
+  path: '/api/billing/webhook',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AppCatalogInventoryIndexRoute =
   AppCatalogInventoryIndexRouteImport.update({
@@ -717,7 +759,7 @@ export interface FileRoutesByFullPath {
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/modules': typeof ModulesRoute
-  '/onboarding': typeof OnboardingRoute
+  '/onboarding': typeof OnboardingRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
@@ -733,6 +775,12 @@ export interface FileRoutesByFullPath {
   '/pagamentos': typeof AppPagamentosRoute
   '/payments': typeof AppPaymentsRoute
   '/receivables': typeof AppReceivablesRoute
+  '/app/onboarding': typeof AppOnboardingRoute
+  '/onboarding/conta': typeof OnboardingContaRoute
+  '/onboarding/empresa': typeof OnboardingEmpresaRoute
+  '/onboarding/pagamento': typeof OnboardingPagamentoRoute
+  '/onboarding/perfil': typeof OnboardingPerfilRoute
+  '/onboarding/plano': typeof OnboardingPlanoRoute
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -744,6 +792,7 @@ export interface FileRoutesByFullPath {
   '/produtos/$productId': typeof AppProdutosProductIdRoute
   '/sales/sellers': typeof AppSalesSellersRoute
   '/vendas/$saleId': typeof AppVendasSaleIdRoute
+  '/api/billing/webhook': typeof ApiBillingWebhookRoute
   '/catalog/': typeof AppCatalogIndexRoute
   '/clientes/': typeof AppClientesIndexRoute
   '/crm/': typeof AppCrmIndexRoute
@@ -826,7 +875,7 @@ export interface FileRoutesByTo {
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/modules': typeof ModulesRoute
-  '/onboarding': typeof OnboardingRoute
+  '/onboarding': typeof OnboardingRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
@@ -840,6 +889,12 @@ export interface FileRoutesByTo {
   '/pagamentos': typeof AppPagamentosRoute
   '/payments': typeof AppPaymentsRoute
   '/receivables': typeof AppReceivablesRoute
+  '/app/onboarding': typeof AppOnboardingRoute
+  '/onboarding/conta': typeof OnboardingContaRoute
+  '/onboarding/empresa': typeof OnboardingEmpresaRoute
+  '/onboarding/pagamento': typeof OnboardingPagamentoRoute
+  '/onboarding/perfil': typeof OnboardingPerfilRoute
+  '/onboarding/plano': typeof OnboardingPlanoRoute
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -851,6 +906,7 @@ export interface FileRoutesByTo {
   '/produtos/$productId': typeof AppProdutosProductIdRoute
   '/sales/sellers': typeof AppSalesSellersRoute
   '/vendas/$saleId': typeof AppVendasSaleIdRoute
+  '/api/billing/webhook': typeof ApiBillingWebhookRoute
   '/catalog': typeof AppCatalogIndexRoute
   '/clientes': typeof AppClientesIndexRoute
   '/crm': typeof AppCrmIndexRoute
@@ -935,7 +991,7 @@ export interface FileRoutesById {
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/modules': typeof ModulesRoute
-  '/onboarding': typeof OnboardingRoute
+  '/onboarding': typeof OnboardingRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
@@ -951,6 +1007,12 @@ export interface FileRoutesById {
   '/_app/pagamentos': typeof AppPagamentosRoute
   '/_app/payments': typeof AppPaymentsRoute
   '/_app/receivables': typeof AppReceivablesRoute
+  '/app/onboarding': typeof AppOnboardingRoute
+  '/onboarding/conta': typeof OnboardingContaRoute
+  '/onboarding/empresa': typeof OnboardingEmpresaRoute
+  '/onboarding/pagamento': typeof OnboardingPagamentoRoute
+  '/onboarding/perfil': typeof OnboardingPerfilRoute
+  '/onboarding/plano': typeof OnboardingPlanoRoute
   '/_app/catalog/attributes': typeof AppCatalogAttributesRoute
   '/_app/catalog/brands': typeof AppCatalogBrandsRoute
   '/_app/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -962,6 +1024,7 @@ export interface FileRoutesById {
   '/_app/produtos/$productId': typeof AppProdutosProductIdRoute
   '/_app/sales/sellers': typeof AppSalesSellersRoute
   '/_app/vendas/$saleId': typeof AppVendasSaleIdRoute
+  '/api/billing/webhook': typeof ApiBillingWebhookRoute
   '/_app/catalog/': typeof AppCatalogIndexRoute
   '/_app/clientes/': typeof AppClientesIndexRoute
   '/_app/crm/': typeof AppCrmIndexRoute
@@ -1062,6 +1125,12 @@ export interface FileRouteTypes {
     | '/pagamentos'
     | '/payments'
     | '/receivables'
+    | '/app/onboarding'
+    | '/onboarding/conta'
+    | '/onboarding/empresa'
+    | '/onboarding/pagamento'
+    | '/onboarding/perfil'
+    | '/onboarding/plano'
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
@@ -1073,6 +1142,7 @@ export interface FileRouteTypes {
     | '/produtos/$productId'
     | '/sales/sellers'
     | '/vendas/$saleId'
+    | '/api/billing/webhook'
     | '/catalog/'
     | '/clientes/'
     | '/crm/'
@@ -1169,6 +1239,12 @@ export interface FileRouteTypes {
     | '/pagamentos'
     | '/payments'
     | '/receivables'
+    | '/app/onboarding'
+    | '/onboarding/conta'
+    | '/onboarding/empresa'
+    | '/onboarding/pagamento'
+    | '/onboarding/perfil'
+    | '/onboarding/plano'
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
@@ -1180,6 +1256,7 @@ export interface FileRouteTypes {
     | '/produtos/$productId'
     | '/sales/sellers'
     | '/vendas/$saleId'
+    | '/api/billing/webhook'
     | '/catalog'
     | '/clientes'
     | '/crm'
@@ -1279,6 +1356,12 @@ export interface FileRouteTypes {
     | '/_app/pagamentos'
     | '/_app/payments'
     | '/_app/receivables'
+    | '/app/onboarding'
+    | '/onboarding/conta'
+    | '/onboarding/empresa'
+    | '/onboarding/pagamento'
+    | '/onboarding/perfil'
+    | '/onboarding/plano'
     | '/_app/catalog/attributes'
     | '/_app/catalog/brands'
     | '/_app/catalog/categories'
@@ -1290,6 +1373,7 @@ export interface FileRouteTypes {
     | '/_app/produtos/$productId'
     | '/_app/sales/sellers'
     | '/_app/vendas/$saleId'
+    | '/api/billing/webhook'
     | '/_app/catalog/'
     | '/_app/clientes/'
     | '/_app/crm/'
@@ -1374,11 +1458,13 @@ export interface RootRouteChildren {
   FeaturesRoute: typeof FeaturesRoute
   LoginRoute: typeof LoginRoute
   ModulesRoute: typeof ModulesRoute
-  OnboardingRoute: typeof OnboardingRoute
+  OnboardingRoute: typeof OnboardingRouteWithChildren
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   StatusRoute: typeof StatusRoute
   TermsRoute: typeof TermsRoute
+  AppOnboardingRoute: typeof AppOnboardingRoute
+  ApiBillingWebhookRoute: typeof ApiBillingWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1565,6 +1651,48 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReceivablesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/onboarding': {
+      id: '/app/onboarding'
+      path: '/app/onboarding'
+      fullPath: '/app/onboarding'
+      preLoaderRoute: typeof AppOnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/conta': {
+      id: '/onboarding/conta'
+      path: '/conta'
+      fullPath: '/onboarding/conta'
+      preLoaderRoute: typeof OnboardingContaRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/onboarding/empresa': {
+      id: '/onboarding/empresa'
+      path: '/empresa'
+      fullPath: '/onboarding/empresa'
+      preLoaderRoute: typeof OnboardingEmpresaRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/onboarding/pagamento': {
+      id: '/onboarding/pagamento'
+      path: '/pagamento'
+      fullPath: '/onboarding/pagamento'
+      preLoaderRoute: typeof OnboardingPagamentoRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/onboarding/perfil': {
+      id: '/onboarding/perfil'
+      path: '/perfil'
+      fullPath: '/onboarding/perfil'
+      preLoaderRoute: typeof OnboardingPerfilRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
+    '/onboarding/plano': {
+      id: '/onboarding/plano'
+      path: '/plano'
+      fullPath: '/onboarding/plano'
+      preLoaderRoute: typeof OnboardingPlanoRouteImport
+      parentRoute: typeof OnboardingRoute
+    }
     '/_app/catalog/': {
       id: '/_app/catalog/'
       path: '/'
@@ -1711,6 +1839,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/vendas/$saleId'
       preLoaderRoute: typeof AppVendasSaleIdRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/api/billing/webhook': {
+      id: '/api/billing/webhook'
+      path: '/api/billing/webhook'
+      fullPath: '/api/billing/webhook'
+      preLoaderRoute: typeof ApiBillingWebhookRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/catalog/inventory/': {
       id: '/_app/catalog/inventory/'
@@ -2420,6 +2555,26 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
+interface OnboardingRouteChildren {
+  OnboardingContaRoute: typeof OnboardingContaRoute
+  OnboardingEmpresaRoute: typeof OnboardingEmpresaRoute
+  OnboardingPagamentoRoute: typeof OnboardingPagamentoRoute
+  OnboardingPerfilRoute: typeof OnboardingPerfilRoute
+  OnboardingPlanoRoute: typeof OnboardingPlanoRoute
+}
+
+const OnboardingRouteChildren: OnboardingRouteChildren = {
+  OnboardingContaRoute: OnboardingContaRoute,
+  OnboardingEmpresaRoute: OnboardingEmpresaRoute,
+  OnboardingPagamentoRoute: OnboardingPagamentoRoute,
+  OnboardingPerfilRoute: OnboardingPerfilRoute,
+  OnboardingPlanoRoute: OnboardingPlanoRoute,
+}
+
+const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
+  OnboardingRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
@@ -2431,11 +2586,13 @@ const rootRouteChildren: RootRouteChildren = {
   FeaturesRoute: FeaturesRoute,
   LoginRoute: LoginRoute,
   ModulesRoute: ModulesRoute,
-  OnboardingRoute: OnboardingRoute,
+  OnboardingRoute: OnboardingRouteWithChildren,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   StatusRoute: StatusRoute,
   TermsRoute: TermsRoute,
+  AppOnboardingRoute: AppOnboardingRoute,
+  ApiBillingWebhookRoute: ApiBillingWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

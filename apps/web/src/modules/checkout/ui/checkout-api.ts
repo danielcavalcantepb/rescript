@@ -4,7 +4,6 @@ import type {
   CheckoutDetailsInput,
   CheckoutSession,
   PlanCode,
-  ProvisioningResult,
 } from '#/modules/checkout/domain/types'
 
 export type CheckoutRpcResult<T> =
@@ -35,17 +34,6 @@ function rowToSession(row: Record<string, unknown>): CheckoutSession {
     currency: String(row.currency),
     createdAt: String(row.created_at),
     expiresAt: String(row.expires_at),
-  }
-}
-
-function rowToProvisioningResult(row: Record<string, unknown>): ProvisioningResult {
-  return {
-    checkoutId: String(row.checkoutId),
-    tenantId: String(row.tenantId),
-    organizationId: String(row.organizationId),
-    ownerId: String(row.ownerId),
-    subscriptionId: String(row.subscriptionId),
-    status: 'SUCCESS',
   }
 }
 
@@ -155,65 +143,11 @@ export const completeCheckoutSession = createServerFn({ method: 'POST' })
       const { validateCheckoutDetails } = await import(
         '#/modules/checkout/domain/validation'
       )
-      const { createAdminSupabaseClient } = await import(
-        '#/lib/supabase/admin.server'
-      )
       validateCheckoutDetails(data)
-
-      const admin = createAdminSupabaseClient()
-      const rpcClient = admin as unknown as RpcClient
-
-      const existing = await rpc<Record<string, unknown> | null>(
-        rpcClient,
-        'get_checkout_result',
-        { p_public_token: data.publicToken },
-      )
-      if (existing) return rowToProvisioningResult(existing)
-
-      const { data: created, error: authError } =
-        await admin.auth.admin.createUser({
-          email: data.ownerEmail.trim().toLowerCase(),
-          password: data.ownerPassword,
-          email_confirm: true,
-          user_metadata: {
-            full_name: data.ownerName.trim(),
-            display_name: data.ownerName.trim(),
-            terms_accepted_at: new Date().toISOString(),
-            checkout_public_token: data.publicToken,
-          },
-        })
-
-      if (authError || !created.user) {
-        await rpc<void>(rpcClient, 'record_checkout_failure', {
-          p_public_token: data.publicToken,
-          p_reason: authError?.message ?? 'owner_auth_creation_failed',
-        }).catch(() => undefined)
-        throw new Error(
-          authError?.message.includes('already')
-            ? 'owner_email_already_exists'
-            : (authError?.message ?? 'owner_auth_creation_failed'),
-        )
-      }
-
-      try {
-        const result = await rpc<Record<string, unknown>>(
-          rpcClient,
-          'provision_checkout_session',
-          {
-            p_public_token: data.publicToken,
-            p_owner_user_id: created.user.id,
-            p_idempotency_key: data.idempotencyKey,
-          },
-        )
-        return rowToProvisioningResult(result)
-      } catch (error) {
-        await admin.auth.admin.deleteUser(created.user.id).catch(() => undefined)
-        await rpc<void>(rpcClient, 'record_checkout_failure', {
-          p_public_token: data.publicToken,
-          p_reason: error instanceof Error ? error.message : 'provisioning_failed',
-        }).catch(() => undefined)
-        throw error
-      }
+      // This legacy entry point intentionally cannot provision a tenant.
+      // Billing confirmation must enter through the verified webhook and CAP
+      // Activation pipeline, which creates the canonical subscription first.
+      throw new Error('legacy_checkout_redirect_to_onboarding')
     }),
   )
 

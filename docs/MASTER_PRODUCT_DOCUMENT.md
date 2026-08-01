@@ -10,6 +10,10 @@ Superseded-By: None
 Related-Modules: All
 ---
 
+## Product Creation Orchestration
+
+Product registration may collect SKU/EAN, initial sale price, initial quantity and initial unit cost, but it never owns those facts. `ProductCreationOrchestrator` is an application service that completes Catalog, Pricing and Inventory Ledger work in one PostgreSQL transaction. Initial cost is immutable `InitialInventoryValuation` data tied to the real ledger entry; margin is derived from Pricing and valuation only.
+
 # Documento Mestre de Produto — Rescript
 
 > A constituição de entidades, ownership, invariantes e eventos está em [Core Domain Specification](./CORE_DOMAIN_SPECIFICATION.md). Nenhuma mudança do Core Domain é implementada antes de atualizar essa especificação.
@@ -319,6 +323,8 @@ O checklist antes de aprovar uma tela é: reduz cliques? preserva contexto? usa 
 - [Roadmap](./07_ROADMAP.md), ADRs e documentação específica de cada módulo.
 
 ## Contratos fundamentais aprovados
+
+**Onboarding Session.** `OnboardingSession` é a jornada SaaS pública anterior ao tenant operacional. Ela não cria nem representa um Customer ERP; concentra conta, consentimentos, perfil de negócio, identidade empresarial, plano, pagamento e provisionamento. Seu lifecycle é autoritativo por `state`, enquanto `current_step` existe apenas para navegação.
 
 **Branch.** `Branch` é a unidade operacional de uma Organization. Uma organização possui ao menos uma filial ativa e exatamente uma filial padrão; `NULL` nunca representa filial.
 

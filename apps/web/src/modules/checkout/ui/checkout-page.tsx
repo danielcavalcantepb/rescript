@@ -23,21 +23,15 @@ type CheckoutPageProps = {
 }
 
 const planLabels: Record<PlanCode, string> = {
-  starter: 'Starter',
-  growth: 'Growth',
-  business: 'Business',
-  enterprise: 'Enterprise',
+  rescript: 'Rescript',
 }
 
 const planDescriptions: Record<PlanCode, string> = {
-  starter: 'Para começar com cliente, venda e controle essencial conectados.',
-  growth: 'Para reduzir retrabalho e operar vendas, estoque e financeiro juntos.',
-  business: 'Para empresas com volume, time e governança operacional.',
-  enterprise: 'Para estruturas com múltiplas empresas e acompanhamento dedicado.',
+  rescript: 'Vendas, estoque, financeiro e indicadores em uma única plataforma.',
 }
 
 export function CheckoutPage({
-  initialPlan = 'starter',
+  initialPlan = 'rescript',
   initialCycle = 'monthly',
 }: CheckoutPageProps) {
   const [step, setStep] = useState(0)

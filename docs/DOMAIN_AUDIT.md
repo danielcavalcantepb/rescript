@@ -10,6 +10,10 @@ Superseded-By: None
 Related-Modules: Catalog, Customers, Suppliers, Purchasing, Sales, Inventory, Finance, Fiscal, Organizations, Permissions
 ---
 
+## Product creation dependency resolved
+
+The Catalog creation flow now has a canonical transaction boundary and an immutable initial-cost fact. Pricing and Inventory retain ownership; the remaining work is the dedicated Wizard UX, not a missing domain contract.
+
 # Auditoria de Domínio
 
 ## Autoridade e método
@@ -96,6 +100,10 @@ Branch, PaymentTerm e InventoryPolicy foram implementados como aggregates organi
 ## Atualização — expansão oficial de Customer
 
 O contrato de Customer foi expandido sem implementação técnica nesta fase. Ownership obrigatório por Organization, Company e Branch; lifecycle `draft/active/inactive/archived`; dados pessoais/jurídicos, address principal, dependentes e AcquisitionSource passam a ser requisitos canônicos. `draft` é cadastro iniciado, com informações ainda incompletas e sem elegibilidade operacional; somente `active` pode participar de novas operações. Customer não passa a ser autoridade de Sales ou Finance: vendas, títulos, caixa e suas projeções continuam pertencendo aos respectivos domínios. A próxima sprint deve materializar este contrato incrementalmente, com RLS, RBAC, auditoria, migrações aditivas e read models autorizados.
+
+## CAP — Onboarding Session Refactor 001
+
+O agregado de aquisição pública foi consolidado como `OnboardingSession`, separado do aggregate operacional Customer. A migração preserva IDs, consentimentos, perfil e retomada por renomeação de tabelas; RLS e as RPCs `cap_*` são mantidas. Business Identity será dependente apenas de `onboarding_id` quando implementado, sem duplicar fatos da sessão.
 
 ## Políticas transversais
 

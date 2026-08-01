@@ -167,6 +167,44 @@
   --shadow-modal: 0 24px 64px rgb(0 0 0 / 0.55);
 }
 
+/* Public acquisition is intentionally light: the onboarding form must remain
+   readable and familiar before a user selects an application theme. */
+.public-onboarding-light {
+  color-scheme: light;
+  background: #f4f6f8;
+  color: #142033;
+  --color-background: #f4f6f8;
+  --color-bg: #f4f6f8;
+  --color-canvas: #f4f6f8;
+  --color-surface: #ffffff;
+  --color-surface-alt: #ffffff;
+  --color-surface-elevated: #ffffff;
+  --color-panel: #ffffff;
+  --color-border: #aebccc;
+  --color-border-soft: #d9e1e8;
+  --color-line: #d9e1e8;
+  --color-ink: #142033;
+  --color-text-primary: #142033;
+  --color-text-secondary: #53657a;
+  --color-muted: #72849a;
+  --color-hover: #f0f5f3;
+  --color-focus: #1f7a56;
+  --shadow-sm: 0 1px 2px rgb(20 32 51 / 0.05);
+  --shadow-overlay: 0 18px 42px rgb(20 32 51 / 0.12);
+}
+
+.public-onboarding-light input,
+.public-onboarding-light select {
+  min-height: 46px;
+  border-color: #9fb0c2;
+  background: #ffffff;
+}
+
+.public-onboarding-light input:hover,
+.public-onboarding-light select:hover {
+  border-color: #638096;
+}
+
 @layer base {
   * {
     box-sizing: border-box;

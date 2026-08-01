@@ -44,6 +44,7 @@ async function cleanup(checkoutId?: string, organizationId?: string) {
       await tx`delete from public.organization_onboarding where organization_id = ${organizationId}::uuid`
       await tx`delete from public.subscription where organization_id = ${organizationId}::uuid`
       await tx`delete from public.stock_location where organization_id = ${organizationId}::uuid`
+      await tx`delete from public.branch where organization_id = ${organizationId}::uuid`
       await tx`delete from public.membership where organization_id = ${organizationId}::uuid`
       await tx`delete from public.organization where id = ${organizationId}::uuid`
     }
@@ -73,7 +74,7 @@ describe('checkout tenant provisioning integration', () => {
         anon,
         'create_checkout_session',
         {
-          p_selected_plan: 'growth',
+          p_selected_plan: 'rescript',
           p_billing_cycle: 'monthly',
           p_country: 'BR',
           p_language: 'pt-BR',
@@ -89,7 +90,7 @@ describe('checkout tenant provisioning integration', () => {
         'start_checkout_session',
         {
           p_public_token: token,
-          p_selected_plan: 'growth',
+          p_selected_plan: 'rescript',
           p_billing_cycle: 'monthly',
           p_organization_name: 'Checkout Test Store',
           p_owner_name: 'Ana Clara',
@@ -166,7 +167,7 @@ describe('checkout tenant provisioning integration', () => {
         select status, selected_plan from public.checkout_search
         where checkout_id = ${checkoutId}::uuid
       `
-      expect(search).toEqual({ status: 'COMPLETED', selected_plan: 'growth' })
+      expect(search).toEqual({ status: 'COMPLETED', selected_plan: 'rescript' })
 
       const [effects] = await sql<{
         receivables: string

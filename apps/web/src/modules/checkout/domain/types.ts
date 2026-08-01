@@ -19,7 +19,7 @@ export const PROVISIONING_STATUSES = [
 
 export type ProvisioningStatus = (typeof PROVISIONING_STATUSES)[number]
 
-export const PLAN_CODES = ['starter', 'growth', 'business', 'enterprise'] as const
+export const PLAN_CODES = ['rescript'] as const
 
 export type PlanCode = (typeof PLAN_CODES)[number]
 

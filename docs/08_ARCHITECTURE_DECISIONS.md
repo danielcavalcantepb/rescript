@@ -148,6 +148,14 @@ Este documento resume decisões permanentes e suas razões. ADRs detalhados cont
 
 **Razão:** evita infraestrutura prematura e mantém decisões proporcionais ao estágio.
 
+## D-23 — Onboarding Session não é Customer
+
+**Decisão:** o agregado raiz do Customer Acquisition Platform é `onboarding_session`. O aggregate operacional `Customer` continua exclusivo do ERP e não participa da jornada pública de aquisição.
+
+**Razão:** a sessão reúne conta, consentimentos, perfil de negócio, identidade empresarial, plano, pagamento e provisionamento. Esses fatos pertencem ao ciclo SaaS, não ao relacionamento operacional de clientes.
+
+**Consequências:** `onboarding_consent`, `onboarding_business_profile` e `onboarding_event` dependem somente de `onboarding_session`. `business_identity` receberá `onboarding_id` quando for introduzido na Sprint 2; não duplica estado, perfil, conta, consentimentos ou UTMs. As RPCs públicas mantêm o prefixo `cap_*` como contrato estável do módulo, sem expor nomes físicos de tabelas.
+
 ## Processo para nova decisão
 
 Uma nova decisão relevante deve registrar:

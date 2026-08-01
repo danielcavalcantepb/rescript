@@ -10,6 +10,10 @@ Superseded-By: None
 Related-Modules: All
 ---
 
+## Catalog product creation progress
+
+The transaction and immutable valuation contracts are implemented. The upcoming Product Creation Wizard should consume `create_product_with_initial_setup` through the Catalog server API and present derived margin read-only.
+
 # Programa Oficial de Implementação
 
 ## Autoridade e regra de execução
@@ -175,6 +179,10 @@ Este plano executa, mas não redefine, o [Documento Mestre](./MASTER_PRODUCT_DOC
 ## Real Data Readiness
 
 **Progresso:** código concluído em 2026-07-28. O runtime não importa mais o dataset legado de demonstração. Leituras analíticas incompletas são descartadas ou exibidas como indisponíveis, sem datas, pontos ou KPIs inventados. As migrations foram aplicadas com sucesso em banco Supabase local reconstruído. Achados de lint em funções SQL legadas devem ser tratados em sprint própria antes da operação comercial.
+
+## CAP — Refactor 001 concluído em código
+
+Antes de Billing, Provisioning, Lifecycle, Analytics e Business Identity, a raiz do CAP é `onboarding_session`. A migration é baseada em `ALTER ... RENAME`, preservando sessões e filhos existentes; rollback é o rename inverso apenas enquanto nenhum consumidor novo depender do contrato. A interface mantém as RPCs públicas `cap_*`; a certificação em PostgreSQL real continua obrigatória.
 
 ## Gates e rollback comuns
 

@@ -113,7 +113,7 @@ export function MarketingAboutPage() {
       />
       <MarketingSection
         eyebrow="Produto"
-        title="Plataforma moderna com disciplina enterprise."
+        title="Plataforma moderna com disciplina operacional."
         description="A base do produto privilegia workspaces, relações, rastreabilidade, permissões, auditoria e fluxos operacionais claros."
       >
         <div className="grid gap-4 md:grid-cols-3">

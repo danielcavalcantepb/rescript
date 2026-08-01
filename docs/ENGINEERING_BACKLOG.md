@@ -10,6 +10,10 @@ Superseded-By: None
 Related-Modules: All
 ---
 
+## Product Creation Wizard
+
+**Status:** Foundation completed. The next delivery is the UX orchestration layer that submits a global idempotency key and per-variant initial price, quantity, cost, SKU and EAN to the transactional command. It must not add cost, price or balance columns to Catalog.
+
 # Backlog Executivo de Engenharia
 
 ## Autoridade e convenções
@@ -374,6 +378,12 @@ O Core Domain está congelado na [Core Domain Specification](./CORE_DOMAIN_SPECI
 ## Fora do horizonte atual
 
 Emissão fiscal/XML/SEFAZ; bancos, OFX e conciliação; juros, multas, descontos financeiros, abatimentos, abertura/fechamento de caixa, promoções, cupons e comissões; CRM de automação; marketplace/e-commerce; lotes, séries, valuation e depósitos avançados sem contrato aprovado.
+
+## CAP — Onboarding Session
+
+| Feature | Prioridade | Status | Valor entregue | Dependência restante |
+|---|---|---|---|---|
+| Refactor 001 — Onboarding Session | Must | Concluído em código; validação PostgreSQL pendente | Aggregate SaaS sem conflito com Customer, lifecycle guardado e contrato RPC compatível. | Aplicar e certificar a migration no Supabase antes da Sprint 2. |
 
 ## Manutenção
 

@@ -8,7 +8,7 @@ import { validateCheckoutDetails } from './validation'
 
 const valid = {
   publicToken: crypto.randomUUID(),
-  selectedPlan: 'starter',
+  selectedPlan: 'rescript',
   billingCycle: 'monthly',
   organizationName: 'Rescript Store',
   ownerName: 'Ana Clara',

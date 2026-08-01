@@ -15,8 +15,8 @@ export function isBillingCycle(value: string): value is BillingCycle {
 }
 
 export function normalizePlan(value: unknown): PlanCode {
-  const plan = typeof value === 'string' ? value.toLowerCase() : 'starter'
-  return isPlanCode(plan) ? plan : 'starter'
+  const plan = typeof value === 'string' ? value.toLowerCase() : 'rescript'
+  return isPlanCode(plan) ? plan : 'rescript'
 }
 
 export function normalizeBillingCycle(value: unknown): BillingCycle {

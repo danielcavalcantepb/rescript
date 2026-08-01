@@ -9,8 +9,29 @@ export type UpdateProfileNameResult =
   | { ok: true; fullName: string }
   | { ok: false; message: string }
 
+export type SignupResult =
+  | { ok: true; userId: string }
+  | { ok: false; message: string }
+
 /** Client-side auth actions — no direct Supabase calls in UI components. */
 export const authService = {
+  async signup(email: string, password: string, fullName: string): Promise<SignupResult> {
+    try {
+      const supabase = createBrowserSupabaseClient()
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim().toLowerCase(),
+        password,
+        options: { data: buildAuthNameMetadata(fullName) },
+      })
+      if (error || !data.user) {
+        return { ok: false, message: 'Já existe uma conta associada a este e-mail. Entre na plataforma ou recupere sua senha.' }
+      }
+      return { ok: true, userId: data.user.id }
+    } catch {
+      return { ok: false, message: 'Não foi possível criar a conta agora. Tente novamente.' }
+    }
+  },
+
   async login(email: string, password: string): Promise<LoginResult> {
     try {
       const supabase = createBrowserSupabaseClient()
