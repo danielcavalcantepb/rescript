@@ -1,5 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
-import { AcquisitionOnboardingPage } from '#/modules/acquisition/ui/acquisition-onboarding-page'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 import { fetchAuthSession } from '#/lib/auth/fetch-auth-session'
 import { fetchMembershipGate } from '#/lib/org/fetch-membership-gate'
 
@@ -11,5 +10,15 @@ export const Route = createFileRoute('/onboarding')({
       throw redirect({ to: '/app/onboarding' })
     }
   },
-  component: AcquisitionOnboardingPage,
+  component: OnboardingLayout,
 })
+
+/**
+ * `/onboarding` is the layout route for the public acquisition flow. Keeping
+ * the child outlet here is essential: rendering the account form at this
+ * level would mask `/onboarding/perfil`, `/onboarding/empresa`, and the
+ * remaining steps after a successful save.
+ */
+function OnboardingLayout() {
+  return <Outlet />
+}

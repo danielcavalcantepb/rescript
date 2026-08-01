@@ -36,6 +36,7 @@ import { Route as AppPagamentosRouteImport } from './routes/_app/pagamentos'
 import { Route as AppPaymentsRouteImport } from './routes/_app/payments'
 import { Route as AppReceivablesRouteImport } from './routes/_app/receivables'
 import { Route as AppOnboardingRouteImport } from './routes/app.onboarding'
+import { Route as OnboardingIndexRouteImport } from './routes/onboarding.index'
 import { Route as OnboardingContaRouteImport } from './routes/onboarding.conta'
 import { Route as OnboardingEmpresaRouteImport } from './routes/onboarding.empresa'
 import { Route as OnboardingPagamentoRouteImport } from './routes/onboarding.pagamento'
@@ -258,6 +259,11 @@ const AppOnboardingRoute = AppOnboardingRouteImport.update({
   id: '/app/onboarding',
   path: '/app/onboarding',
   getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingIndexRoute = OnboardingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => OnboardingRoute,
 } as any)
 const OnboardingContaRoute = OnboardingContaRouteImport.update({
   id: '/conta',
@@ -781,6 +787,7 @@ export interface FileRoutesByFullPath {
   '/onboarding/pagamento': typeof OnboardingPagamentoRoute
   '/onboarding/perfil': typeof OnboardingPerfilRoute
   '/onboarding/plano': typeof OnboardingPlanoRoute
+  '/onboarding/': typeof OnboardingIndexRoute
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -875,7 +882,6 @@ export interface FileRoutesByTo {
   '/features': typeof FeaturesRoute
   '/login': typeof LoginRoute
   '/modules': typeof ModulesRoute
-  '/onboarding': typeof OnboardingRouteWithChildren
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/status': typeof StatusRoute
@@ -895,6 +901,7 @@ export interface FileRoutesByTo {
   '/onboarding/pagamento': typeof OnboardingPagamentoRoute
   '/onboarding/perfil': typeof OnboardingPerfilRoute
   '/onboarding/plano': typeof OnboardingPlanoRoute
+  '/onboarding': typeof OnboardingIndexRoute
   '/catalog/attributes': typeof AppCatalogAttributesRoute
   '/catalog/brands': typeof AppCatalogBrandsRoute
   '/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -1013,6 +1020,7 @@ export interface FileRoutesById {
   '/onboarding/pagamento': typeof OnboardingPagamentoRoute
   '/onboarding/perfil': typeof OnboardingPerfilRoute
   '/onboarding/plano': typeof OnboardingPlanoRoute
+  '/onboarding/': typeof OnboardingIndexRoute
   '/_app/catalog/attributes': typeof AppCatalogAttributesRoute
   '/_app/catalog/brands': typeof AppCatalogBrandsRoute
   '/_app/catalog/categories': typeof AppCatalogCategoriesRoute
@@ -1131,6 +1139,7 @@ export interface FileRouteTypes {
     | '/onboarding/pagamento'
     | '/onboarding/perfil'
     | '/onboarding/plano'
+    | '/onboarding/'
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
@@ -1225,7 +1234,6 @@ export interface FileRouteTypes {
     | '/features'
     | '/login'
     | '/modules'
-    | '/onboarding'
     | '/pricing'
     | '/privacy'
     | '/status'
@@ -1245,6 +1253,7 @@ export interface FileRouteTypes {
     | '/onboarding/pagamento'
     | '/onboarding/perfil'
     | '/onboarding/plano'
+    | '/onboarding'
     | '/catalog/attributes'
     | '/catalog/brands'
     | '/catalog/categories'
@@ -1362,6 +1371,7 @@ export interface FileRouteTypes {
     | '/onboarding/pagamento'
     | '/onboarding/perfil'
     | '/onboarding/plano'
+    | '/onboarding/'
     | '/_app/catalog/attributes'
     | '/_app/catalog/brands'
     | '/_app/catalog/categories'
@@ -1657,6 +1667,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/onboarding'
       preLoaderRoute: typeof AppOnboardingRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/': {
+      id: '/onboarding/'
+      path: '/'
+      fullPath: '/onboarding/'
+      preLoaderRoute: typeof OnboardingIndexRouteImport
+      parentRoute: typeof OnboardingRoute
     }
     '/onboarding/conta': {
       id: '/onboarding/conta'
@@ -2561,6 +2578,7 @@ interface OnboardingRouteChildren {
   OnboardingPagamentoRoute: typeof OnboardingPagamentoRoute
   OnboardingPerfilRoute: typeof OnboardingPerfilRoute
   OnboardingPlanoRoute: typeof OnboardingPlanoRoute
+  OnboardingIndexRoute: typeof OnboardingIndexRoute
 }
 
 const OnboardingRouteChildren: OnboardingRouteChildren = {
@@ -2569,6 +2587,7 @@ const OnboardingRouteChildren: OnboardingRouteChildren = {
   OnboardingPagamentoRoute: OnboardingPagamentoRoute,
   OnboardingPerfilRoute: OnboardingPerfilRoute,
   OnboardingPlanoRoute: OnboardingPlanoRoute,
+  OnboardingIndexRoute: OnboardingIndexRoute,
 }
 
 const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
